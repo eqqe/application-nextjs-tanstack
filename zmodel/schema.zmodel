@@ -1,0 +1,185 @@
+import "application"
+import "space/space"
+import "space/dashboard/dashboard"
+import "space/property/property"
+import "space/property/lease"
+import "space/property/associate"
+import "space/list/list"
+
+datasource db {
+    provider = 'postgresql'
+    url = env('POSTGRES_URL')
+    directUrl = env('POSTGRES_URL_NON_POOLING')
+}
+
+generator js {
+    provider = 'prisma-client-js'
+}
+
+plugin enhancer {
+    provider = '@core/enhancer'
+    generatePermissionChecker = true
+}
+
+plugin zod {
+    provider = '@core/zod'
+}
+
+plugin hooks {
+    provider = '@zenstackhq/tanstack-query'
+    output = 'lib/hooks'
+    target = 'react'
+    version = 'v5'
+}
+
+abstract model IdCreatedUpdated {
+    id        String   @id @default(uuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+abstract model IdCreatedUpdatedAuth extends IdCreatedUpdated {
+    @@deny('all', auth() == null)
+}
+
+abstract model IdCreatedUpdatedSpace extends IdCreatedUpdatedAuth {
+    space   Space  @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+    spaceId String @default(auth().currentSpaceId)
+
+    @@allow('read', auth().currentSpaceId == spaceId && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)])
+}
+enum SpaceUserRole {
+    USER
+    ADMIN
+    GUEST
+}
+
+abstract model LinkToSpace extends IdCreatedUpdatedAuth {
+    space   Space  @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+    spaceId String
+
+    @@allow('read', auth().currentSpaceId == spaceId && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)])
+    // space admin can create/update/delete
+    @@allow('create,update,delete', space.members?[user == auth() && profile.role == ADMIN])
+}
+
+model Profile extends LinkToSpace {
+
+
+    users SpaceUser[]
+
+    role  SpaceUserRole
+}
+
+model SpaceUser extends LinkToSpace {
+
+
+    profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+    profileId String
+
+
+    user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId    String
+    @@unique([userId, spaceId])
+}
+
+
+
+model User extends IdCreatedUpdated {
+    email                  String                  @unique @email
+    emailVerified          DateTime?
+    password               String?                 @password @omit
+    name                   String?
+    spaces                 SpaceUser[]
+    spacesOwned            Space[]                 @relation("owner")
+    currentSpaceId         String?                 @ignore
+    image                  String?                 @url
+    todos                  Todo[]                  @relation("owner")
+
+    tenants                Tenant[]                @relation("user")
+    tenantsOwned           Tenant[]                @relation("owner")
+
+    leases                 Lease[]                 @relation("owner")
+    dashboards             Dashboard[]             @relation("owner")
+    properties             Property[]              @relation("owner")
+    lists                  List[]                  @relation("owner")
+    payments               Payment[]               @relation("owner")
+
+    charges                Charge[]                @relation("owner")
+    panelRows              PanelRow[]              @relation("owner")
+    panels                 Panel[]                 @relation("owner")
+    panelComponents        PanelComponent[]        @relation("owner")
+    panelComponentsCounter PanelComponentCounter[] @relation("owner")
+    panelComponentsReport  PanelComponentReport[]  @relation("owner")
+    associatesOwned        Associate[]             @relation("owner")
+    associates             Associate[]             @relation("user")
+    propertyAsssociates    PropertyAssociate[]     @relation("owner")
+    companyOwned           Company[]               @relation("owner")
+    personOwned            Person[]                @relation("owner")
+    
+    // next-auth
+    accounts               Account[]
+
+    // can be read by users sharing any space
+    @@allow('read', spaces?[auth().currentSpaceId == spaceId && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])
+
+    // full access by oneself
+    @@allow('all', auth() == this)
+}
+
+abstract model Owner {
+    owner   User   @relation("owner", fields: [ownerId], references: [id], onDelete: Cascade)
+    ownerId String @default(auth().id)
+    @@deny('update', future().owner != owner)
+}
+
+abstract model OptionalUser {
+    user   User?   @relation("user", fields: [userId], references: [id], onDelete: Cascade)
+    userId String?
+}
+
+
+
+abstract model Component extends IdCreatedUpdatedAuth, Owner {
+}
+enum Type {
+    List
+    Todo
+    Dashboard
+    Property
+    Lease
+    Associate
+    Payment
+    Tenant
+    Charge
+    Grid
+}
+
+
+
+// next-auth
+model Account {
+    id                       String  @id @default(uuid())
+    userId                   String
+    type                     String
+    provider                 String
+    providerAccountId        String
+    refresh_token            String?
+    refresh_token_expires_in Int?
+    access_token             String?
+    expires_at               Int?
+    token_type               String?
+    scope                    String?
+    id_token                 String?
+    session_state            String?
+    user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    @@unique([provider, providerAccountId])
+}
+
+// next-auth
+model VerificationToken {
+    identifier String
+    token      String
+    expires    DateTime
+
+    @@id([identifier, token])
+}

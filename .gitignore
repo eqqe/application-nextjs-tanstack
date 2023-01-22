@@ -1,0 +1,14 @@
+logs
+*.log
+node_modules/
+.env.local
+.next
+.zenstack_repl*
+zmodel/lib/hooks
+.env
+zmodel/prisma/schema.prisma
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+tsconfig.tsbuildinfo

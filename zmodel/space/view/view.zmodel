@@ -1,0 +1,14 @@
+
+import "../../schema.zmodel"
+import "../space.zmodel"
+import "../../application"
+
+
+model View extends IdCreatedUpdatedAuth {
+    subTab   SubTabFolder @relation(fields: [subTabId], references: [id], onDelete: Cascade)
+    subTabId String
+
+    table    Type
+
+    @@allow('read', subTab.tab.folder.applicationVersion.activations?[auth().currentSpaceId == spaceId && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])
+}

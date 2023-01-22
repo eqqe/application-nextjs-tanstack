@@ -1,0 +1,124 @@
+
+import "../../schema.zmodel"
+import "../space.zmodel"
+import "../../application"
+import "table"
+
+abstract model BaseGrid extends IdCreatedUpdatedAuth, Named {
+    elements GridElement[]
+}
+
+
+model Grid extends BaseGrid {
+    subTab   SubTabFolder @relation(fields: [parentId], references: [id], onDelete: Cascade)
+    parentId String
+
+    columns  Int          @gte(1) @lte(12)
+
+    @@allow('read', subTab.tab.folder.applicationVersion.activations?[auth().currentSpaceId == spaceId && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])
+}
+
+
+enum GridElementType {
+    Card
+    Tabs
+}
+
+model GridElement extends IdCreatedUpdatedAuth {
+
+    grid             Grid?           @relation(fields: [parentId], references: [id], onDelete: Cascade)
+    parentId         String?
+
+    gridTabContent   GridTabContent? @relation(fields: [gridTabContentId], references: [id], onDelete: Cascade)
+    gridTabContentId String?
+
+    type             GridElementType
+
+    colSpan          Int?            @gte(1) @lte(12)
+    rowStart         Int?            @gte(1) @lte(12)
+    rowEnd           Int?            @gte(1) @lte(12)
+    colStart         Int?            @gte(1) @lte(12)
+    colEnd           Int?            @gte(1) @lte(12)
+
+    card             GridCard?
+    tabs             GridTabs?
+
+    @@allow('read', grid.subTab.tab.folder.applicationVersion.activations?[auth().currentSpaceId == spaceId && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])
+    @@allow('read', gridTabContent.tabs.element.grid.subTab.tab.folder.applicationVersion.activations?[auth().currentSpaceId == spaceId && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])
+}
+
+
+
+
+model GridCard extends IdCreatedUpdatedAuth {
+
+    element                GridElement     @relation(fields: [parentId], references: [id], onDelete: Cascade)
+    parentId               String          @unique
+
+    title                  String
+    titleXl                Int?            @gte(1) @lte(4)
+    description            String
+    invertTitleDescription Boolean         @default(false)
+    headerPb               Int             @default(2) @gte(1) @lte(6)
+
+
+
+    content                String?
+
+    table                  GridCardTable?
+
+    footer                 GridCardFooter?
+
+    @@allow('read', element.grid.subTab.tab.folder.applicationVersion.activations?[auth().currentSpaceId == spaceId && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])
+    @@allow('read', element.gridTabContent.tabs.element.grid.subTab.tab.folder.applicationVersion.activations?[auth().currentSpaceId == spaceId && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])
+}
+
+model GridTabs extends IdCreatedUpdatedAuth {
+
+    element     GridElement      @relation(fields: [parentId], references: [id], onDelete: Cascade)
+    parentId    String           @unique
+
+    tabsContent GridTabContent[]
+
+    @@allow('read', element.grid.subTab.tab.folder.applicationVersion.activations?[auth().currentSpaceId == spaceId && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])
+}
+
+
+model GridTabContent extends BaseGrid {
+    tabs     GridTabs @relation(fields: [parentId], references: [id], onDelete: Cascade)
+    parentId String
+
+    @@allow('read', tabs.element.grid.subTab.tab.folder.applicationVersion.activations?[auth().currentSpaceId == spaceId && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])
+    @@allow('read', tabs.element.gridTabContent.tabs.element.grid.subTab.tab.folder.applicationVersion.activations?[auth().currentSpaceId == spaceId && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])
+}
+
+
+model GridCardFooter extends IdCreatedUpdatedAuth {
+
+    card     GridCard                @relation(fields: [parentId], references: [id], onDelete: Cascade)
+    parentId String                  @unique
+    button   GridCardFooterButton?
+    progress GridCardFooterProgress?
+
+    @@allow('read', card.element.grid.subTab.tab.folder.applicationVersion.activations?[auth().currentSpaceId == spaceId && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])
+}
+
+model GridCardFooterButton extends IdCreatedUpdatedAuth {
+
+    footer   GridCardFooter @relation(fields: [parentId], references: [id], onDelete: Cascade)
+    parentId String         @unique
+
+    text     String
+    table    Type
+
+    @@allow('read', footer.card.element.grid.subTab.tab.folder.applicationVersion.activations?[auth().currentSpaceId == spaceId && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])
+}
+model GridCardFooterProgress extends IdCreatedUpdatedAuth {
+
+    footer   GridCardFooter @relation(fields: [parentId], references: [id], onDelete: Cascade)
+    parentId String         @unique
+
+    value    Int
+    @@allow('read', footer.card.element.grid.subTab.tab.folder.applicationVersion.activations?[auth().currentSpaceId == spaceId && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])
+}
+

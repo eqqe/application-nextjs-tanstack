@@ -1,0 +1,47 @@
+import "../../schema.zmodel"
+import "../space.zmodel"
+import "property"
+import "lease"
+
+
+model Company extends Address, Component {
+    name              String?
+    siret             String?
+    siren             String?
+    codeNafApe        String?
+    rcs               String?
+    lei               String?
+    intraCommunityVAT String?
+    associates        Associate[]
+
+    @@allow('all', associates?[propertyAssociates?[auth().currentSpaceId == property.spaceId && property.space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)]]])
+}
+
+model Person extends Component {
+    birthDate  DateTime
+    phone      String?
+    associates Associate[]
+    tenants    Tenant[]
+    @@allow('all', associates?[propertyAssociates?[auth().currentSpaceId == property.spaceId &&  property.space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)]]])
+    @@allow('all', tenants?[auth().currentSpaceId == lease.property.spaceId &&  lease.property.space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])
+}
+
+model Associate extends Component, OptionalUser {
+    company            Company             @relation(fields: [companyId], references: [id], onDelete: Cascade)
+    companyId          String
+    person             Person              @relation(fields: [personId], references: [id], onDelete: Cascade)
+    personId           String
+    propertyAssociates PropertyAssociate[]
+    @@allow('all', propertyAssociates?[auth().currentSpaceId == property.spaceId &&  property.space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])
+}
+
+abstract model BaseAssociateLink {
+    associate   Associate @relation(fields: [associateId], references: [id], onDelete: Cascade)
+    associateId String
+
+    @@allow('all', associate.propertyAssociates?[auth().currentSpaceId == property.spaceId &&  property.space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])
+}
+model PropertyAssociate extends BasePropertyLink, BaseAssociateLink, Component {
+    entryDate DateTime
+    exitDate  DateTime?
+}

@@ -1,0 +1,18 @@
+
+import "../../schema.zmodel"
+import "../space.zmodel"
+
+
+model List extends SpaceComponent {
+    todos Todo[]
+}
+
+model Todo extends Component {
+    list        List      @relation(fields: [listId], references: [id], onDelete: Cascade)
+    listId      String
+    title       String    @length(1, 100)
+    completedAt DateTime?
+
+    @@deny('all', list.private && list.owner != auth())
+    @@allow('all', list.spaceId == auth().currentSpaceId && list.space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)])
+}

@@ -1,0 +1,19 @@
+{
+    "folders": [
+        {
+            "name": "App",
+            "path": "."
+        }
+    ],
+    "settings": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "files.autoSave": "onFocusChange",
+        "[zmodel]": {
+            "editor.defaultFormatter": "zenstack.zenstack"
+        }
+    },
+    "extensions": {
+        "recommendations": ["dbaeumer.vscode-eslint", "yoavbls.pretty-ts-errors", "ms-playwright.playwright"]
+    }
+}

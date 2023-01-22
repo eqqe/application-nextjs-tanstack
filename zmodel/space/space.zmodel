@@ -1,0 +1,37 @@
+import "../schema"
+import "../application"
+import "dashboard/dashboard"
+import "property/property"
+import "property/associate"
+import "list/list"
+
+model Space extends IdCreatedUpdatedAuth, Owner, Named {
+    members      SpaceUser[]
+    profiles     Profile[]
+    applications SpaceApplicationVersion[]
+    dashboards   Dashboard[]
+    properties   Property[]
+    lists        List[]
+
+    // When creating a space, we need to build a manual id with these to create the space, profiles and members at the same time
+    @@unique([name, ownerId])
+
+    @@allow('create', auth() != null)
+
+    @@allow('read', members?[user == auth()])
+
+    @@allow('update,delete', members?[user == auth() && profile.role == ADMIN])
+}
+
+abstract model Named {
+    name String @length(2, 150)
+}
+
+abstract model SpaceComponent extends IdCreatedUpdatedSpace, Owner, Named {
+    private Boolean @default(false)
+
+    @@deny('all', private && owner != auth())
+    @@allow('all', spaceId == auth().currentSpaceId && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)])
+}
+
+

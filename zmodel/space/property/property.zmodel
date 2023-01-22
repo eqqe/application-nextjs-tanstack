@@ -1,0 +1,55 @@
+
+import "../../schema.zmodel"
+import "../space.zmodel"
+import "associate"
+import "lease"
+
+enum PropertyType {
+    APARTMENT
+    HOUSE
+    COMMERCIAL
+}
+
+abstract model Address {
+    streetAddress String
+    city          String
+    postalCode    String
+    country       String
+    state         String?
+}
+
+model Property extends Address, SpaceComponent {
+    propertyType       PropertyType
+    leases             Lease[]
+    surface            Int
+    charges            Charge[]
+    propertyAssociates PropertyAssociate[]
+}
+
+
+abstract model BasePropertyLink {
+    property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+    propertyId String
+
+
+    @@deny('all', property.private && property.owner != auth())
+}
+abstract model PropertyComponent extends BasePropertyLink, Component {
+
+    @@allow('all', auth().currentSpaceId == property.spaceId && property.space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)])
+}
+
+enum ChargeType {
+    MAINTENANCE
+    UTILITIES
+    TAXES
+    OTHER
+}
+model Charge  extends PropertyComponent {
+    lease       Lease?     @relation(fields: [leaseId], references: [id], onDelete: Cascade)
+    leaseId     String?
+    chargeType  ChargeType
+    amount      Int
+    dueDate     DateTime
+    description String?
+}
