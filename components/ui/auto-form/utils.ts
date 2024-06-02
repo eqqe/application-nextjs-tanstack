@@ -6,23 +6,22 @@ import { FieldConfig } from './types';
 // TODO: This should support recursive ZodEffects but TypeScript doesn't allow circular type definitions.
 export type ZodObjectOrWrapped = z.ZodObject<any, any> | z.ZodEffects<z.ZodObject<any, any>>;
 
-/**
- * Beautify a camelCase string.
- * e.g. "myString" -> "My String"
- */
 export function beautifyObjectName(string: string) {
-    // if numbers only return the string
-    let output = string.replace(/([A-Z])/g, ' $1');
-    output = output.charAt(0).toUpperCase() + output.slice(1);
-    return output;
+    return string
+        .split('.')
+        .map((segment) => {
+            let output = segment.replace(/([A-Z])/g, ' $1');
+            output = output.charAt(0).toUpperCase() + output.slice(1);
+            return output;
+        })
+        .join(' ');
 }
-
 /**
  * Get the lowest level Zod type.
  * This will unpack optionals, refinements, etc.
  */
 export function getBaseSchema<ChildType extends z.ZodAny | z.AnyZodObject = z.ZodAny>(
-    schema: ChildType | z.ZodEffects<ChildType>,
+    schema: ChildType | z.ZodEffects<ChildType>
 ): ChildType | null {
     if (!schema) {
         return null;
@@ -70,7 +69,7 @@ export function getDefaultValueInZodStack(schema: z.ZodAny): any {
  */
 export function getDefaultValues<Schema extends z.ZodObject<any, any>>(
     schema: Schema,
-    fieldConfig?: FieldConfig<z.infer<Schema>>,
+    fieldConfig?: FieldConfig<z.infer<Schema>>
 ) {
     if (!schema) {
         return null;
@@ -88,7 +87,7 @@ export function getDefaultValues<Schema extends z.ZodObject<any, any>>(
         if (getBaseType(item) === 'ZodObject') {
             const defaultItems = getDefaultValues(
                 getBaseSchema(item) as unknown as z.ZodObject<any, any>,
-                fieldConfig?.[key] as FieldConfig<z.infer<Schema>>,
+                fieldConfig?.[key] as FieldConfig<z.infer<Schema>>
             );
 
             if (defaultItems !== null) {
@@ -124,7 +123,7 @@ export function getObjectFormSchema(schema: ZodObjectOrWrapped): z.ZodObject<any
  * Once submitted, the schema will be validated completely.
  */
 export function zodToHtmlInputProps(
-    schema: z.ZodNumber | z.ZodString | z.ZodOptional<z.ZodNumber | z.ZodString> | any,
+    schema: z.ZodNumber | z.ZodString | z.ZodOptional<z.ZodNumber | z.ZodString> | any
 ): React.InputHTMLAttributes<HTMLInputElement> {
     if (['ZodOptional', 'ZodNullable'].includes(schema._def.typeName)) {
         const typedSchema = schema as z.ZodOptional<z.ZodNumber | z.ZodString>;

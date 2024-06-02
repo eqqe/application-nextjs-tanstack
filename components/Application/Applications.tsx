@@ -6,19 +6,40 @@ import {
     useFindManySpaceApplication,
 } from '@/zmodel/lib/hooks';
 import { Button } from '@/components/ui/button';
+import {
+    ApplicationScalarSchema,
+    SpaceApplicationScalarSchema,
+    SpaceScalarSchema,
+} from '@zenstackhq/runtime/zod/models';
+import { AutoTable } from '../ui/auto-table';
+import * as z from 'zod';
 
 export const Applications = () => {
-    const { data: applications } = useFindManyApplication();
     const space = useCurrentSpace();
+    const { data: applications } = useFindManyApplication(
+        {
+            include: {
+                activations: {
+                    include: {
+                        space: true,
+                    },
+                },
+            },
+        },
+        {
+            enabled: !!space,
+        }
+    );
+
     const activate = useCreateSpaceApplication();
     const desactivate = useDeleteSpaceApplication();
     const { data: spaceApplications } = useFindManySpaceApplication({ where: { spaceId: space?.id } });
     if (!applications || !space) {
         return <>Loading...</>;
     }
-    return applications.map((application) => {
+    const applicationsData = applications.map((application) => {
         const activated = spaceApplications?.find(
-            (spaceApplication) => spaceApplication.applicationId === application.id,
+            (spaceApplication) => spaceApplication.applicationId === application.id
         );
         const onClick = () => {
             if (activated) {
@@ -36,4 +57,15 @@ export const Applications = () => {
             </div>
         );
     });
+    return (
+        <>
+            {applicationsData}
+            <AutoTable
+                formSchema={ApplicationScalarSchema.extend({
+                    activations: z.array(SpaceApplicationScalarSchema.extend({ space: SpaceScalarSchema })),
+                })}
+                data={applications}
+            />
+        </>
+    );
 };

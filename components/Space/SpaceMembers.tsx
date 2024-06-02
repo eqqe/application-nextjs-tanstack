@@ -4,34 +4,42 @@ import { useFindManySpaceUser } from '@/zmodel/lib/hooks';
 import { Space } from '@prisma/client';
 import ManageMembers from './ManageMembers';
 import { UserAvatar } from '../UserAvatar';
+import { toast } from 'react-toastify';
+import AutoForm from '@/components/ui/auto-form';
+import { z } from 'zod';
+import { ZodObjectOrWrapped } from '@/components/ui/auto-form/utils';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+    DialogFooter,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { useState } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+import { FallbackError } from '../layout/FallbackError';
 
 function ManagementDialog(space?: Space) {
     if (!space) {
         return void 0;
     }
     return (
-        <>
-            <label htmlFor="management-modal" className="modal-button">
-                <PlusIcon className="mr-1 size-6 cursor-pointer text-gray-500" />
-            </label>
-
-            <input type="checkbox" id="management-modal" className="modal-toggle" />
-            <div className="modal">
-                <div className="modal-box">
-                    <h3 className="text-base font-bold md:text-lg">Manage Members of {space.name}</h3>
-
-                    <div className="mt-4 p-4">
-                        <ManageMembers space={space} />
-                    </div>
-
-                    <div className="modal-action">
-                        <label htmlFor="management-modal" className="btn btn-outline">
-                            Close
-                        </label>
-                    </div>
-                </div>
-            </div>
-        </>
+        <Dialog>
+            <DialogTrigger asChild>
+                <Button variant="outline">Manage members</Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                    <DialogTitle>Manage members</DialogTitle>
+                </DialogHeader>
+                <ErrorBoundary fallback={<FallbackError />}>
+                    <ManageMembers />
+                </ErrorBoundary>
+            </DialogContent>
+        </Dialog>
     );
 }
 
@@ -50,17 +58,8 @@ export function SpaceMembers() {
                 role: 'desc',
             },
         },
-        { enabled: !!space },
+        { enabled: !!space }
     );
 
-    return (
-        <div className="flex items-center">
-            {ManagementDialog(space)}
-            {members && (
-                <label className="modal-button mr-1 cursor-pointer" htmlFor="management-modal">
-                    {members?.map((member) => <UserAvatar key={member.id} user={member.user} size={24} />)}
-                </label>
-            )}
-        </div>
-    );
+    return <div className="flex items-center">{ManagementDialog(space)}</div>;
 }

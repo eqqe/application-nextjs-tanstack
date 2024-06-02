@@ -10,6 +10,8 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import { useQuery } from '@tanstack/react-query';
+import { useSpaceSlug } from '@/lib/context';
+import { getSpaceUrl } from '@/lib/urls';
 
 const formSchema = z.object({
     email: z.string().email({ message: 'Enter a valid email address' }),
@@ -24,7 +26,10 @@ export const userDemo = {
 };
 export function UserAuthForm() {
     const searchParams = useSearchParams();
-    const callbackUrl = searchParams.get('callbackUrl');
+    const spaceSlug = useSpaceSlug();
+    const spaceSlugUrl = spaceSlug ? getSpaceUrl(spaceSlug) : '';
+    const callbackUrl = searchParams.get('callbackUrl') ?? spaceSlugUrl ?? '/';
+
     const [loading, setLoading] = useState(false);
     const form = useForm<UserFormValue>({
         resolver: zodResolver(formSchema),
@@ -35,7 +40,7 @@ export function UserAuthForm() {
             await signIn('credentials', {
                 email,
                 password,
-                callbackUrl: callbackUrl ?? '/',
+                callbackUrl,
             });
         },
         [callbackUrl]
@@ -119,7 +124,7 @@ export function UserAuthForm() {
                 className="w-full"
                 variant="outline"
                 type="button"
-                onClick={() => signIn('discord', { callbackUrl: callbackUrl ?? '/' })}
+                onClick={() => signIn('discord', { callbackUrl })}
             >
                 Continue with Discord
             </Button>

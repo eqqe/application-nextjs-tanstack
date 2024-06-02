@@ -1,17 +1,14 @@
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { ChangeEvent, KeyboardEvent, useState } from 'react';
 import { toast } from 'react-toastify';
-import { useCurrentUser } from '@/lib/context';
+import { useCurrentSpace, useCurrentUser } from '@/lib/context';
 import { Space, SpaceUserRole } from '@prisma/client';
 import { useCreateSpaceUser, useDeleteSpaceUser, useFindManySpaceUser } from '@/zmodel/lib/hooks';
 import { UserAvatar } from '../UserAvatar';
 
-type Props = {
-    space: Space;
-};
-
-export default function ManageMembers({ space }: Props) {
+export default function ManageMembers() {
     const [email, setEmail] = useState('');
+    const space = useCurrentSpace();
     const [role, setRole] = useState<SpaceUserRole>(SpaceUserRole.USER);
     const user = useCurrentUser();
     const { mutateAsync: createMember } = useCreateSpaceUser();
@@ -19,7 +16,7 @@ export default function ManageMembers({ space }: Props) {
 
     const { data: members } = useFindManySpaceUser({
         where: {
-            spaceId: space.id,
+            spaceId: space?.id,
         },
         include: {
             user: true,
@@ -29,6 +26,9 @@ export default function ManageMembers({ space }: Props) {
         },
     });
 
+    if (!space) {
+        return <></>;
+    }
     const inviteUser = async () => {
         try {
             await createMember({

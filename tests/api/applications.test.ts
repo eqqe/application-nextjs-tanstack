@@ -1,6 +1,6 @@
 import { assert, it } from 'vitest';
 import { getEnhancedPrisma } from '../mock/enhanced-prisma';
-import { coreApplication } from '@/zmodel/prisma/applications/applications';
+import { coreApplication } from '@/zmodel/prisma/applications/coreApplication';
 
 it('Should list apps', async () => {
     const {

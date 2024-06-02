@@ -1,4 +1,5 @@
-import { useFindFirstSpace, useFindUniqueSpace, useFindUniqueSpaceComponent } from '@/zmodel/lib/hooks';
+import { localStorageSpace } from '@/components/layout/SpaceSwith';
+import { useFindUniqueSpace, useFindUniqueSpaceComponent } from '@/zmodel/lib/hooks';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 
@@ -8,7 +9,16 @@ export function useCurrentUser() {
 }
 export function useSpaceSlug() {
     const router = useRouter();
-    return router.query.slug as string;
+    const slug = router.query.slug as string;
+    if (slug) {
+        return slug;
+    }
+    if (global?.window !== undefined) {
+        const localStorageSlug = localStorage.getItem(localStorageSpace);
+        if (localStorageSlug) {
+            return localStorageSlug;
+        }
+    }
 }
 
 export function useCurrentSpace() {
@@ -21,7 +31,7 @@ export function useCurrentSpace() {
         },
         {
             enabled: !!slug,
-        },
+        }
     );
 
     return data;
@@ -37,7 +47,7 @@ export function useCurrentSpaceComponent() {
         },
         {
             enabled: !!router.query.componentId,
-        },
+        }
     );
 
     return data;

@@ -84,3 +84,130 @@ it('Should create / list properties', async () => {
     properties = await user1.prisma.property.findMany();
     assert.equal(properties.length, 0);
 });
+
+it('Should allow a user to update properties they own', async () => {
+    const { user2 } = await getEnhancedPrisma();
+
+    const property = fakeProperty();
+
+    const newProperty = await user2.prisma.property.create({
+        data: {
+            ...property,
+            table: {
+                create: { type: 'Property' },
+            },
+            spaceComponent: {
+                create: {
+                    type: SpaceComponentType.Property,
+                    name: 'User2 Property',
+                    spaceId: user2.space.id,
+                },
+            },
+        },
+    });
+
+    const updatedProperty = await user2.prisma.property.update({
+        where: { id: newProperty.id },
+        data: { address: 'New Address' },
+    });
+
+    assert.equal(updatedProperty.address, 'New Address');
+});
+
+it('Should not allow a user to update properties they do not own', async () => {
+    const { user1, user2 } = await getEnhancedPrisma();
+
+    const property = fakeProperty();
+
+    const newProperty = await user2.prisma.property.create({
+        data: {
+            ...property,
+            table: {
+                create: { type: 'Property' },
+            },
+            spaceComponent: {
+                create: {
+                    type: SpaceComponentType.Property,
+                    name: 'User2 Property',
+                    spaceId: user2.space.id,
+                },
+            },
+        },
+    });
+
+    let error;
+    try {
+        await user1.prisma.property.update({
+            where: { id: newProperty.id },
+            data: { address: 'User1 Address' },
+        });
+    } catch (e) {
+        error = e;
+    }
+
+    // @ts-ignore
+    assert.equal(error.meta.reason, 'ACCESS_POLICY_VIOLATION');
+});
+
+it('Should not allow a user to delete properties they do not own', async () => {
+    const { user1, user2 } = await getEnhancedPrisma();
+
+    const property = fakeProperty();
+
+    const newProperty = await user2.prisma.property.create({
+        data: {
+            ...property,
+            table: {
+                create: { type: 'Property' },
+            },
+            spaceComponent: {
+                create: {
+                    type: SpaceComponentType.Property,
+                    name: 'User2 Property',
+                    spaceId: user2.space.id,
+                },
+            },
+        },
+    });
+
+    let error;
+    try {
+        await user1.prisma.property.delete({
+            where: { id: newProperty.id },
+        });
+    } catch (e) {
+        error = e;
+    }
+
+    // @ts-ignore
+    assert.equal(error.meta.reason, 'ACCESS_POLICY_VIOLATION');
+});
+
+it('Should allow a user to delete properties they own', async () => {
+    const { user2 } = await getEnhancedPrisma();
+
+    const property = fakeProperty();
+
+    const newProperty = await user2.prisma.property.create({
+        data: {
+            ...property,
+            table: {
+                create: { type: 'Property' },
+            },
+            spaceComponent: {
+                create: {
+                    type: SpaceComponentType.Property,
+                    name: 'User2 Property',
+                    spaceId: user2.space.id,
+                },
+            },
+        },
+    });
+
+    await user2.prisma.property.delete({
+        where: { id: newProperty.id },
+    });
+
+    const properties = await user2.prisma.property.findMany();
+    assert.equal(properties.length, 0);
+});
