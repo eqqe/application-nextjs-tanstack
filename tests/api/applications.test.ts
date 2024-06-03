@@ -1,6 +1,7 @@
 import { assert, it } from 'vitest';
 import { getEnhancedPrisma } from '../mock/enhanced-prisma';
-import { slugAssetsApplication, slugSettingsApplication } from '@/zmodel/prisma/applications/createApplications';
+import { slugAssetsApplication } from '@/zmodel/prisma/applications/createApplications';
+import { enableApplication } from '../mock/enable-application';
 
 it('Should list apps', async () => {
     const {
@@ -9,7 +10,7 @@ it('Should list apps', async () => {
     const apps = await prisma.application.findMany();
     assert.deepEqual(
         apps.map((app) => app.slug),
-        [slugSettingsApplication, slugAssetsApplication]
+        [slugAssetsApplication]
     );
 });
 
@@ -64,5 +65,6 @@ it('Should enable an application in space', async () => {
             },
         },
     });
+    assert.equal(appDetails.length, 1);
     assert.deepEqual(appDetails[0].applications[0].applicationVersion.folders[0].path, '/properties');
 });

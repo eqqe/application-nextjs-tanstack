@@ -7,7 +7,6 @@ import { Property, List, Dashboard, Space, User } from '@prisma/client';
 import { SpaceComponent } from '@zenstackhq/runtime/models';
 import { PropertyCreateScalarSchema, SpaceComponentCreateScalarSchema } from '@zenstackhq/runtime/zod/models';
 import { z } from 'zod';
-import { Applications } from '@/components/Application/Applications';
 import { SpaceMembers } from '@/components/Space/SpaceMembers';
 import { GenerateDemonstration } from '@/components/Space/GenerateDemonstration';
 import { WithNavBar } from '@/components/layout/WithNavBar';
@@ -94,11 +93,6 @@ export function SpaceHomeComponent({
                         title={'Create Dashboard'}
                     />
                 </div>
-                <div>
-                    <GenerateDemonstration />
-                    <SpaceMembers />
-                    <Applications />
-                </div>
 
                 <h2 className="mb-4 text-xl font-semibold">Components</h2>
                 <ul className="mb-8 flex flex-wrap gap-6">
@@ -138,7 +132,7 @@ export default function SpaceHome() {
         },
         {
             enabled: !!router.query.slug,
-        },
+        }
     );
     if (!space) {
         return <></>;

@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { Cloud, PlusCircle, IceCreamIcon } from 'lucide-react';
+import { Cloud, PlusCircle, IceCreamIcon, EyeIcon } from 'lucide-react';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -12,8 +12,7 @@ import {
 import { ErrorBoundary } from 'react-error-boundary';
 import { FallbackError } from '../layout/FallbackError';
 import { useFindManySpace } from '@/zmodel/lib/hooks';
-import { useRouter } from 'next/router';
-import { getSpaceUrl } from '@/lib/urls';
+import { useRouter } from 'next/navigation';
 import { useSpaceSlug } from '@/lib/context';
 import { Badge } from '@/components/ui/badge';
 
@@ -23,14 +22,14 @@ export function SpaceSwitch() {
 
     const currentSpaceSlug = useSpaceSlug();
 
+    const router = useRouter();
     function switchSpace(slug: string) {
         if (global?.window !== undefined) {
             localStorage.setItem(localStorageSpace, slug);
         }
-        router.push(getSpaceUrl(slug));
+        router.refresh();
     }
 
-    const router = useRouter();
     return (
         <ErrorBoundary fallback={<FallbackError />}>
             <DropdownMenu>
@@ -44,20 +43,16 @@ export function SpaceSwitch() {
                     <DropdownMenuLabel>Switch space</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuGroup>
-                        {[
-                            {
-                                slug: 'all',
-                                name: 'See all content',
-                            },
-                        ]
-                            .concat(spaces ?? [])
-                            .map((space) => ({ slug: space.slug, name: space.name }))
-                            .map(({ slug, name }) => (
-                                <DropdownMenuItem key={slug} onClick={() => switchSpace(slug)}>
-                                    <IceCreamIcon className="mr-2 size-4" />
-                                    {slug === currentSpaceSlug ? <Badge variant={'outline'}>{name}</Badge> : name}
-                                </DropdownMenuItem>
-                            ))}
+                        <DropdownMenuItem onClick={() => switchSpace('')}>
+                            <EyeIcon className="mr-2 size-4" />
+                            {!currentSpaceSlug ? <Badge variant={'outline'}>See all content</Badge> : 'See all content'}
+                        </DropdownMenuItem>
+                        {spaces?.map(({ slug, name }) => (
+                            <DropdownMenuItem key={slug} onClick={() => switchSpace(slug)}>
+                                <IceCreamIcon className="mr-2 size-4" />
+                                {slug === currentSpaceSlug ? <Badge variant={'outline'}>{name}</Badge> : name}
+                            </DropdownMenuItem>
+                        ))}
                     </DropdownMenuGroup>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={() => router.push('/s/n')}>

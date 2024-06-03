@@ -1,19 +1,13 @@
 import { PrismaClient, Prisma } from '@prisma/client';
-import { assetsv0_1, assetsv0_2 } from './assets/versions';
-import { settingsv0_1 } from './settings/versions';
+import { assetsv0_1 } from './assets/versions';
 
-export const slugAssetsApplication = 'assets';
-export const slugSettingsApplication = 'settings';
+export const slugAssetsApplication = 'Assets';
 
 /* Existing application versions in the database will not be modified */
 const applications = [
     createApplicationConnectVersions({
-        slug: slugSettingsApplication,
-        applicationVersions: [settingsv0_1],
-    }),
-    createApplicationConnectVersions({
         slug: slugAssetsApplication,
-        applicationVersions: [assetsv0_1, assetsv0_2],
+        applicationVersions: [assetsv0_1],
     }),
 ];
 

@@ -1,4 +1,3 @@
-import { useCurrentSpace } from '@/lib/context';
 import {
     useCreateSpaceApplicationVersion,
     useDeleteSpaceApplicationVersion,
@@ -16,35 +15,31 @@ import {
 import { AutoTable } from '../ui/auto-table';
 import * as z from 'zod';
 import { toast } from 'react-toastify';
+import { Space } from '@zenstackhq/runtime/models';
+import { useQueryClient } from '@tanstack/react-query';
 
-export const Applications = () => {
-    const space = useCurrentSpace();
-    const { data: applications } = useFindManyApplication(
-        {
-            include: {
-                versions: {
-                    include: {
-                        activations: {
-                            include: {
-                                space: true,
-                            },
+export const Applications = ({ space }: { space: Space }) => {
+    const { data: applications } = useFindManyApplication({
+        include: {
+            versions: {
+                include: {
+                    activations: {
+                        include: {
+                            space: true,
                         },
                     },
-                    orderBy: [
-                        {
-                            versionMajor: 'desc',
-                        },
-                        {
-                            versionMinor: 'desc',
-                        },
-                    ],
                 },
+                orderBy: [
+                    {
+                        versionMajor: 'desc',
+                    },
+                    {
+                        versionMinor: 'desc',
+                    },
+                ],
             },
         },
-        {
-            enabled: !!space,
-        }
-    );
+    });
 
     const activate = useCreateSpaceApplicationVersion();
     const desactivate = useDeleteSpaceApplicationVersion();
@@ -59,6 +54,8 @@ export const Applications = () => {
             },
         },
     });
+
+    const queryClient = useQueryClient();
     if (!applications || !space) {
         return <>Loading...</>;
     }
@@ -80,16 +77,18 @@ export const Applications = () => {
                   )
                 : null,
         };
-        const onClickActivate = () => {
+        async function onClickActivate() {
             if (activated) {
-                return desactivate.mutateAsync({ where: { id: activated.id } });
+                await desactivate.mutateAsync({ where: { id: activated.id } });
             } else if (application.versions.length) {
-                return activate.mutateAsync({
+                await activate.mutateAsync({
                     data: { applicationVersionId: application.versions[0].id, spaceId: space.id },
                 });
+            } else {
+                toast('No version available for this application');
             }
-            toast('No version available for this application');
-        };
+            queryClient.refetchQueries({ queryKey: ['zenstack', 'Grid'] });
+        }
 
         async function updateToVersion(applicationVersionId: string) {
             if (!activated) {
@@ -120,15 +119,19 @@ export const Applications = () => {
 
         return (
             <div key={application.id}>
-                <Button onClick={onClickActivate} variant={activated ? 'default' : 'outline'}>
+                <Button onClick={onClickActivate} variant={activated ? 'default' : 'outline'} className="min-w-40">
                     {activated ? 'Disable' : 'Enable'} {application.slug}
                 </Button>
-                <Button onClick={onClickUpdateMajor} variant={updatable.major ? 'default' : 'outline'}>
-                    Major update
-                </Button>
-                <Button onClick={onClickUpdateMinor} variant={updatable.minor ? 'default' : 'outline'}>
-                    Minor update
-                </Button>
+                {updatable.major && (
+                    <Button onClick={onClickUpdateMajor} className="min-w-40">
+                        Major update
+                    </Button>
+                )}
+                {updatable.minor && (
+                    <Button onClick={onClickUpdateMinor} className="min-w-40">
+                        Minor update
+                    </Button>
+                )}
             </div>
         );
     });

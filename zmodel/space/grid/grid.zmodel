@@ -46,6 +46,7 @@ model GridElement extends IdCreatedUpdatedAuth {
     tabs GridTabs?
 
     @@allow('read', grid.subTab.tab.folder.applicationVersion.activations?[space.members?[user == auth()]])
+    @@allow('read', gridTabContent.tabs.element.grid.subTab.tab.folder.applicationVersion.activations?[space.members?[user == auth()]])
 
 }
 
@@ -72,7 +73,7 @@ model GridCard extends IdCreatedUpdatedAuth {
     footer  GridCardFooter?
 
     @@allow('read', element.grid.subTab.tab.folder.applicationVersion.activations?[space.members?[user == auth()]])
-
+    @@allow('read', element.gridTabContent.tabs.element.grid.subTab.tab.folder.applicationVersion.activations?[space.members?[user == auth()]])
 }
 
 model GridTabs extends IdCreatedUpdatedAuth {
@@ -94,6 +95,7 @@ model GridTabContent extends BaseGrid {
     name    String
 
     @@allow('read', tabs.element.grid.subTab.tab.folder.applicationVersion.activations?[space.members?[user == auth()]])
+    @@allow('read', tabs.element.gridTabContent.tabs.element.grid.subTab.tab.folder.applicationVersion.activations?[space.members?[user == auth()]])
 }
  
 

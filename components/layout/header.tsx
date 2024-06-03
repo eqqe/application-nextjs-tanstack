@@ -38,6 +38,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useCurrentUser } from '@/lib/context';
 import { ModeToggle } from './ModeToggle';
 import { SpaceSwitch } from './SpaceSwith';
+import Link from 'next/link';
 
 export default function Header() {
     const user = useCurrentUser();
@@ -78,7 +79,7 @@ export default function Header() {
                         </DropdownMenuItem>
                         <DropdownMenuItem>
                             <Settings className="mr-2 size-4" />
-                            <span>Settings</span>
+                            <Link href="/settings">Settings</Link>
                             <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
                         </DropdownMenuItem>
                         <DropdownMenuItem>
