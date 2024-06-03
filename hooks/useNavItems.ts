@@ -6,13 +6,29 @@ export interface NavItem {
 }
 
 export function useNavItems(): NavItem[] {
-    const { data: grids } = useFindManyGrid();
+    const { data: grids } = useFindManyGrid({
+        include: {
+            subTab: {
+                include: {
+                    tab: {
+                        include: {
+                            folder: {
+                                include: {
+                                    applicationVersion: true,
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        },
+    });
 
     if (!grids) {
         return [];
     }
     return grids.map((grid) => ({
-        title: grid.slug,
+        title: grid.subTab.tab.folder.applicationVersion.applicationSlug,
         href: getGridUrl(grid.id),
     }));
 }

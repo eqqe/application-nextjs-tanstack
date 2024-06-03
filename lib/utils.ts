@@ -8,7 +8,8 @@ export function cn(...inputs: ClassValue[]) {
 // GPT4o
 type AnyObject = { [key: string]: any };
 
-export function replaceArraysWithFirstObject<T extends any[]>(obj: T) {
+export function replaceArraysWithFirstObject<T extends any[]>(sourceObj: T) {
+    const obj = structuredClone(sourceObj);
     for (const key in obj) {
         if (obj.hasOwnProperty(key)) {
             const value = obj[key];

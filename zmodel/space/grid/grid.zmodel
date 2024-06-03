@@ -16,9 +16,6 @@ model Grid extends BaseGrid {
 
     columns Int @gte(1) @lte(12)
 
-    slug      String      @unique @regex('^[0-9a-zA-Z]{4,16}$')
-
-
     @@allow('read', subTab.tab.folder.applicationVersion.activations?[space.members?[user == auth()]])
 
 }

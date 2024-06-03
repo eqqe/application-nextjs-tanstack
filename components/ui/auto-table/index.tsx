@@ -61,9 +61,6 @@ export function AutoTable<SchemaType extends ZodObjectOrWrapped>({
             ];
         });
     }
-
-    console.log(getAccessor(objectFormSchema));
-    console.log(replaceArraysWithFirstObject(data));
     return (
         <DataTable
             columns={getAccessor(objectFormSchema)}

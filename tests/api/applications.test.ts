@@ -1,6 +1,6 @@
 import { assert, it } from 'vitest';
 import { getEnhancedPrisma } from '../mock/enhanced-prisma';
-import { coreApplication } from '@/zmodel/prisma/applications/coreApplication';
+import { slugAssetsApplication, slugSettingsApplication } from '@/zmodel/prisma/applications/createApplications';
 
 it('Should list apps', async () => {
     const {
@@ -9,7 +9,7 @@ it('Should list apps', async () => {
     const apps = await prisma.application.findMany();
     assert.deepEqual(
         apps.map((app) => app.slug),
-        ['assets']
+        [slugSettingsApplication, slugAssetsApplication]
     );
 });
 
@@ -25,7 +25,7 @@ it('Should enable an application in space', async () => {
         },
     });
     const application = await prisma.application.findUnique({
-        where: { slug: coreApplication.slug },
+        where: { slug: slugAssetsApplication },
         include: {
             versions: true,
         },
@@ -49,7 +49,7 @@ it('Should enable an application in space', async () => {
     });
 
     assert.equal(spaceApplication.spaceId, space.id);
-    assert.equal(spaceApplication.applicationVersion.applicationId, application.id);
+    assert.equal(spaceApplication.applicationVersion.applicationSlug, application.slug);
 
     const appDetails = await prisma.space.findMany({
         include: {

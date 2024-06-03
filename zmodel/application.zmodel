@@ -26,12 +26,15 @@ model Application extends IdCreatedUpdatedAuth
     @@allow('read', auth() != null)
 }
 
-
 model ApplicationVersion extends IdCreatedUpdatedAuth
 {
-    application          Application         @relation(fields: [applicationId], references: [id], onDelete: Cascade)
-    applicationId        String
+    application          Application         @relation(fields: [applicationSlug], references: [slug], onDelete: Cascade)
+    applicationSlug        String
 
+    versionMajor Int
+    versionMinor Int
+
+    @@unique([applicationSlug, versionMinor, versionMajor])
     activations SpaceApplicationVersion[]
     folders FolderApplicationVersion[]
 

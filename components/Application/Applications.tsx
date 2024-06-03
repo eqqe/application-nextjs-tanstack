@@ -4,6 +4,7 @@ import {
     useDeleteSpaceApplicationVersion,
     useFindManyApplication,
     useFindManySpaceApplicationVersion,
+    useUpdateSpaceApplicationVersion,
 } from '@/zmodel/lib/hooks';
 import { Button } from '@/components/ui/button';
 import {
@@ -29,6 +30,14 @@ export const Applications = () => {
                             },
                         },
                     },
+                    orderBy: [
+                        {
+                            versionMajor: 'desc',
+                        },
+                        {
+                            versionMinor: 'desc',
+                        },
+                    ],
                 },
             },
         },
@@ -39,6 +48,7 @@ export const Applications = () => {
 
     const activate = useCreateSpaceApplicationVersion();
     const desactivate = useDeleteSpaceApplicationVersion();
+    const update = useUpdateSpaceApplicationVersion();
     const { data: spaceApplications } = useFindManySpaceApplicationVersion({
         where: { spaceId: space?.id },
         include: {
@@ -54,9 +64,23 @@ export const Applications = () => {
     }
     const applicationsData = applications.map((application) => {
         const activated = spaceApplications?.find(
-            (spaceApplication) => spaceApplication.applicationVersion.applicationId === application.id
+            (spaceApplication) => spaceApplication.applicationVersion.applicationSlug === application.slug
         );
-        const onClick = () => {
+        const updatable = {
+            major: activated
+                ? application.versions.find(
+                      (version) => version.versionMajor > (activated.applicationVersion.versionMajor ?? 0)
+                  )
+                : null,
+            minor: activated
+                ? application.versions.find(
+                      (version) =>
+                          version.versionMinor > (activated.applicationVersion.versionMinor ?? 0) &&
+                          version.versionMajor === activated.applicationVersion.versionMajor
+                  )
+                : null,
+        };
+        const onClickActivate = () => {
             if (activated) {
                 return desactivate.mutateAsync({ where: { id: activated.id } });
             } else if (application.versions.length) {
@@ -66,13 +90,45 @@ export const Applications = () => {
             }
             toast('No version available for this application');
         };
+
+        async function updateToVersion(applicationVersionId: string) {
+            if (!activated) {
+                return;
+            }
+            await update.mutateAsync({
+                data: {
+                    applicationVersionId,
+                },
+                where: {
+                    id: activated.id,
+                },
+            });
+        }
+
+        async function onClickUpdateMajor() {
+            if (!updatable.major) {
+                return;
+            }
+            await updateToVersion(updatable.major.id);
+        }
+        async function onClickUpdateMinor() {
+            if (!updatable.minor) {
+                return;
+            }
+            await updateToVersion(updatable.minor.id);
+        }
+
         return (
             <div key={application.id}>
-                {
-                    <Button onClick={onClick} variant={activated ? 'default' : 'outline'}>
-                        {activated ? 'Disable' : 'Enable'} {application.slug}
-                    </Button>
-                }
+                <Button onClick={onClickActivate} variant={activated ? 'default' : 'outline'}>
+                    {activated ? 'Disable' : 'Enable'} {application.slug}
+                </Button>
+                <Button onClick={onClickUpdateMajor} variant={updatable.major ? 'default' : 'outline'}>
+                    Major update
+                </Button>
+                <Button onClick={onClickUpdateMinor} variant={updatable.minor ? 'default' : 'outline'}>
+                    Minor update
+                </Button>
             </div>
         );
     });
