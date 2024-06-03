@@ -10,7 +10,7 @@ model Space extends IdCreatedUpdatedAuth {
     slug      String      @unique @regex('^[0-9a-zA-Z]{4,16}$')
     members   SpaceUser[]
     components SpaceComponent[]
-    applications SpaceApplication[]
+    applications SpaceApplicationVersion[]
 
     // everyone can create a space
     @@allow('create', true)

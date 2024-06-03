@@ -19,7 +19,7 @@ model Grid extends BaseGrid {
     slug      String      @unique @regex('^[0-9a-zA-Z]{4,16}$')
 
 
-    @@allow('read', auth() != null)
+    @@allow('read', subTab.tab.folder.applicationVersion.activations?[space.members?[user == auth()]])
 
 }
 
@@ -48,7 +48,7 @@ model GridElement extends IdCreatedUpdatedAuth {
     card GridCard?
     tabs GridTabs?
 
-    @@allow('read', auth() != null)
+    @@allow('read', grid.subTab.tab.folder.applicationVersion.activations?[space.members?[user == auth()]])
 
 }
 
@@ -74,7 +74,7 @@ model GridCard extends IdCreatedUpdatedAuth {
 
     footer  GridCardFooter?
 
-    @@allow('read', auth() != null)
+    @@allow('read', element.grid.subTab.tab.folder.applicationVersion.activations?[space.members?[user == auth()]])
 
 }
 
@@ -85,7 +85,7 @@ model GridTabs extends IdCreatedUpdatedAuth {
 
     tabsContent     GridTabContent[]
 
-    @@allow('read', auth() != null)
+    @@allow('read', element.grid.subTab.tab.folder.applicationVersion.activations?[space.members?[user == auth()]])
 }
 
 
@@ -96,7 +96,7 @@ model GridTabContent extends BaseGrid {
 
     name    String
 
-    @@allow('read', auth() != null)
+    @@allow('read', tabs.element.grid.subTab.tab.folder.applicationVersion.activations?[space.members?[user == auth()]])
 }
  
 
@@ -115,7 +115,7 @@ model GridCardFooter extends IdCreatedUpdatedAuth {
     button GridCardFooterButton?
     progress GridCardFooterProgress?
 
-    @@allow('read', auth() != null)
+    @@allow('read', card.element.grid.subTab.tab.folder.applicationVersion.activations?[space.members?[user == auth()]])
 
 }
 
@@ -125,7 +125,7 @@ model GridCardFooterButton extends IdCreatedUpdatedAuth {
     parentId        String @unique
 
     text    String
-    @@allow('read', auth() != null)
+    @@allow('read', footer.card.element.grid.subTab.tab.folder.applicationVersion.activations?[space.members?[user == auth()]])
 }
 model GridCardFooterProgress extends IdCreatedUpdatedAuth {
 
@@ -133,6 +133,6 @@ model GridCardFooterProgress extends IdCreatedUpdatedAuth {
     parentId        String @unique
 
     value   Int
-    @@allow('read', auth() != null)
+    @@allow('read', footer.card.element.grid.subTab.tab.folder.applicationVersion.activations?[space.members?[user == auth()]])
 }
 

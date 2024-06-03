@@ -10,5 +10,5 @@ model View extends IdCreatedUpdatedAuth {
 
     table Type
 
-    @@allow('read', auth() != null)
+    @@allow('read', subTab.tab.folder.applicationVersion.activations?[space.members?[user == auth()]])
 }

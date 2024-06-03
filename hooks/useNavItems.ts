@@ -1,4 +1,4 @@
-import { useActivatedApplications } from './useActivatedApplications';
+import { useFindManyGrid } from '@/zmodel/lib/hooks';
 import { getGridUrl } from '@/lib/urls';
 export interface NavItem {
     title: string;
@@ -6,21 +6,13 @@ export interface NavItem {
 }
 
 export function useNavItems(): NavItem[] {
-    const applications = useActivatedApplications();
+    const { data: grids } = useFindManyGrid();
 
-    if (!applications) {
+    if (!grids) {
         return [];
     }
-    return applications.flatMap((application) =>
-        application.application.folders.flatMap((folder) =>
-            folder.tabs.flatMap((tab) =>
-                tab.subTabs.flatMap((subTab) => {
-                    return subTab.grids.map((grid) => ({
-                        title: application.application.slug,
-                        href: getGridUrl(grid.id),
-                    }));
-                }),
-            ),
-        ),
-    );
+    return grids.map((grid) => ({
+        title: grid.slug,
+        href: getGridUrl(grid.id),
+    }));
 }

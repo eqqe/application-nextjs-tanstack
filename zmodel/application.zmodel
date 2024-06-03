@@ -3,13 +3,13 @@ import "space/space.zmodel"
 import "space/view/view"
 import "space/grid/grid"
 
-model SpaceApplication extends IdCreatedUpdatedAuth {
+model SpaceApplicationVersion extends IdCreatedUpdatedAuth {
     space          Space         @relation(fields: [spaceId], references: [id], onDelete: Cascade)
     spaceId        String
-    application    Application   @relation(fields: [applicationId], references: [id], onDelete: Cascade)
-    applicationId  String
+    applicationVersion    ApplicationVersion   @relation(fields: [applicationVersionId], references: [id], onDelete: Cascade)
+    applicationVersionId  String
 
-    @@unique([spaceId, applicationId])
+    @@unique([spaceId, applicationVersionId])
 
     @@allow('create,update,delete', space.members?[user == auth() && role == ADMIN])
 
@@ -20,29 +20,41 @@ model SpaceApplication extends IdCreatedUpdatedAuth {
 model Application extends IdCreatedUpdatedAuth
 {
     slug      String      @unique @regex('^[0-9a-zA-Z]{4,16}$')
-    activations SpaceApplication[]
-    folders FolderApplication[]
+
+    versions ApplicationVersion[]
 
     @@allow('read', auth() != null)
 }
 
-model FolderApplication extends IdCreatedUpdatedAuth
+
+model ApplicationVersion extends IdCreatedUpdatedAuth
 {
     application          Application         @relation(fields: [applicationId], references: [id], onDelete: Cascade)
     applicationId        String
+
+    activations SpaceApplicationVersion[]
+    folders FolderApplicationVersion[]
+
+    @@allow('read', auth() != null)
+}
+
+model FolderApplicationVersion extends IdCreatedUpdatedAuth
+{
+    applicationVersion          ApplicationVersion         @relation(fields: [applicationVersionId], references: [id], onDelete: Cascade)
+    applicationVersionId        String
     tabs TabFolder[]
 
     path String
-    @@allow('read', auth() != null)
+    @@allow('read', applicationVersion.activations?[space.members?[user == auth()]])
 }
 
 model TabFolder extends IdCreatedUpdatedAuth
 {
-    folder          FolderApplication         @relation(fields: [folderId], references: [id], onDelete: Cascade)
+    folder          FolderApplicationVersion         @relation(fields: [folderId], references: [id], onDelete: Cascade)
     folderId        String
 
     subTabs SubTabFolder[]
-    @@allow('read', auth() != null)
+    @@allow('read', folder.applicationVersion.activations?[space.members?[user == auth()]])
 }
 
 model SubTabFolder extends IdCreatedUpdatedAuth
@@ -52,7 +64,7 @@ model SubTabFolder extends IdCreatedUpdatedAuth
 
     views View[]
     grids Grid[]
-    @@allow('read', auth() != null)
+    @@allow('read', tab.folder.applicationVersion.activations?[space.members?[user == auth()]])
 }
 
 

@@ -12,5 +12,5 @@ model GridCardTable extends IdCreatedUpdatedAuth {
 
     columns String[]
 
-    @@allow('read', auth() != null)
+    @@allow('read', parent.element.grid.subTab.tab.folder.applicationVersion.activations?[space.members?[user == auth()]])
 }

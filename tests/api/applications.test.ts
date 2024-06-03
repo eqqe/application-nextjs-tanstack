@@ -24,25 +24,38 @@ it('Should enable an application in space', async () => {
             spaceId: space.id,
         },
     });
-    const application = await prisma.application.findUnique({ where: { slug: coreApplication.slug } });
+    const application = await prisma.application.findUnique({
+        where: { slug: coreApplication.slug },
+        include: {
+            versions: true,
+        },
+    });
 
     assert(application);
+    assert(application.versions.length);
 
-    const spaceApplication = await prisma.spaceApplication.create({
+    const spaceApplication = await prisma.spaceApplicationVersion.create({
         data: {
+            applicationVersionId: application.versions[0].id,
             spaceId: space.id,
-            applicationId: application.id,
+        },
+        include: {
+            applicationVersion: {
+                include: {
+                    application: true,
+                },
+            },
         },
     });
 
     assert.equal(spaceApplication.spaceId, space.id);
-    assert.equal(spaceApplication.applicationId, application.id);
+    assert.equal(spaceApplication.applicationVersion.applicationId, application.id);
 
     const appDetails = await prisma.space.findMany({
         include: {
             applications: {
                 include: {
-                    application: {
+                    applicationVersion: {
                         include: {
                             folders: true,
                         },
@@ -51,5 +64,5 @@ it('Should enable an application in space', async () => {
             },
         },
     });
-    assert.deepEqual(appDetails[0].applications[0].application.folders[0].path, '/properties');
+    assert.deepEqual(appDetails[0].applications[0].applicationVersion.folders[0].path, '/properties');
 });
