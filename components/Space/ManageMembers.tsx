@@ -15,9 +15,6 @@ export default function ManageMembers() {
     const { mutate: deleteMember } = useDeleteSpaceUser();
 
     const { data: members } = useFindManySpaceUser({
-        where: {
-            spaceId: space?.id,
-        },
         include: {
             user: true,
         },

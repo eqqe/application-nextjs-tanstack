@@ -37,7 +37,7 @@ import { MobileSideNav } from './MobileSideNav';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useCurrentUser } from '@/lib/context';
 import { ModeToggle } from './ModeToggle';
-import { SpaceSwitch } from './SpaceSwith';
+import { SpaceSwitch } from './SpaceSwitch';
 import Link from 'next/link';
 
 export default function Header() {

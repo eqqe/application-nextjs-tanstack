@@ -1,14 +1,14 @@
 import { test } from '@playwright/test';
 import { faker } from '@faker-js/faker';
-import { SpaceComponent } from '@zenstackhq/runtime/models';
-import { clickButton, goToSpace, getByLabel } from './utils';
+import { Dashboard } from '@zenstackhq/runtime/models';
+import { clickButton, openHome, getByLabel } from './utils';
 
 test('should navigate to the about page', async ({ page }) => {
     async function createDashboard() {
         await clickButton(page, 'Create Dashboard');
 
         const name = faker.lorem.words(3);
-        await getByLabel<SpaceComponent>(page, 'name').fill(name);
+        await getByLabel<Dashboard>(page, 'name').fill(name);
         await page.getByText('Save changes', { exact: true }).click();
 
         page.getByText('Dashboard created successfully!');
@@ -16,7 +16,7 @@ test('should navigate to the about page', async ({ page }) => {
         return name;
     }
 
-    await goToSpace(page);
+    await openHome(page);
     const dashboardTitle = await createDashboard();
     await page.getByText(dashboardTitle).click();
     page.getByText(dashboardTitle);

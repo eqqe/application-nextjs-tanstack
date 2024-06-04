@@ -1,5 +1,5 @@
 import { useCurrentSpace } from '@/lib/context';
-import { useAggregateSpaceComponent } from '@/zmodel/lib/hooks';
+import { useAggregateTable } from '@/zmodel/lib/hooks';
 import { PanelComponentReport } from '@zenstackhq/runtime/models';
 
 export const Report = ({ report }: { report: PanelComponentReport }) => {
@@ -7,13 +7,13 @@ export const Report = ({ report }: { report: PanelComponentReport }) => {
     if (!space) {
         throw '!spaceId';
     }
-    const aggregation = useAggregateSpaceComponent({
+
+    const { data } = useAggregateTable({
         where: {
-            type: report.spaceComponentType,
-            spaceId: space.id,
+            type: report.tableType,
         },
         _count: true,
     });
 
-    return <>{aggregation.data?._count}</>;
+    return <>{data?._count}</>;
 };

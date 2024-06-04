@@ -1,7 +1,6 @@
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { SpaceUserRole } from '@prisma/client';
 import { compare } from 'bcryptjs';
-import { nanoid } from 'nanoid';
 import NextAuth, { User } from 'next-auth';
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
@@ -65,7 +64,6 @@ export const authOptions: NextAuthOptions = {
             await prisma.space.create({
                 data: {
                     name: `${user.name || user.email}'s space`,
-                    slug: nanoid(8),
                     members: {
                         create: [
                             {

@@ -15,10 +15,9 @@ import {
 import { AutoTable } from '../ui/auto-table';
 import * as z from 'zod';
 import { toast } from 'react-toastify';
-import { Space } from '@zenstackhq/runtime/models';
 import { useQueryClient } from '@tanstack/react-query';
 
-export const Applications = ({ space }: { space: Space }) => {
+export const Applications = () => {
     const { data: applications } = useFindManyApplication({
         include: {
             versions: {
@@ -45,7 +44,6 @@ export const Applications = ({ space }: { space: Space }) => {
     const desactivate = useDeleteSpaceApplicationVersion();
     const update = useUpdateSpaceApplicationVersion();
     const { data: spaceApplications } = useFindManySpaceApplicationVersion({
-        where: { spaceId: space?.id },
         include: {
             applicationVersion: {
                 include: {
@@ -56,7 +54,7 @@ export const Applications = ({ space }: { space: Space }) => {
     });
 
     const queryClient = useQueryClient();
-    if (!applications || !space) {
+    if (!applications) {
         return <>Loading...</>;
     }
     const applicationsData = applications.map((application) => {
@@ -82,7 +80,7 @@ export const Applications = ({ space }: { space: Space }) => {
                 await desactivate.mutateAsync({ where: { id: activated.id } });
             } else if (application.versions.length) {
                 await activate.mutateAsync({
-                    data: { applicationVersionId: application.versions[0].id, spaceId: space.id },
+                    data: { applicationVersionId: application.versions[0].id },
                 });
             } else {
                 toast('No version available for this application');

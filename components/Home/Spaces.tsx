@@ -1,24 +1,13 @@
 import { getSpaceUrl } from '@/lib/urls';
-import { useCountSpaceComponent, useFindManySpace } from '@/zmodel/lib/hooks';
+import { useFindManySpace } from '@/zmodel/lib/hooks';
 import { Space } from '@prisma/client';
 import Link from 'next/link';
 
 function SpaceItem({ space }: { space: Space }) {
-    const { data: spaceComponentCount } = useCountSpaceComponent({
-        where: { spaceId: space.id },
-    });
     return (
-        <Link href={getSpaceUrl(space.slug)}>
+        <Link href={getSpaceUrl(space.id)}>
             <div className="relative flex size-full items-center justify-center">
-                <div className="badge badge-outline badge-accent badge-sm absolute right-4 top-4">
-                    {spaceComponentCount}
-                </div>
-                <div
-                    className="card-body"
-                    title={`${space.name} ${
-                        spaceComponentCount ? ': ' + spaceComponentCount + ' space component' : ''
-                    }`}
-                >
+                <div>
                     <h2 className="card-title line-clamp-1">{space.name}</h2>
                 </div>
             </div>

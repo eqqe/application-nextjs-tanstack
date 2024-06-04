@@ -1,7 +1,7 @@
 import { test } from '@playwright/test';
 import { faker } from '@faker-js/faker';
-import { clickButton, goToSpace, getByLabel, selectFromCombo, openSpace } from './utils';
-import { Lease, Property, SpaceComponent } from '@zenstackhq/runtime/models';
+import { clickButton, openHome, getByLabel, selectFromCombo, openSpace } from './utils';
+import { Lease, Property } from '@zenstackhq/runtime/models';
 
 test('Should create property', async ({ page }) => {
     async function createProperty() {
@@ -20,7 +20,7 @@ test('Should create property', async ({ page }) => {
         await getByLabel<Property>(page, 'city').fill(city);
         await getByLabel<Property>(page, 'postalCode').fill(postalCode);
         await getByLabel<Property>(page, 'country').fill(country);
-        await getByLabel<SpaceComponent>(page, 'name').fill(name);
+        await getByLabel<Property>(page, 'name').fill(name);
         await getByLabel(page, 'private').check();
         await page.getByText('Save changes', { exact: true }).click();
 
@@ -50,7 +50,7 @@ test('Should create property', async ({ page }) => {
         page.getByText(`$${rentAmount}`);
     }
 
-    await goToSpace(page);
+    await openHome(page);
     await createProperty();
     await createProperty();
     const address = await createProperty();
@@ -59,8 +59,6 @@ test('Should create property', async ({ page }) => {
     await createLease(address);
     await createLease(address);
     await createLease(address);
-
-    await openSpace(page);
 
     /*const applicationSlug = coreApplication.slug;
     await page.getByText(`Enable ${applicationSlug}`).click();

@@ -47,16 +47,24 @@ abstract model IdCreatedUpdatedAuth extends IdCreatedUpdated
 
 abstract model IdCreatedUpdatedSpace extends IdCreatedUpdatedAuth {
     space     Space         @relation(fields: [spaceId], references: [id], onDelete: Cascade)
-    spaceId   String
+    spaceId   String        @default(auth().currentSpaceId)
 
-    @@allow('read', space.members?[user == auth()])
+    @@allow('read', auth().currentSpace == space && space.members?[user == auth()])
 }
 enum SpaceUserRole {
     USER
     ADMIN
 }
 
-model SpaceUser extends IdCreatedUpdatedSpace {
+model SpaceUser extends IdCreatedUpdatedAuth {
+
+    space     Space         @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+    spaceId   String       
+
+    @@allow('read', auth().currentSpace == space && space.members?[user == auth()])
+
+
+
     user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId    String
     role      SpaceUserRole
@@ -72,9 +80,11 @@ model User extends IdCreatedUpdated {
     password      String?     @password @omit
     name          String?
     spaces        SpaceUser[]
+    currentSpace          Space?         @relation(fields: [currentSpaceId], references: [id], onDelete: Cascade)
+    currentSpaceId        String?
     image         String?     @url
     todos         Todo[]
-    components    SpaceComponent[]
+    
 
     leases        Lease[]
     dashboards  Dashboard[]
@@ -97,7 +107,7 @@ model User extends IdCreatedUpdated {
     @@allow('create', true)
 
     // can be read by users sharing any space
-    @@allow('read', spaces?[space.members?[user == auth()]])
+    @@allow('read', spaces?[auth().currentSpace == space && space.members?[user == auth()]])
 
     // full access by oneself
     @@allow('all', auth() == this)

@@ -1,7 +1,7 @@
 import { assert, it } from 'vitest';
 import { getEnhancedPrisma } from '../mock/enhanced-prisma';
 import { slugAssetsApplication } from '@/zmodel/prisma/applications/createApplications';
-import { enableApplication } from '../mock/enable-application';
+import { Type } from '@prisma/client';
 
 it('Should list apps', async () => {
     const {
@@ -18,11 +18,19 @@ it('Should enable an application in space', async () => {
     const {
         user1: { prisma, space },
     } = await getEnhancedPrisma();
-    await prisma.spaceComponent.create({
+    await prisma.list.create({
         data: {
             name: 'test',
-            type: 'List',
-            spaceId: space.id,
+            space: {
+                connect: {
+                    id: space.id,
+                },
+            },
+            table: {
+                create: {
+                    type: Type.List,
+                },
+            },
         },
     });
     const application = await prisma.application.findUnique({
@@ -31,14 +39,12 @@ it('Should enable an application in space', async () => {
             versions: true,
         },
     });
-
     assert(application);
     assert(application.versions.length);
 
     const spaceApplication = await prisma.spaceApplicationVersion.create({
         data: {
             applicationVersionId: application.versions[0].id,
-            spaceId: space.id,
         },
         include: {
             applicationVersion: {

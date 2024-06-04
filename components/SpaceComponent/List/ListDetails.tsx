@@ -1,5 +1,5 @@
 import { PlusIcon } from '@heroicons/react/24/outline';
-import { useCurrentSpace, useCurrentSpaceComponent } from '@/lib/context';
+import { useCurrentSpace, useComponentIdRouter } from '@/lib/context';
 import { useCreateTodo, useFindUniqueList } from '@/zmodel/lib/hooks';
 import TodoComponent from 'components/Todo';
 import { ChangeEvent, KeyboardEvent, useState } from 'react';
@@ -7,11 +7,11 @@ import { Type } from '@prisma/client';
 
 export function ListDetails() {
     const space = useCurrentSpace();
-    const spaceComponent = useCurrentSpaceComponent();
+    const componentId = useComponentIdRouter();
     const { data: list } = useFindUniqueList(
         {
             where: {
-                spaceComponentId: spaceComponent?.id,
+                id: componentId,
             },
             include: {
                 todos: {
@@ -25,8 +25,8 @@ export function ListDetails() {
             },
         },
         {
-            enabled: !!spaceComponent?.id,
-        },
+            enabled: !!componentId,
+        }
     );
 
     const [title, setTitle] = useState('');
@@ -58,7 +58,7 @@ export function ListDetails() {
 
     return (
         <>
-            <h1 className="mb-4 text-2xl font-semibold">{spaceComponent?.name}</h1>
+            <h1 className="mb-4 text-2xl font-semibold">{list.name}</h1>
             <div className="flex space-x-2">
                 <input
                     type="text"
@@ -79,7 +79,9 @@ export function ListDetails() {
                 </button>
             </div>
             <ul className="flex w-11/12 flex-col space-y-4 py-8 md:w-auto">
-                {list.todos?.map((todo) => <TodoComponent key={todo.id} value={todo} />)}
+                {list.todos?.map((todo) => (
+                    <TodoComponent key={todo.id} value={todo} />
+                ))}
             </ul>
         </>
     );

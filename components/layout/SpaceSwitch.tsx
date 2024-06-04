@@ -13,21 +13,32 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { FallbackError } from '../layout/FallbackError';
 import { useFindManySpace } from '@/zmodel/lib/hooks';
 import { useRouter } from 'next/navigation';
-import { useSpaceSlug } from '@/lib/context';
+import { useCurrentSpace, useCurrentUser } from '@/lib/context';
 import { Badge } from '@/components/ui/badge';
+import { toast } from 'react-toastify';
+import { Space } from '@zenstackhq/runtime/models';
+import { setCookie } from 'cookies-next';
+import { useQueryClient } from '@tanstack/react-query';
 
-export const localStorageSpace = 'currentSpaceSlug';
+export const currentSpaceCookieName = 'currentSpaceId';
 export function SpaceSwitch() {
     const { data: spaces } = useFindManySpace();
 
-    const currentSpaceSlug = useSpaceSlug();
+    const currentUser = useCurrentUser();
 
     const router = useRouter();
-    function switchSpace(slug: string) {
-        if (global?.window !== undefined) {
-            localStorage.setItem(localStorageSpace, slug);
+
+    const currentSpace = useCurrentSpace();
+
+    const queryClient = useQueryClient();
+
+    async function switchSpace(space: Space) {
+        if (currentUser) {
+            setCookie(currentSpaceCookieName, space.id);
+            queryClient.refetchQueries({ queryKey: ['zenstack'] });
+        } else {
+            toast('Error cannot find current user');
         }
-        router.refresh();
     }
 
     return (
@@ -43,14 +54,14 @@ export function SpaceSwitch() {
                     <DropdownMenuLabel>Switch space</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuGroup>
-                        <DropdownMenuItem onClick={() => switchSpace('')}>
-                            <EyeIcon className="mr-2 size-4" />
-                            {!currentSpaceSlug ? <Badge variant={'outline'}>See all content</Badge> : 'See all content'}
-                        </DropdownMenuItem>
-                        {spaces?.map(({ slug, name }) => (
-                            <DropdownMenuItem key={slug} onClick={() => switchSpace(slug)}>
+                        {spaces?.map((space) => (
+                            <DropdownMenuItem key={space.id} onClick={() => switchSpace(space)}>
                                 <IceCreamIcon className="mr-2 size-4" />
-                                {slug === currentSpaceSlug ? <Badge variant={'outline'}>{name}</Badge> : name}
+                                {space.id === currentSpace?.id ? (
+                                    <Badge variant={'outline'}>{space.name}</Badge>
+                                ) : (
+                                    space.name
+                                )}
                             </DropdownMenuItem>
                         ))}
                     </DropdownMenuGroup>

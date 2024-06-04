@@ -16,7 +16,7 @@ model Grid extends BaseGrid {
 
     columns Int @gte(1) @lte(12)
 
-    @@allow('read', subTab.tab.folder.applicationVersion.activations?[space.members?[user == auth()]])
+    @@allow('read', subTab.tab.folder.applicationVersion.activations?[auth().currentSpace == space && space.members?[user == auth()]])
 
 }
 
@@ -45,8 +45,8 @@ model GridElement extends IdCreatedUpdatedAuth {
     card GridCard?
     tabs GridTabs?
 
-    @@allow('read', grid.subTab.tab.folder.applicationVersion.activations?[space.members?[user == auth()]])
-    @@allow('read', gridTabContent.tabs.element.grid.subTab.tab.folder.applicationVersion.activations?[space.members?[user == auth()]])
+    @@allow('read', grid.subTab.tab.folder.applicationVersion.activations?[auth().currentSpace == space && space.members?[user == auth()]])
+    @@allow('read', gridTabContent.tabs.element.grid.subTab.tab.folder.applicationVersion.activations?[auth().currentSpace == space && space.members?[user == auth()]])
 
 }
 
@@ -72,8 +72,8 @@ model GridCard extends IdCreatedUpdatedAuth {
 
     footer  GridCardFooter?
 
-    @@allow('read', element.grid.subTab.tab.folder.applicationVersion.activations?[space.members?[user == auth()]])
-    @@allow('read', element.gridTabContent.tabs.element.grid.subTab.tab.folder.applicationVersion.activations?[space.members?[user == auth()]])
+    @@allow('read', element.grid.subTab.tab.folder.applicationVersion.activations?[auth().currentSpace == space && space.members?[user == auth()]])
+    @@allow('read', element.gridTabContent.tabs.element.grid.subTab.tab.folder.applicationVersion.activations?[auth().currentSpace == space && space.members?[user == auth()]])
 }
 
 model GridTabs extends IdCreatedUpdatedAuth {
@@ -83,7 +83,7 @@ model GridTabs extends IdCreatedUpdatedAuth {
 
     tabsContent     GridTabContent[]
 
-    @@allow('read', element.grid.subTab.tab.folder.applicationVersion.activations?[space.members?[user == auth()]])
+    @@allow('read', element.grid.subTab.tab.folder.applicationVersion.activations?[auth().currentSpace == space && space.members?[user == auth()]])
 }
 
 
@@ -94,8 +94,8 @@ model GridTabContent extends BaseGrid {
 
     name    String
 
-    @@allow('read', tabs.element.grid.subTab.tab.folder.applicationVersion.activations?[space.members?[user == auth()]])
-    @@allow('read', tabs.element.gridTabContent.tabs.element.grid.subTab.tab.folder.applicationVersion.activations?[space.members?[user == auth()]])
+    @@allow('read', tabs.element.grid.subTab.tab.folder.applicationVersion.activations?[auth().currentSpace == space && space.members?[user == auth()]])
+    @@allow('read', tabs.element.gridTabContent.tabs.element.grid.subTab.tab.folder.applicationVersion.activations?[auth().currentSpace == space && space.members?[user == auth()]])
 }
  
 
@@ -114,7 +114,7 @@ model GridCardFooter extends IdCreatedUpdatedAuth {
     button GridCardFooterButton?
     progress GridCardFooterProgress?
 
-    @@allow('read', card.element.grid.subTab.tab.folder.applicationVersion.activations?[space.members?[user == auth()]])
+    @@allow('read', card.element.grid.subTab.tab.folder.applicationVersion.activations?[auth().currentSpace == space && space.members?[user == auth()]])
 
 }
 
@@ -124,7 +124,7 @@ model GridCardFooterButton extends IdCreatedUpdatedAuth {
     parentId        String @unique
 
     text    String
-    @@allow('read', footer.card.element.grid.subTab.tab.folder.applicationVersion.activations?[space.members?[user == auth()]])
+    @@allow('read', footer.card.element.grid.subTab.tab.folder.applicationVersion.activations?[auth().currentSpace == space && space.members?[user == auth()]])
 }
 model GridCardFooterProgress extends IdCreatedUpdatedAuth {
 
@@ -132,6 +132,6 @@ model GridCardFooterProgress extends IdCreatedUpdatedAuth {
     parentId        String @unique
 
     value   Int
-    @@allow('read', footer.card.element.grid.subTab.tab.folder.applicationVersion.activations?[space.members?[user == auth()]])
+    @@allow('read', footer.card.element.grid.subTab.tab.folder.applicationVersion.activations?[auth().currentSpace == space && space.members?[user == auth()]])
 }
 

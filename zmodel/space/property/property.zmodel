@@ -8,7 +8,7 @@ enum PropertyType {
     COMMERCIAL
 }
 
-model Property extends SpaceComponentRelation {
+model Property extends SpaceComponent {
     propertyType        PropertyType
     address     String
     city        String
@@ -22,8 +22,8 @@ model Property extends SpaceComponentRelation {
 abstract model IdCreatedUpdatedAuthOwnerProperty extends Component {
     property    Property   @relation(fields: [propertyId], references: [id], onDelete: Cascade)
     propertyId  String
-    @@allow('all', property.spaceComponent.owner == auth())
-    @@allow('all', property.spaceComponent.space.members?[user == auth()] && !property.spaceComponent.private)
+    @@allow('all', property.owner == auth())
+    @@allow('all', auth().currentSpace == property.space && property.space.members?[user == auth()] && !property.private)
 }
 
 model Lease extends IdCreatedUpdatedAuthOwnerProperty {
@@ -40,8 +40,8 @@ model Payment extends Component {
     amount      BigInt
     date        DateTime
 
-    @@allow('all', lease.property.spaceComponent.owner == auth())
-    @@allow('all', lease.property.spaceComponent.space.members?[user == auth()] && !lease.property.spaceComponent.private)
+    @@allow('all', lease.property.owner == auth())
+    @@allow('all', lease.property.space == auth().currentSpace && lease.property.space.members?[user == auth()] && !lease.property.private)
 }
 enum ChargeType {
     MAINTENANCE

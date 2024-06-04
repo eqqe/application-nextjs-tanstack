@@ -1,4 +1,4 @@
-import { useCurrentSpace, useCurrentSpaceComponent } from '@/lib/context';
+import { useCurrentSpace, useComponentIdRouter } from '@/lib/context';
 import { useCreateLease, useFindUniqueProperty } from '@/zmodel/lib/hooks';
 import LeaseDetail from 'components/Lease/LeaseList';
 import { LeaseCreateScalarSchema } from '@zenstackhq/runtime/zod/models';
@@ -6,12 +6,12 @@ import { CreateForm } from '@/components/Form/CreateForm';
 
 export function PropertyDetails() {
     const space = useCurrentSpace();
-    const spaceComponent = useCurrentSpaceComponent();
+    const componentId = useComponentIdRouter();
 
     const { data: property } = useFindUniqueProperty(
         {
             where: {
-                spaceComponentId: spaceComponent?.id,
+                id: componentId,
             },
             include: {
                 leases: {
@@ -25,8 +25,8 @@ export function PropertyDetails() {
             },
         },
         {
-            enabled: !!spaceComponent?.id,
-        },
+            enabled: !!componentId,
+        }
     );
 
     const createLease = useCreateLease();
@@ -55,7 +55,9 @@ export function PropertyDetails() {
                 </div>
             </div>
             <ul className="flex w-11/12 flex-col space-y-4 py-8 md:w-auto">
-                {property.leases?.map((lease) => <LeaseDetail key={lease.id} {...{ lease }} />)}
+                {property.leases?.map((lease) => (
+                    <LeaseDetail key={lease.id} {...{ lease }} />
+                ))}
             </ul>
         </>
     );

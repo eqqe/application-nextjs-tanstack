@@ -1,7 +1,7 @@
 import Header from '@/components/layout/header';
 import { ReactNode } from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { Package2, Home, ShoppingCart, Package, Users2, LineChart, Settings } from 'lucide-react';
+import { Package, Settings } from 'lucide-react';
 import Link from 'next/link';
 import { useNavItems } from '@/hooks/useNavItems';
 import { ErrorBoundary } from 'react-error-boundary';

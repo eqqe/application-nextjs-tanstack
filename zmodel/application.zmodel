@@ -3,17 +3,13 @@ import "space/space.zmodel"
 import "space/view/view"
 import "space/grid/grid"
 
-model SpaceApplicationVersion extends IdCreatedUpdatedAuth {
-    space          Space         @relation(fields: [spaceId], references: [id], onDelete: Cascade)
-    spaceId        String
+model SpaceApplicationVersion extends IdCreatedUpdatedSpace {
     applicationVersion    ApplicationVersion   @relation(fields: [applicationVersionId], references: [id], onDelete: Cascade)
     applicationVersionId  String
 
     @@unique([spaceId, applicationVersionId])
 
-    @@allow('create,update,delete', space.members?[user == auth() && role == ADMIN])
-
-    @@allow('read', space.members?[user == auth()])
+    @@allow('create,update,delete',  auth().currentSpace == space && space.members?[user == auth() && role == ADMIN])
 }
 
 
@@ -48,7 +44,7 @@ model FolderApplicationVersion extends IdCreatedUpdatedAuth
     tabs TabFolder[]
 
     path String
-    @@allow('read', applicationVersion.activations?[space.members?[user == auth()]])
+    @@allow('read', applicationVersion.activations?[auth().currentSpace == space && space.members?[user == auth()]])
 }
 
 model TabFolder extends IdCreatedUpdatedAuth
@@ -57,7 +53,7 @@ model TabFolder extends IdCreatedUpdatedAuth
     folderId        String
 
     subTabs SubTabFolder[]
-    @@allow('read', folder.applicationVersion.activations?[space.members?[user == auth()]])
+    @@allow('read', folder.applicationVersion.activations?[auth().currentSpace == space && space.members?[user == auth()]])
 }
 
 model SubTabFolder extends IdCreatedUpdatedAuth
@@ -67,7 +63,7 @@ model SubTabFolder extends IdCreatedUpdatedAuth
 
     views View[]
     grids Grid[]
-    @@allow('read', tab.folder.applicationVersion.activations?[space.members?[user == auth()]])
+    @@allow('read', tab.folder.applicationVersion.activations?[auth().currentSpace == space && space.members?[user == auth()]])
 }
 
 

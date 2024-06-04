@@ -1,27 +1,20 @@
 import { assert, it } from 'vitest';
 import { fakeProperty } from '@/components/Space/GenerateDemonstration';
 import { getEnhancedPrisma } from '../../mock/enhanced-prisma';
-import { SpaceComponentType } from '@prisma/client';
+import { Type } from '@prisma/client';
 
 it('Should create / list properties', async () => {
     const { user1, user2, user3 } = await getEnhancedPrisma();
     let properties = await user2.prisma.property.findMany();
     assert.notOk(properties.length);
     const property = fakeProperty();
-
     const newProperty = await user2.prisma.property.create({
         data: {
             ...property,
+            name: 'Property test',
             table: {
                 create: {
-                    type: 'Property',
-                },
-            },
-            spaceComponent: {
-                create: {
-                    type: SpaceComponentType.Property,
-                    name: 'Property test',
-                    spaceId: user2.space.id,
+                    type: Type.Property,
                 },
             },
         },
@@ -29,7 +22,6 @@ it('Should create / list properties', async () => {
 
     assert.equal(newProperty.address, property.address);
     assert.equal(newProperty.postalCode, property.postalCode);
-
     /* Properties of user2 are seen by user3 member of the space */
 
     properties = await user2.prisma.property.findMany();
@@ -40,6 +32,7 @@ it('Should create / list properties', async () => {
 
     properties = await user3.prisma.property.findMany();
     assert.equal(properties.length, 1);
+
     assert.equal(properties[0].address, property.address);
     assert.equal(properties[0].postalCode, property.postalCode);
     assert.equal(properties[0].id, newProperty.id);
@@ -49,31 +42,30 @@ it('Should create / list properties', async () => {
 
     /* Private property */
 
+    const fakePrivateProperty = fakeProperty();
     const privateProperty = await user2.prisma.property.create({
         data: {
-            ...property,
+            ...fakePrivateProperty,
+            name: 'Private property test',
+            private: true,
             table: {
                 create: {
-                    type: 'Property',
-                },
-            },
-            spaceComponent: {
-                create: {
-                    type: SpaceComponentType.Property,
-                    name: 'Private property test',
-                    private: true,
-                    spaceId: user2.space.id,
+                    type: Type.Property,
                 },
             },
         },
     });
 
-    properties = await user2.prisma.property.findMany();
+    properties = await user2.prisma.property.findMany({
+        orderBy: {
+            private: 'desc',
+        },
+    });
     assert.equal(properties.length, 2);
-    assert.equal(properties[0].address, property.address);
-    assert.equal(properties[0].postalCode, property.postalCode);
-    assert.equal(properties[0].id, newProperty.id);
-    assert.equal(properties[1].id, privateProperty.id);
+    assert.equal(properties[1].address, property.address);
+    assert.equal(properties[1].postalCode, property.postalCode);
+    assert.equal(properties[1].id, newProperty.id);
+    assert.equal(properties[0].id, privateProperty.id);
 
     properties = await user3.prisma.property.findMany();
     assert.equal(properties.length, 1);
@@ -94,14 +86,7 @@ it('Should allow a user to update properties they own', async () => {
         data: {
             ...property,
             table: {
-                create: { type: 'Property' },
-            },
-            spaceComponent: {
-                create: {
-                    type: SpaceComponentType.Property,
-                    name: 'User2 Property',
-                    spaceId: user2.space.id,
-                },
+                create: { type: Type.Property },
             },
         },
     });
@@ -114,7 +99,7 @@ it('Should allow a user to update properties they own', async () => {
     assert.equal(updatedProperty.address, 'New Address');
 });
 
-it('Should not allow a user to update properties they do not own', async () => {
+it('Should not allow a user to delete properties they do not own / allow if they own', async () => {
     const { user1, user2 } = await getEnhancedPrisma();
 
     const property = fakeProperty();
@@ -122,92 +107,44 @@ it('Should not allow a user to update properties they do not own', async () => {
     const newProperty = await user2.prisma.property.create({
         data: {
             ...property,
+            name: 'User2 Property',
             table: {
-                create: { type: 'Property' },
-            },
-            spaceComponent: {
-                create: {
-                    type: SpaceComponentType.Property,
-                    name: 'User2 Property',
-                    spaceId: user2.space.id,
-                },
+                create: { type: Type.Property },
             },
         },
     });
 
-    let error;
+    let errorUpdate;
     try {
         await user1.prisma.property.update({
             where: { id: newProperty.id },
             data: { address: 'User1 Address' },
         });
     } catch (e) {
-        error = e;
+        errorUpdate = e;
     }
 
     // @ts-ignore
-    assert.equal(error.meta.reason, 'ACCESS_POLICY_VIOLATION');
-});
+    assert.equal(errorUpdate.meta.reason, 'ACCESS_POLICY_VIOLATION');
 
-it('Should not allow a user to delete properties they do not own', async () => {
-    const { user1, user2 } = await getEnhancedPrisma();
-
-    const property = fakeProperty();
-
-    const newProperty = await user2.prisma.property.create({
-        data: {
-            ...property,
-            table: {
-                create: { type: 'Property' },
-            },
-            spaceComponent: {
-                create: {
-                    type: SpaceComponentType.Property,
-                    name: 'User2 Property',
-                    spaceId: user2.space.id,
-                },
-            },
-        },
-    });
-
-    let error;
+    let errorDelete;
     try {
         await user1.prisma.property.delete({
             where: { id: newProperty.id },
         });
     } catch (e) {
-        error = e;
+        errorDelete = e;
     }
 
     // @ts-ignore
-    assert.equal(error.meta.reason, 'ACCESS_POLICY_VIOLATION');
-});
-
-it('Should allow a user to delete properties they own', async () => {
-    const { user2 } = await getEnhancedPrisma();
-
-    const property = fakeProperty();
-
-    const newProperty = await user2.prisma.property.create({
-        data: {
-            ...property,
-            table: {
-                create: { type: 'Property' },
-            },
-            spaceComponent: {
-                create: {
-                    type: SpaceComponentType.Property,
-                    name: 'User2 Property',
-                    spaceId: user2.space.id,
-                },
-            },
-        },
-    });
+    assert.equal(errorDelete.meta.reason, 'ACCESS_POLICY_VIOLATION');
+    let properties = await user2.prisma.property.findMany();
+    assert.equal(properties.length, 1);
 
     await user2.prisma.property.delete({
         where: { id: newProperty.id },
     });
 
-    const properties = await user2.prisma.property.findMany();
+    properties = await user2.prisma.property.findMany();
     assert.equal(properties.length, 0);
 });

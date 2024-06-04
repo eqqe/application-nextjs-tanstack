@@ -7,13 +7,13 @@ import {
     useCreateManyList,
     useCreateManyPayment,
     useCreateManyProperty,
-    useCreateManySpaceComponent,
     useCreateManyTable,
 } from '@/zmodel/lib/hooks';
 import { PropertyType, ChargeType } from '@prisma/client';
 
 export const fakeProperty = () => {
     return {
+        name: faker.word.noun(),
         address: faker.location.streetAddress(),
         city: faker.location.city(),
         propertyType: PropertyType.COMMERCIAL,
@@ -56,7 +56,6 @@ const fakeCharge = ({ propertyId, leaseId }: { propertyId: string; leaseId: stri
 export const GenerateDemonstration = () => {
     const space = useCurrentSpace();
 
-    const createManySpaceComponent = useCreateManySpaceComponent();
     const createManyTable = useCreateManyTable();
 
     const createManyProperty = useCreateManyProperty();
@@ -73,15 +72,6 @@ export const GenerateDemonstration = () => {
         }
         const prefix = `demo_${Date.now()}_`;
 
-        await createManySpaceComponent.mutateAsync({
-            data: Array.from({ length: 5 }).map((_, index) => ({
-                spaceId: space.id,
-                id: `${prefix}Dashboard${index}`,
-                type: 'Dashboard',
-                name: `${prefix}Dashboard${index}`,
-            })),
-        });
-
         await createManyTable.mutateAsync({
             data: Array.from({ length: 5 }).map((_, index) => ({
                 id: `${prefix}Dashboard${index}`,
@@ -91,17 +81,9 @@ export const GenerateDemonstration = () => {
 
         await createManyDashboard.mutateAsync({
             data: Array.from({ length: 5 }).map((_, index) => ({
-                spaceComponentId: `${prefix}Dashboard${index}`,
-                tableId: `${prefix}Dashboard${index}`,
-            })),
-        });
-
-        await createManySpaceComponent.mutateAsync({
-            data: Array.from({ length: 5 }).map((_, index) => ({
                 spaceId: space.id,
-                id: `${prefix}List${index}`,
-                type: 'List',
-                name: `${prefix}List${index}`,
+                name: `${prefix}Dashboard${index}`,
+                tableId: `${prefix}Dashboard${index}`,
             })),
         });
 
@@ -116,15 +98,8 @@ export const GenerateDemonstration = () => {
             data: Array.from({ length: 5 }).map((_, index) => ({
                 spaceComponentId: `${prefix}List${index}`,
                 tableId: `${prefix}List${index}`,
-            })),
-        });
-
-        await createManySpaceComponent.mutateAsync({
-            data: Array.from({ length: 5 }).map((_, index) => ({
                 spaceId: space.id,
-                id: `${prefix}Property${index}`,
-                type: 'Property',
-                name: `${prefix}Property${index}`,
+                name: `${prefix}List${index}`,
             })),
         });
 
@@ -139,8 +114,9 @@ export const GenerateDemonstration = () => {
             data: Array.from({ length: 5 }).map((_, index) => ({
                 ...fakeProperty(),
                 tableId: `${prefix}Property${index}`,
-                spaceComponentId: `${prefix}Property${index}`,
                 id: `${prefix}Property${index}`,
+                spaceId: space.id,
+                name: `${prefix}Property${index}`,
             })),
         });
 

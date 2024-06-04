@@ -8,5 +8,17 @@ export async function getEnhancedPrisma(ctx: {
     res: GetServerSidePropsContext['res'];
 }) {
     const session = await getServerAuthSession(ctx);
-    return enhance(prisma, { user: session?.user });
+    let user;
+    if (session?.user) {
+        const currentSpaceId = ctx.req.cookies['currentSpaceId'];
+        if (currentSpaceId) {
+            user = { ...session?.user, currentSpace: { id: currentSpaceId }, currentSpaceId: currentSpaceId };
+        } else {
+            user = session.user;
+        }
+    }
+    // @ts-ignore
+    return enhance(prisma, {
+        user,
+    });
 }

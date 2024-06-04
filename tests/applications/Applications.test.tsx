@@ -4,6 +4,15 @@ import { renderProvide } from '../create-wrapper';
 import { Applications } from '@/components/Application/Applications';
 
 test('Should display loader when no data', async () => {
-    renderProvide(<Applications />);
+    renderProvide(
+        <Applications
+            space={{
+                createdAt: new Date(),
+                id: 'test id',
+                name: 'space name',
+                updatedAt: new Date(),
+            }}
+        />
+    );
     screen.getByText('Loading...');
 });

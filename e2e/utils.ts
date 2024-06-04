@@ -16,11 +16,6 @@ export async function selectFromCombo<T extends FieldValues>(page: Page, label: 
     await page.locator(`span:has-text("${type}")`).click();
 }
 
-export async function openSpace(page: Page) {
-    await page.getByText(`${userDemo.email}'s space`).click();
-}
-
-export async function goToSpace(page: Page) {
+export async function openHome(page: Page) {
     await page.goto('http://localhost:3000/');
-    await openSpace(page);
 }

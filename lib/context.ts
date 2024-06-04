@@ -1,54 +1,36 @@
-import { localStorageSpace } from '@/components/layout/SpaceSwith';
-import { useFindUniqueSpace, useFindUniqueSpaceComponent } from '@/zmodel/lib/hooks';
+import { useFindManySpace, useFindUniqueSpace, useFindUniqueUser } from '@/zmodel/lib/hooks';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
+import { getCookie, setCookie } from 'cookies-next';
+import { currentSpaceCookieName } from '@/components/layout/SpaceSwitch';
 
 export function useCurrentUser() {
     const { data: session } = useSession();
     return session?.user;
 }
-export function useSpaceSlug() {
-    const router = useRouter();
-    const slug = router.query.slug as string;
-    if (slug) {
-        return slug;
-    }
-    if (global?.window !== undefined) {
-        const localStorageSlug = localStorage.getItem(localStorageSpace);
-        if (localStorageSlug) {
-            return localStorageSlug;
-        }
-    }
-}
-
 export function useCurrentSpace() {
-    const slug = useSpaceSlug();
-    const { data } = useFindUniqueSpace(
-        {
-            where: {
-                slug,
-            },
-        },
-        {
-            enabled: !!slug,
-        }
-    );
+    const { data: spaces } = useFindManySpace();
+    if (!spaces) {
+        return;
+    }
 
-    return data;
+    const currentSpaceId = getCookie(currentSpaceCookieName);
+    if (currentSpaceId) {
+        return spaces.find((space) => space.id === currentSpaceId);
+    } else {
+        if (spaces?.length) {
+            const firstSpace = spaces[0];
+            setCookie(currentSpaceCookieName, firstSpace.id);
+            return spaces[0];
+        }
+        throw 'Cannot find space';
+    }
 }
 
-export function useCurrentSpaceComponent() {
+export function useComponentIdRouter() {
     const router = useRouter();
-    const { data } = useFindUniqueSpaceComponent(
-        {
-            where: {
-                id: router.query.componentId as string,
-            },
-        },
-        {
-            enabled: !!router.query.componentId,
-        }
-    );
-
-    return data;
+    const componentId = router.query.componentId;
+    if (typeof componentId === 'string') {
+        return componentId;
+    }
 }

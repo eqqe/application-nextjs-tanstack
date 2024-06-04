@@ -1,5 +1,5 @@
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
-import { useCurrentSpace, useCurrentSpaceComponent } from '@/lib/context';
+import { useCurrentSpace, useComponentIdRouter } from '@/lib/context';
 import { PanelComponentRender } from '@/components/SpaceComponent/Dashboard/PanelComponentRender';
 import { PanelRender } from '@/components/SpaceComponent/Dashboard/PanelRender';
 import { useFindUniqueDashboard, useCreatePanel, useCreatePanelRow, useDeletePanelRow } from '@/zmodel/lib/hooks';
@@ -7,12 +7,12 @@ import { UserAvatar } from '@/components/UserAvatar';
 
 export function DashboardDetails() {
     const space = useCurrentSpace();
-    const spaceComponent = useCurrentSpaceComponent();
+    const componentId = useComponentIdRouter();
 
     const { data: dashboard } = useFindUniqueDashboard(
         {
             where: {
-                spaceComponentId: spaceComponent?.id,
+                id: componentId,
             },
             include: {
                 owner: true,
@@ -33,8 +33,8 @@ export function DashboardDetails() {
             },
         },
         {
-            enabled: !!spaceComponent?.id,
-        },
+            enabled: !!componentId,
+        }
     );
 
     const createPanel = useCreatePanel();
@@ -46,7 +46,7 @@ export function DashboardDetails() {
     }
     return (
         <>
-            <h1 className="mb-4 text-2xl font-semibold">{spaceComponent?.name}</h1>
+            <h1 className="mb-4 text-2xl font-semibold">{dashboard.name}</h1>
             <UserAvatar user={dashboard.owner} size={18} />
             <ul className="flex w-11/12 flex-col space-y-4 py-8 md:w-auto">
                 {dashboard.panelRows.map((panelRow) => (

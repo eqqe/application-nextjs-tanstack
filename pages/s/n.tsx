@@ -1,5 +1,4 @@
 import { CreateForm } from '@/components/Form/CreateForm';
-import { Spaces } from '@/components/Home/Spaces';
 import { WithNavBar } from '@/components/layout/WithNavBar';
 import { useCurrentUser } from '@/lib/context';
 import { useCreateSpace } from '@/zmodel/lib/hooks';
@@ -15,7 +14,6 @@ export const Home: NextPage = () => {
     }
     return (
         <WithNavBar>
-            <Spaces />
             <CreateForm
                 formSchema={SpaceCreateScalarSchema}
                 onSubmitData={async (data) => {

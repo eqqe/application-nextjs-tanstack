@@ -3,11 +3,12 @@ import { PrismaClient } from '@prisma/client';
 import { nanoid } from 'nanoid';
 import { assert } from 'vitest';
 import { slugAssetsApplication } from '@/zmodel/prisma/applications/createApplications';
+import { Space } from '@zenstackhq/runtime/models';
 
 const prisma = new PrismaClient();
 
 export async function getEnhancedPrisma() {
-    async function createUserWithSpace() {
+    async function createUserWithSpace({ currentSpace }: { currentSpace?: Space }) {
         const testUser = {
             email: `${nanoid()}@gmail.com`,
             password: 'demo',
@@ -15,7 +16,6 @@ export async function getEnhancedPrisma() {
         const userCreated = await prisma.user.create({ data: testUser });
         const space = await prisma.space.create({
             data: {
-                slug: `${nanoid()}`,
                 name: `Test spaces ${testUser.email}`,
                 members: {
                     create: [
@@ -27,13 +27,20 @@ export async function getEnhancedPrisma() {
                 },
             },
         });
-        return { userCreated, space, testUser, prisma: enhance(prisma, { user: userCreated }) };
+        return {
+            userCreated,
+            space,
+            testUser,
+            prisma: enhance(prisma, {
+                user: { ...userCreated, currentSpace: currentSpace ?? { id: space.id }, currentSpaceId: space.id },
+            }),
+        };
     }
 
-    const user1 = await createUserWithSpace();
-    const user2 = await createUserWithSpace();
-    const user3 = await createUserWithSpace();
-    /* User3 is a member of User2's space */
+    const user1 = await createUserWithSpace({});
+    const user2 = await createUserWithSpace({});
+    /* User3 is a member of User2's space and he is currently viewing the space */
+    const user3 = await createUserWithSpace({ currentSpace: user2.space });
     await prisma.spaceUser.create({
         data: {
             role: 'USER',
@@ -45,7 +52,7 @@ export async function getEnhancedPrisma() {
     assert.notEqual(user1.userCreated.id, user3.userCreated.id);
     assert.notEqual(user2.userCreated.id, user3.userCreated.id);
 
-    /* Enable an application in User3 space */
+    /* Enable an application in User2 space */
     const application = await prisma.application.findUnique({
         where: { slug: slugAssetsApplication },
         include: {
@@ -59,7 +66,7 @@ export async function getEnhancedPrisma() {
     const spaceApplication = await prisma.spaceApplicationVersion.create({
         data: {
             applicationVersionId: application.versions[0].id,
-            spaceId: user3.space.id,
+            spaceId: user2.space.id,
         },
         include: {
             applicationVersion: {
@@ -70,7 +77,7 @@ export async function getEnhancedPrisma() {
         },
     });
 
-    assert.equal(spaceApplication.spaceId, user3.space.id);
+    assert.equal(spaceApplication.spaceId, user2.space.id);
     assert.equal(spaceApplication.applicationVersion.applicationSlug, application.slug);
 
     return {

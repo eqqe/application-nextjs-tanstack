@@ -2,7 +2,7 @@
 import "../../schema.zmodel"
 import "../space.zmodel"
 
-model Dashboard extends SpaceComponentRelation {
+model Dashboard extends SpaceComponent {
     panelRows     PanelRow[]
 }
 
@@ -12,8 +12,8 @@ model PanelRow extends Component {
     title       String    @length(1, 100)
     panels     Panel[]
 
-    @@allow('all', dashboard.spaceComponent.owner == auth())
-    @@allow('all', dashboard.spaceComponent.space.members?[user == auth()] && !dashboard.spaceComponent.private)
+    @@allow('all', dashboard.owner == auth())
+    @@allow('all', dashboard.space == auth().currentSpace && dashboard.space.members?[user == auth()] && !dashboard.private)
 }
 
 
@@ -23,8 +23,8 @@ model Panel extends Component {
     title       String    @length(1, 100)
     panelComponents     PanelComponent[]
 
-    @@allow('all', panelRow.dashboard.spaceComponent.owner == auth())
-    @@allow('all', panelRow.dashboard.spaceComponent.space.members?[user == auth()] && !panelRow.dashboard.spaceComponent.private)
+    @@allow('all', panelRow.dashboard.owner == auth())
+    @@allow('all', panelRow.dashboard.space == auth().currentSpace && panelRow.dashboard.space.members?[user == auth()] && !panelRow.dashboard.private)
 }
 
 enum PanelComponentType {
@@ -41,18 +41,17 @@ model PanelComponent extends Component {
     counter PanelComponentCounter?
     report PanelComponentReport?
 
-    @@allow('all', panel.panelRow.dashboard.spaceComponent.owner == auth())
-    @@allow('all', panel.panelRow.dashboard.spaceComponent.space.members?[user == auth()] && !panel.panelRow.dashboard.spaceComponent.private)
+    @@allow('all', panel.panelRow.dashboard.owner == auth())
+    @@allow('all', panel.panelRow.dashboard.space == auth().currentSpace && panel.panelRow.dashboard.space.members?[user == auth()] && !panel.panelRow.dashboard.private)
 }
 
 abstract model PanelComponentRelation extends Component {
     panelComponent   PanelComponent @relation(fields: [panelComponentId], references: [id], onDelete: Cascade)
     panelComponentId String   @unique
+    tableType Type
 
-    spaceComponentType SpaceComponentType
-
-    @@allow('all', panelComponent.panel.panelRow.dashboard.spaceComponent.owner == auth())
-    @@allow('all', panelComponent.panel.panelRow.dashboard.spaceComponent.space.members?[user == auth()] && !panelComponent.panel.panelRow.dashboard.spaceComponent.private)
+    @@allow('all', panelComponent.panel.panelRow.dashboard.owner == auth())
+    @@allow('all', panelComponent.panel.panelRow.dashboard.space == auth().currentSpace && panelComponent.panel.panelRow.dashboard.space.members?[user == auth()] && !panelComponent.panel.panelRow.dashboard.private)
 }
 
 

@@ -1,21 +1,24 @@
-import { Spaces } from '@/components/Home/Spaces';
-import { WithNavBar } from '@/components/layout/WithNavBar';
-import { useSpaceSlug } from '@/lib/context';
-import { getSpaceUrl } from '@/lib/urls';
+import { useFindManyTable } from '@/zmodel/lib/hooks';
 import type { NextPage } from 'next';
-import { useRouter } from 'next/router';
+import { SpaceHomeComponent } from '@/components/Space/SpaceHomeComponent';
 
 export const Home: NextPage = () => {
-    const router = useRouter();
-    const spaceSlug = useSpaceSlug();
-    if (spaceSlug) {
-        router.push(getSpaceUrl(spaceSlug));
+    const { data: tables } = useFindManyTable({
+        include: {
+            owner: true,
+            dashboard: true,
+            list: true,
+            property: true,
+        },
+        orderBy: {
+            updatedAt: 'desc',
+        },
+    });
+
+    if (!tables) {
+        return <></>;
     }
-    return (
-        <WithNavBar>
-            <Spaces />
-        </WithNavBar>
-    );
+    return <SpaceHomeComponent tables={tables} />;
 };
 
 export default Home;
