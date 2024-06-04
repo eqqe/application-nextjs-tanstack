@@ -26,11 +26,6 @@ it('Should enable an application in space', async () => {
                     id: space.id,
                 },
             },
-            table: {
-                create: {
-                    type: Type.List,
-                },
-            },
         },
     });
     const application = await prisma.application.findUnique({

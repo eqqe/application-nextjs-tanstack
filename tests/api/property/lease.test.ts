@@ -12,9 +12,6 @@ it('Should not allow a user to create leases or payments for properties they do 
         data: {
             ...property,
             name: 'Property test',
-            table: {
-                create: { type: Type.Property },
-            },
         },
     });
 
@@ -44,9 +41,6 @@ it('Should allow a user to create leases and payments for properties in their sp
         data: {
             ...property,
             name: 'user2 Property test',
-            table: {
-                create: { type: Type.Property },
-            },
         },
     });
 

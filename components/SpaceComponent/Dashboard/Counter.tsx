@@ -1,5 +1,5 @@
+import { getTypeHook } from '@/components/Grid/Table/hooks';
 import { useCurrentSpace } from '@/lib/context';
-import { useAggregateTable } from '@/zmodel/lib/hooks';
 import { PanelComponentCounter } from '@zenstackhq/runtime/models';
 
 export const Counter = ({ counter }: { counter: PanelComponentCounter }) => {
@@ -7,10 +7,10 @@ export const Counter = ({ counter }: { counter: PanelComponentCounter }) => {
     if (!space) {
         throw '!spaceId';
     }
-    const { data } = useAggregateTable({
-        where: {
-            type: counter.tableType,
-        },
+    const { useAggregate } = getTypeHook({ type: counter.tableType });
+
+    // @ts-expect-error useAggregate is called with 0 arguments valid in all cases
+    const { data } = useAggregate({
         _count: true,
     });
 

@@ -25,20 +25,9 @@ model Space extends IdCreatedUpdatedAuth {
 }
 
 
-abstract model HasTable {
-        table        Table      @relation(fields: [tableId], references: [id], onDelete: Cascade)
-    tableId      String @unique
-}
-
-abstract model TableComponent extends HasTable, Component
-{}
-
-abstract model SpaceComponent extends IdCreatedUpdatedSpace, Owner, HasTable {
+abstract model SpaceComponent extends IdCreatedUpdatedSpace, Owner {
     private   Boolean  @default(false)
     name     String   @length(1, 100)
-
-
-
 
 
     @@deny('read', private && owner != auth())

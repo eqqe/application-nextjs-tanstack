@@ -44,14 +44,7 @@ export function ListDetails() {
         await createTodo.mutateAsync({
             data: {
                 title,
-                table: {
-                    create: {
-                        type: Type.Todo,
-                    },
-                },
-                list: {
-                    connect: { id: list.id },
-                },
+                listId: list.id,
             },
         });
     };

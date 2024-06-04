@@ -1,22 +1,15 @@
-import { useFindManyTable } from '@/zmodel/lib/hooks';
 import { beautifyObjectName } from '@/components/ui/auto-form/utils';
 import { DataTable } from '@/components/ui/data-table';
 import { Prisma } from '@prisma/client';
+import { getTypeHook } from './hooks';
 
 export const GridCardTableInclude = {};
 
 export function CardTableComponent({ table }: { table: Prisma.GridCardTableGetPayload<typeof GridCardTableInclude> }) {
-    const { data } = useFindManyTable({
-        where: {
-            type: table.type,
-        },
-        include: {
-            // I'm a Genius :)
-            [table.type.toLowerCase()]: true,
-        },
-    });
+    const { useFindMany } = getTypeHook(table);
 
-    const rows = data?.flatMap((lines) => lines[table.type.toLowerCase()]);
+    // @ts-expect-error useFindMany is called with 0 arguments valid in all cases
+    const { data: rows } = useFindMany();
 
     if (!rows) {
         return <></>;

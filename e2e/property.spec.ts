@@ -1,6 +1,6 @@
 import { test } from '@playwright/test';
 import { faker } from '@faker-js/faker';
-import { clickButton, openHome, getByLabel, selectFromCombo, openSpace } from './utils';
+import { clickButton, openHome, getByLabel, selectFromCombo } from './utils';
 import { Lease, Property } from '@zenstackhq/runtime/models';
 
 test('Should create property', async ({ page }) => {

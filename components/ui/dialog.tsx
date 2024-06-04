@@ -5,8 +5,6 @@ import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { Cross2Icon } from '@radix-ui/react-icons';
 
 import { cn } from '@/lib/utils';
-import { ErrorBoundary } from 'react-error-boundary';
-import { FallbackError } from '../layout/FallbackError';
 
 const Dialog = DialogPrimitive.Root;
 

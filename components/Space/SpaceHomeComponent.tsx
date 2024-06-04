@@ -1,4 +1,3 @@
-import { useCreateTable, useFindManyTable, useFindUniqueSpace } from '@/zmodel/lib/hooks';
 import { PropertyCard } from '@/components/SpaceComponent/Property/PropertyCard';
 import { SpaceComponentCard } from '@/components/SpaceComponent/Dashboard/DashboardCard';
 import { useRouter } from 'next/router';
@@ -13,19 +12,21 @@ import { z } from 'zod';
 import { WithNavBar } from '@/components/layout/WithNavBar';
 import { ListCard } from '@/components/SpaceComponent/List/ListCard';
 import Link from 'next/link';
+import { useCreateDashboard, useCreateList, useCreateProperty } from '@/zmodel/lib/hooks';
 
 export function SpaceHomeComponent({
-    tables,
+    dashboards,
+    lists,
+    properties,
 }: {
-    tables: {
-        owner: User;
-        dashboard: Dashboard | null;
-        list: List | null;
-        property: Property | null;
-    }[];
+    dashboards: Dashboard[];
+    lists: List[];
+    properties: Property[];
 }) {
-    const createTable = useCreateTable();
     const router = useRouter();
+    const createList = useCreateList();
+    const createProperty = useCreateProperty();
+    const createDashboard = useCreateDashboard();
     return (
         <WithNavBar>
             <div className="p-8">
@@ -33,13 +34,8 @@ export function SpaceHomeComponent({
                     <CreateForm
                         formSchema={z.object({ list: ListCreateScalarSchema })}
                         onSubmitData={async (data) => {
-                            await createTable.mutateAsync({
-                                data: {
-                                    type: 'List',
-                                    list: {
-                                        create: data.list,
-                                    },
-                                },
+                            await createList.mutateAsync({
+                                data: data.list,
                             });
                         }}
                         title={'Create List'}
@@ -49,13 +45,8 @@ export function SpaceHomeComponent({
                             property: PropertyCreateScalarSchema,
                         })}
                         onSubmitData={async (data) => {
-                            await createTable.mutateAsync({
-                                data: {
-                                    type: Type.Property,
-                                    property: {
-                                        create: data.property,
-                                    },
-                                },
+                            await createProperty.mutateAsync({
+                                data: data.property,
                             });
                         }}
                         title={'Create Property'}
@@ -63,13 +54,8 @@ export function SpaceHomeComponent({
                     <CreateForm
                         formSchema={z.object({ dashboard: DashboardCreateScalarSchema })}
                         onSubmitData={async (data) => {
-                            await createTable.mutateAsync({
-                                data: {
-                                    type: 'Dashboard',
-                                    dashboard: {
-                                        create: data.dashboard,
-                                    },
-                                },
+                            await createDashboard.mutateAsync({
+                                data: data.dashboard,
                             });
                         }}
                         title={'Create Dashboard'}
@@ -78,38 +64,40 @@ export function SpaceHomeComponent({
 
                 <h2 className="mb-4 text-xl font-semibold">Components</h2>
                 <ul className="mb-8 flex flex-wrap gap-6">
-                    {tables.map((table) => {
-                        if (table.dashboard) {
-                            return (
-                                <li key={table.dashboard.id}>
-                                    <Link href={`${router.asPath}/dashboard/${table.dashboard.id}`}>
-                                        <SpaceComponentCard spaceComponent={table.dashboard}>
-                                            {table.dashboard.createdAt.toString()}
-                                        </SpaceComponentCard>
-                                    </Link>
-                                </li>
-                            );
-                        } else if (table.list) {
-                            return (
-                                <li key={table.list.id}>
-                                    <Link href={`${router.asPath}/list/${table.list.id}`}>
-                                        <SpaceComponentCard spaceComponent={table.list}>
-                                            <ListCard list={table.list} />
-                                        </SpaceComponentCard>
-                                    </Link>
-                                </li>
-                            );
-                        } else if (table.property) {
-                            return (
-                                <li key={table.property.id}>
-                                    <Link href={`${router.asPath}/property/${table.property.id}`}>
-                                        <SpaceComponentCard spaceComponent={table.property}>
-                                            <PropertyCard property={table.property} />
-                                        </SpaceComponentCard>
-                                    </Link>
-                                </li>
-                            );
-                        }
+                    {dashboards.map((dashboard) => {
+                        return (
+                            <li key={dashboard.id}>
+                                <Link href={`/dashboard/${dashboard.id}`}>
+                                    <SpaceComponentCard spaceComponent={dashboard}>
+                                        {dashboard.createdAt.toString()}
+                                    </SpaceComponentCard>
+                                </Link>
+                            </li>
+                        );
+                    })}
+
+                    {lists.map((list) => {
+                        return (
+                            <li key={list.id}>
+                                <Link href={`/list/${list.id}`}>
+                                    <SpaceComponentCard spaceComponent={list}>
+                                        <ListCard list={list} />
+                                    </SpaceComponentCard>
+                                </Link>
+                            </li>
+                        );
+                    })}
+
+                    {properties.map((property) => {
+                        return (
+                            <li key={property.id}>
+                                <Link href={`/property/${property.id}`}>
+                                    <SpaceComponentCard spaceComponent={property}>
+                                        <PropertyCard property={property} />
+                                    </SpaceComponentCard>
+                                </Link>
+                            </li>
+                        );
                     })}
                 </ul>
             </div>

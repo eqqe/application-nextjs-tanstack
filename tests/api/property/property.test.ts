@@ -12,11 +12,6 @@ it('Should create / list properties', async () => {
         data: {
             ...property,
             name: 'Property test',
-            table: {
-                create: {
-                    type: Type.Property,
-                },
-            },
         },
     });
 
@@ -48,11 +43,6 @@ it('Should create / list properties', async () => {
             ...fakePrivateProperty,
             name: 'Private property test',
             private: true,
-            table: {
-                create: {
-                    type: Type.Property,
-                },
-            },
         },
     });
 
@@ -85,9 +75,6 @@ it('Should allow a user to update properties they own', async () => {
     const newProperty = await user2.prisma.property.create({
         data: {
             ...property,
-            table: {
-                create: { type: Type.Property },
-            },
         },
     });
 
@@ -108,9 +95,6 @@ it('Should not allow a user to delete properties they do not own / allow if they
         data: {
             ...property,
             name: 'User2 Property',
-            table: {
-                create: { type: Type.Property },
-            },
         },
     });
 

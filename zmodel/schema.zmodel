@@ -92,7 +92,6 @@ model User extends IdCreatedUpdated {
     lists  List[]
     payments      Payment[]
 
-    tables      Table[]
     charges         Charge[]
     panelRows         PanelRow[]
     panels           Panel[]
@@ -131,16 +130,7 @@ enum Type {
     Property
 }
 
-model Table extends Component {
-    type Type
 
-    list List?
-    todo Todo?
-    dashboard Dashboard?
-    property Property?
-
-    @@allow('all', owner == auth())
-}
 
 // next-auth
 model Account {

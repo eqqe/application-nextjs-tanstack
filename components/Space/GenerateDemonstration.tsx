@@ -7,7 +7,6 @@ import {
     useCreateManyList,
     useCreateManyPayment,
     useCreateManyProperty,
-    useCreateManyTable,
 } from '@/zmodel/lib/hooks';
 import { PropertyType, ChargeType } from '@prisma/client';
 
@@ -56,8 +55,6 @@ const fakeCharge = ({ propertyId, leaseId }: { propertyId: string; leaseId: stri
 export const GenerateDemonstration = () => {
     const space = useCurrentSpace();
 
-    const createManyTable = useCreateManyTable();
-
     const createManyProperty = useCreateManyProperty();
     const createManyDashboard = useCreateManyDashboard();
     const createManyList = useCreateManyList();
@@ -72,48 +69,22 @@ export const GenerateDemonstration = () => {
         }
         const prefix = `demo_${Date.now()}_`;
 
-        await createManyTable.mutateAsync({
-            data: Array.from({ length: 5 }).map((_, index) => ({
-                id: `${prefix}Dashboard${index}`,
-                type: 'Dashboard',
-            })),
-        });
-
         await createManyDashboard.mutateAsync({
             data: Array.from({ length: 5 }).map((_, index) => ({
                 spaceId: space.id,
                 name: `${prefix}Dashboard${index}`,
-                tableId: `${prefix}Dashboard${index}`,
             })),
         });
-
-        await createManyTable.mutateAsync({
-            data: Array.from({ length: 5 }).map((_, index) => ({
-                id: `${prefix}List${index}`,
-                type: 'List',
-            })),
-        });
-
         await createManyList.mutateAsync({
             data: Array.from({ length: 5 }).map((_, index) => ({
                 spaceComponentId: `${prefix}List${index}`,
-                tableId: `${prefix}List${index}`,
                 spaceId: space.id,
                 name: `${prefix}List${index}`,
             })),
         });
-
-        await createManyTable.mutateAsync({
-            data: Array.from({ length: 5 }).map((_, index) => ({
-                id: `${prefix}Property${index}`,
-                type: 'Property',
-            })),
-        });
-
         await createManyProperty.mutateAsync({
             data: Array.from({ length: 5 }).map((_, index) => ({
                 ...fakeProperty(),
-                tableId: `${prefix}Property${index}`,
                 id: `${prefix}Property${index}`,
                 spaceId: space.id,
                 name: `${prefix}Property${index}`,
