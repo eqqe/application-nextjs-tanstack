@@ -19,7 +19,7 @@ model Property extends SpaceComponent {
 }
 
 
-abstract model IdCreatedUpdatedAuthOwnerProperty extends Component {
+abstract model PropertyComponent extends Component {
     property    Property   @relation(fields: [propertyId], references: [id], onDelete: Cascade)
     propertyId  String
 
@@ -28,12 +28,23 @@ abstract model IdCreatedUpdatedAuthOwnerProperty extends Component {
     @@allow('all', auth().currentSpace == property.space && property.space.members?[user == auth()])
 }
 
-model Lease extends IdCreatedUpdatedAuthOwnerProperty {
+model Lease extends PropertyComponent {
     startDate   DateTime
     endDate     DateTime?
     rentAmount  Int
     payments    Payment[]
     charges     Charge[]
+    tenants     Tenant[]
+    @@allow('read', tenants?[user == auth()])
+}
+
+model Tenant extends Component
+{
+    lease    Lease   @relation(fields: [leaseId], references: [id], onDelete: Cascade)
+    leaseId  String
+
+    user    User   @relation("user", fields: [userId], references: [id], onDelete: Cascade)
+    userId  String
 }
 
 model Payment extends Component {
@@ -51,7 +62,7 @@ enum ChargeType {
     TAXES
     OTHER
 }
-model Charge  extends IdCreatedUpdatedAuthOwnerProperty {
+model Charge  extends PropertyComponent {
     lease       Lease?     @relation(fields: [leaseId], references: [id], onDelete: Cascade)
     leaseId     String?
     chargeType        ChargeType

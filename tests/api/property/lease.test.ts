@@ -1,5 +1,5 @@
 import { assert, expect, it } from 'vitest';
-import { fakeLease, fakePayment, fakeProperty } from '@/components/Space/GenerateDemonstration';
+import { fakeLease, fakePayment, fakeProperty } from '@/lib/fake';
 import { getEnhancedPrisma } from '../../mock/enhanced-prisma';
 
 it('Should not allow a user to create leases or payments for properties they do not own', async () => {

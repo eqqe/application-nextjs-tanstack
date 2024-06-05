@@ -1,5 +1,5 @@
 import { assert, expect, it } from 'vitest';
-import { fakeLease, fakeProperty } from '@/components/Space/GenerateDemonstration';
+import { fakeLease, fakeProperty } from '@/lib/fake';
 import { getEnhancedPrisma } from '../../mock/enhanced-prisma';
 
 it('Should create / list properties', async () => {

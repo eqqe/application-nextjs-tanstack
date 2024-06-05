@@ -1,7 +1,7 @@
 import { assert, it } from 'vitest';
 import { getEnhancedPrisma } from '../mock/enhanced-prisma';
 import { SpaceUserRole } from '@prisma/client';
-import { fakeLease, fakePayment, fakeProperty } from '@/components/Space/GenerateDemonstration';
+import { fakeLease, fakePayment, fakeProperty } from '@/lib/fake';
 import { enhancePrisma } from '@/server/enhanced-db';
 
 it('Should list spaces, and check that only current space components are visible', async () => {

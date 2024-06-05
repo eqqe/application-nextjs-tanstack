@@ -80,21 +80,24 @@ model User extends IdCreatedUpdated {
     currentSpace          Space?         @relation(fields: [currentSpaceId], references: [id], onDelete: Cascade)
     currentSpaceId        String?
     image         String?     @url
-    todos         Todo[]
+    todos         Todo[] @relation("owner")
+
+    tenants     Tenant[] @relation("user")
+    tenantsOwned Tenant[] @relation("owner")
     
 
-    leases        Lease[]
-    dashboards  Dashboard[]
-    properties  Property[]
-    lists  List[]
-    payments      Payment[]
+    leases        Lease[] @relation("owner")
+    dashboards  Dashboard[] @relation("owner")
+    properties  Property[] @relation("owner")
+    lists  List[]  @relation("owner")
+    payments      Payment[] @relation("owner")
 
-    charges         Charge[]
-    panelRows         PanelRow[]
-    panels           Panel[]
-    panelComponents     PanelComponent[]
-    panelComponentsCounter     PanelComponentCounter[]
-    panelComponentsReport     PanelComponentReport[]
+    charges         Charge[] @relation("owner")
+    panelRows         PanelRow[] @relation("owner")
+    panels           Panel[] @relation("owner")
+    panelComponents     PanelComponent[] @relation("owner")
+    panelComponentsCounter     PanelComponentCounter[] @relation("owner")
+    panelComponentsReport     PanelComponentReport[] @relation("owner")
     
     // next-auth
     accounts      Account[]
@@ -110,7 +113,7 @@ model User extends IdCreatedUpdated {
 }
 
 abstract model Owner {
-    owner     User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+    owner     User     @relation("owner", fields: [ownerId], references: [id], onDelete: Cascade)
     ownerId   String   @default(auth().id)
     @@deny('update', future().owner != owner)
 }
