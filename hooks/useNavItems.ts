@@ -1,11 +1,7 @@
 import { useFindManyGrid } from '@/zmodel/lib/hooks';
 import { getGridUrl } from '@/lib/urls';
-export interface NavItem {
-    title: string;
-    href: string;
-}
 
-export function useNavItems(): NavItem[] {
+export function useNavItems() {
     const { data: grids } = useFindManyGrid({
         include: {
             subTab: {
@@ -23,12 +19,8 @@ export function useNavItems(): NavItem[] {
             },
         },
     });
-
-    if (!grids) {
-        return [];
-    }
-    return grids.map((grid) => ({
-        title: grid.subTab.tab.folder.applicationVersion.applicationSlug,
+    return grids?.map((grid) => ({
+        title: `Application ${grid.subTab.tab.folder.applicationVersion.applicationSlug}`,
         href: getGridUrl(grid.id),
     }));
 }

@@ -1,5 +1,5 @@
 import { PrismaClient, Prisma } from '@prisma/client';
-import { assetsv0_1 } from './assets/versions';
+import { assetsv0_1, assetsv0_2 } from './assets/versions';
 
 export const slugAssetsApplication = 'Assets';
 
@@ -7,7 +7,7 @@ export const slugAssetsApplication = 'Assets';
 const applications = [
     createApplicationConnectVersions({
         slug: slugAssetsApplication,
-        applicationVersions: [assetsv0_1],
+        applicationVersions: [assetsv0_1, assetsv0_2],
     }),
 ];
 

@@ -63,9 +63,12 @@ export async function getEnhancedPrisma() {
     assert(application);
     assert(application.versions.length);
 
+    const version02 = application.versions.find((version) => version.versionMajor === 0 && version.versionMinor === 2);
+    assert(version02);
+
     const spaceApplication = await prisma.spaceApplicationVersion.create({
         data: {
-            applicationVersionId: application.versions[0].id,
+            applicationVersionId: version02.id,
             spaceId: user2.space.id,
         },
         include: {

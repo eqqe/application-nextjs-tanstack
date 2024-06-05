@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { Cloud, PlusCircle, IceCreamIcon, EyeIcon } from 'lucide-react';
+import { Cloud, PlusCircle, IceCreamIcon } from 'lucide-react';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -13,33 +13,20 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { FallbackError } from '../layout/FallbackError';
 import { useFindManySpace } from '@/zmodel/lib/hooks';
 import { useRouter } from 'next/navigation';
-import { useCurrentSpace, useCurrentUser } from '@/lib/context';
+import { useCurrentSpace } from '@/lib/context';
 import { Badge } from '@/components/ui/badge';
-import { toast } from 'react-toastify';
-import { Space } from '@zenstackhq/runtime/models';
-import { setCookie } from 'cookies-next';
-import { useQueryClient } from '@tanstack/react-query';
+import { useSwitchSpace } from '@/lib/switchSpace';
 
-export const currentSpaceCookieName = 'currentSpaceId';
+export const currentSpaceCookieName = (userId: string) => `${userId}-currentSpaceId`;
+
 export function SpaceSwitch() {
     const { data: spaces } = useFindManySpace();
-
-    const currentUser = useCurrentUser();
 
     const router = useRouter();
 
     const currentSpace = useCurrentSpace();
 
-    const queryClient = useQueryClient();
-
-    async function switchSpace(space: Space) {
-        if (currentUser) {
-            setCookie(currentSpaceCookieName, space.id);
-            queryClient.refetchQueries({ queryKey: ['zenstack'] });
-        } else {
-            toast('Error cannot find current user');
-        }
-    }
+    const switchSpace = useSwitchSpace();
 
     return (
         <ErrorBoundary fallback={<FallbackError />}>

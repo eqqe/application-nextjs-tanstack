@@ -7,6 +7,7 @@ import {
     PanelComponentCounterCreateScalarSchema,
     PanelComponentReportCreateScalarSchema,
 } from '@zenstackhq/runtime/zod/models';
+import { toast } from 'react-toastify';
 
 export const PanelRender = ({ panel, children }: { panel: Panel; children: ReactNode }) => {
     const deletePanel = useDeletePanel();
@@ -23,7 +24,7 @@ export const PanelRender = ({ panel, children }: { panel: Panel; children: React
                         onSubmitData={async (data) => {
                             await create.mutateAsync({
                                 data: {
-                                    title: 'New counCounterter',
+                                    title: 'New counter',
                                     panelId: panel.id,
                                     type: 'Counter',
                                     counter: {
@@ -33,6 +34,7 @@ export const PanelRender = ({ panel, children }: { panel: Panel; children: React
                                     },
                                 },
                             });
+                            toast.success(`Counter created successfully!`);
                         }}
                         title={'Create Counter'}
                     />
@@ -51,6 +53,7 @@ export const PanelRender = ({ panel, children }: { panel: Panel; children: React
                                     },
                                 },
                             });
+                            toast.success(`Report created successfully!`);
                         }}
                         title={'Create Report'}
                     />

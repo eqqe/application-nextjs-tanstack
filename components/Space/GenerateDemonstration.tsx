@@ -1,5 +1,4 @@
 import { faker } from '@faker-js/faker';
-import { useCurrentSpace } from '@/lib/context';
 import {
     useCreateManyCharge,
     useCreateManyDashboard,
@@ -10,13 +9,13 @@ import {
 } from '@/zmodel/lib/hooks';
 import { PropertyType, ChargeType } from '@prisma/client';
 
-export const fakeProperty = () => {
+export const fakeProperty = (postalCode?: string) => {
     return {
         name: faker.word.noun(),
         address: faker.location.streetAddress(),
         city: faker.location.city(),
         propertyType: PropertyType.COMMERCIAL,
-        postalCode: faker.location.zipCode(),
+        postalCode: postalCode ?? faker.location.zipCode(),
         country: faker.location.country(),
         createdAt: faker.date.past(),
     };
@@ -53,8 +52,6 @@ const fakeCharge = ({ propertyId, leaseId }: { propertyId: string; leaseId: stri
 };
 
 export const GenerateDemonstration = () => {
-    const space = useCurrentSpace();
-
     const createManyProperty = useCreateManyProperty();
     const createManyDashboard = useCreateManyDashboard();
     const createManyList = useCreateManyList();
@@ -64,29 +61,22 @@ export const GenerateDemonstration = () => {
     const createManyCharge = useCreateManyCharge();
 
     const generateDemonstration = async () => {
-        if (!space) {
-            throw 'not space';
-        }
         const prefix = `demo_${Date.now()}_`;
 
         await createManyDashboard.mutateAsync({
             data: Array.from({ length: 5 }).map((_, index) => ({
-                spaceId: space.id,
                 name: `${prefix}Dashboard${index}`,
             })),
         });
         await createManyList.mutateAsync({
             data: Array.from({ length: 5 }).map((_, index) => ({
-                spaceComponentId: `${prefix}List${index}`,
-                spaceId: space.id,
                 name: `${prefix}List${index}`,
             })),
         });
         await createManyProperty.mutateAsync({
             data: Array.from({ length: 5 }).map((_, index) => ({
-                ...fakeProperty(),
+                ...fakeProperty(index === 0 ? 'Property to find in Playwright test' : void 0),
                 id: `${prefix}Property${index}`,
-                spaceId: space.id,
                 name: `${prefix}Property${index}`,
             })),
         });

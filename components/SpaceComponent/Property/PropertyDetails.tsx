@@ -5,7 +5,6 @@ import { LeaseCreateScalarSchema } from '@zenstackhq/runtime/zod/models';
 import { CreateForm } from '@/components/Form/CreateForm';
 
 export function PropertyDetails() {
-    const space = useCurrentSpace();
     const componentId = useComponentIdRouter();
 
     const { data: property } = useFindUniqueProperty(
@@ -31,10 +30,6 @@ export function PropertyDetails() {
 
     const createLease = useCreateLease();
 
-    if (!space || !property) {
-        return <></>;
-    }
-
     return (
         <>
             <h1 className="mb-4 text-2xl font-semibold">{property?.address}</h1>
@@ -43,6 +38,9 @@ export function PropertyDetails() {
                     <CreateForm
                         formSchema={LeaseCreateScalarSchema}
                         onSubmitData={async (data) => {
+                            if (!property) {
+                                throw 'Error no property';
+                            }
                             await createLease.mutateAsync({
                                 data: {
                                     ...data,
@@ -55,7 +53,7 @@ export function PropertyDetails() {
                 </div>
             </div>
             <ul className="flex w-11/12 flex-col space-y-4 py-8 md:w-auto">
-                {property.leases?.map((lease) => (
+                {property?.leases?.map((lease) => (
                     <LeaseDetail key={lease.id} {...{ lease }} />
                 ))}
             </ul>

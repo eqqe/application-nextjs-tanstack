@@ -1,9 +1,8 @@
 import { useNavItems } from '@/hooks/useNavItems';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Home, LineChart, Package, Package2, PanelLeft, ShoppingCart, Users2 } from 'lucide-react';
+import { LineChart, Package, PanelLeft } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { getGridUrl } from '@/lib/urls';
 
 export const MobileSideNav = () => {
     const items = useNavItems();
@@ -18,7 +17,7 @@ export const MobileSideNav = () => {
             </SheetTrigger>
             <SheetContent side="left" className="sm:max-w-xs">
                 <nav className="grid gap-6 text-lg font-medium">
-                    {items.map((item, index) => (
+                    {items?.map((item, index) => (
                         <Link
                             key={index}
                             href={item.href}

@@ -16,6 +16,7 @@ import { AutoTable } from '../ui/auto-table';
 import * as z from 'zod';
 import { toast } from 'react-toastify';
 import { useQueryClient } from '@tanstack/react-query';
+import { ApplicationVersion } from '@zenstackhq/runtime/models';
 
 export const Applications = () => {
     const { data: applications } = useFindManyApplication({
@@ -61,6 +62,7 @@ export const Applications = () => {
         const activated = spaceApplications?.find(
             (spaceApplication) => spaceApplication.applicationVersion.applicationSlug === application.slug
         );
+        /* Application are ordered by descending version, so the latest version should be found */
         const updatable = {
             major: activated
                 ? application.versions.find(
@@ -75,6 +77,25 @@ export const Applications = () => {
                   )
                 : null,
         };
+
+        /* Application are ordered by descending version, so the closest previous version should be found */
+        const rollbackable = {
+            major: activated
+                ? application.versions.find(
+                      (version) => version.versionMajor < (activated.applicationVersion.versionMajor ?? 0)
+                  )
+                : null,
+            minor: activated
+                ? application.versions.find(
+                      (version) =>
+                          version.versionMinor < (activated.applicationVersion.versionMinor ?? 0) &&
+                          version.versionMajor === activated.applicationVersion.versionMajor
+                  )
+                : null,
+        };
+        async function refetchGrids() {
+            queryClient.refetchQueries({ queryKey: ['zenstack', 'Grid'] });
+        }
         async function onClickActivate() {
             if (activated) {
                 await desactivate.mutateAsync({ where: { id: activated.id } });
@@ -85,7 +106,7 @@ export const Applications = () => {
             } else {
                 toast('No version available for this application');
             }
-            queryClient.refetchQueries({ queryKey: ['zenstack', 'Grid'] });
+            refetchGrids();
         }
 
         async function updateToVersion(applicationVersionId: string) {
@@ -100,6 +121,7 @@ export const Applications = () => {
                     id: activated.id,
                 },
             });
+            refetchGrids();
         }
 
         async function onClickUpdateMajor() {
@@ -115,19 +137,45 @@ export const Applications = () => {
             await updateToVersion(updatable.minor.id);
         }
 
+        async function onClickRollbackMajor() {
+            if (!rollbackable.major) {
+                return;
+            }
+            await updateToVersion(rollbackable.major.id);
+        }
+        async function onClickRollbackMinor() {
+            if (!rollbackable.minor) {
+                return;
+            }
+            await updateToVersion(rollbackable.minor.id);
+        }
+
+        function displayVersion({ version }: { version: ApplicationVersion }) {
+            return `version ${version.versionMajor}.${version.versionMinor}`;
+        }
         return (
-            <div key={application.id}>
+            <div key={application.id} className="flex gap-5">
                 <Button onClick={onClickActivate} variant={activated ? 'default' : 'outline'} className="min-w-40">
                     {activated ? 'Disable' : 'Enable'} {application.slug}
                 </Button>
                 {updatable.major && (
                     <Button onClick={onClickUpdateMajor} className="min-w-40">
-                        Major update
+                        Update to {displayVersion({ version: updatable.major })}
                     </Button>
                 )}
                 {updatable.minor && (
                     <Button onClick={onClickUpdateMinor} className="min-w-40">
-                        Minor update
+                        Update to {displayVersion({ version: updatable.minor })}
+                    </Button>
+                )}
+                {rollbackable.major && (
+                    <Button onClick={onClickRollbackMajor} className="min-w-40">
+                        Rollback to {displayVersion({ version: rollbackable.major })}
+                    </Button>
+                )}
+                {rollbackable.minor && (
+                    <Button onClick={onClickRollbackMinor} className="min-w-40">
+                        Rollback to {displayVersion({ version: rollbackable.minor })}
                     </Button>
                 )}
             </div>

@@ -4,6 +4,6 @@ import { renderProvide } from './create-wrapper';
 import { SpaceHomeComponent } from '@/components/Space/SpaceHomeComponent';
 
 test('Page', () => {
-    renderProvide(<SpaceHomeComponent properties={[]} lists={[]} dashboards={[]} />);
+    renderProvide(<SpaceHomeComponent />);
     screen.getByText('Components');
 });

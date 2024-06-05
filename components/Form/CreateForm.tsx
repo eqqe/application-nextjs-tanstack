@@ -31,7 +31,6 @@ export function CreateForm<SchemaType extends ZodObjectOrWrapped>({
         try {
             setOpen(false);
             await onSubmitData(data);
-            toast.success('Created successfully!');
         } catch (err) {
             toast.error('Failed to create');
         }

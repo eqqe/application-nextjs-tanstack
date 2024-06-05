@@ -54,13 +54,7 @@ export function UserAuthForm() {
         }
     };
 
-    useQuery({
-        queryKey: ['demoSignIn'],
-        queryFn: async () => {
-            await onSubmit(userDemo);
-        },
-        enabled: process.env.NODE_ENV === 'development',
-    });
+    console.error(process.env.NODE_ENV);
 
     return (
         <>

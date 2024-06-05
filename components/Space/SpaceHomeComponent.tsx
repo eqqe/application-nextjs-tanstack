@@ -12,21 +12,44 @@ import { z } from 'zod';
 import { WithNavBar } from '@/components/layout/WithNavBar';
 import { ListCard } from '@/components/SpaceComponent/List/ListCard';
 import Link from 'next/link';
-import { useCreateDashboard, useCreateList, useCreateProperty } from '@/zmodel/lib/hooks';
+import {
+    useCreateDashboard,
+    useCreateList,
+    useCreateProperty,
+    useFindManyDashboard,
+    useFindManyList,
+    useFindManyProperty,
+} from '@/zmodel/lib/hooks';
+import { toast } from 'react-toastify';
 
-export function SpaceHomeComponent({
-    dashboards,
-    lists,
-    properties,
-}: {
-    dashboards: Dashboard[];
-    lists: List[];
-    properties: Property[];
-}) {
-    const router = useRouter();
+export function SpaceHomeComponent() {
     const createList = useCreateList();
     const createProperty = useCreateProperty();
     const createDashboard = useCreateDashboard();
+    const { data: dashboards } = useFindManyDashboard({
+        include: {
+            owner: true,
+        },
+        orderBy: {
+            updatedAt: 'desc',
+        },
+    });
+    const { data: properties } = useFindManyProperty({
+        include: {
+            owner: true,
+        },
+        orderBy: {
+            updatedAt: 'desc',
+        },
+    });
+    const { data: lists } = useFindManyList({
+        include: {
+            owner: true,
+        },
+        orderBy: {
+            updatedAt: 'desc',
+        },
+    });
     return (
         <WithNavBar>
             <div className="p-8">
@@ -37,6 +60,7 @@ export function SpaceHomeComponent({
                             await createList.mutateAsync({
                                 data: data.list,
                             });
+                            toast.success(`${data.list.name} created successfully!`);
                         }}
                         title={'Create List'}
                     />
@@ -48,6 +72,7 @@ export function SpaceHomeComponent({
                             await createProperty.mutateAsync({
                                 data: data.property,
                             });
+                            toast.success(`${data.property.name} created successfully!`);
                         }}
                         title={'Create Property'}
                     />
@@ -57,6 +82,7 @@ export function SpaceHomeComponent({
                             await createDashboard.mutateAsync({
                                 data: data.dashboard,
                             });
+                            toast.success(`${data.dashboard.name} created successfully!`);
                         }}
                         title={'Create Dashboard'}
                     />
@@ -64,7 +90,7 @@ export function SpaceHomeComponent({
 
                 <h2 className="mb-4 text-xl font-semibold">Components</h2>
                 <ul className="mb-8 flex flex-wrap gap-6">
-                    {dashboards.map((dashboard) => {
+                    {dashboards?.map((dashboard) => {
                         return (
                             <li key={dashboard.id}>
                                 <Link href={`/dashboard/${dashboard.id}`}>
@@ -76,7 +102,7 @@ export function SpaceHomeComponent({
                         );
                     })}
 
-                    {lists.map((list) => {
+                    {lists?.map((list) => {
                         return (
                             <li key={list.id}>
                                 <Link href={`/list/${list.id}`}>
@@ -88,7 +114,7 @@ export function SpaceHomeComponent({
                         );
                     })}
 
-                    {properties.map((property) => {
+                    {properties?.map((property) => {
                         return (
                             <li key={property.id}>
                                 <Link href={`/property/${property.id}`}>

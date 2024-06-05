@@ -10,20 +10,13 @@ export function useCurrentUser() {
 }
 export function useCurrentSpace() {
     const { data: spaces } = useFindManySpace();
-    if (!spaces) {
+    const user = useCurrentUser();
+    if (!spaces || !user?.id) {
         return;
     }
-
-    const currentSpaceId = getCookie(currentSpaceCookieName);
+    const currentSpaceId = getCookie(currentSpaceCookieName(user.id));
     if (currentSpaceId) {
         return spaces.find((space) => space.id === currentSpaceId);
-    } else {
-        if (spaces?.length) {
-            const firstSpace = spaces[0];
-            setCookie(currentSpaceCookieName, firstSpace.id);
-            return spaces[0];
-        }
-        throw 'Cannot find space';
     }
 }
 
