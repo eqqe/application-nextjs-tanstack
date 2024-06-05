@@ -1,9 +1,9 @@
-import { enhance } from '@zenstackhq/runtime';
 import { PrismaClient } from '@prisma/client';
 import { nanoid } from 'nanoid';
 import { assert } from 'vitest';
 import { slugAssetsApplication } from '@/zmodel/prisma/applications/createApplications';
 import { Space } from '@zenstackhq/runtime/models';
+import { enhancePrisma } from '@/server/enhanced-db';
 
 const prisma = new PrismaClient();
 
@@ -31,9 +31,7 @@ export async function getEnhancedPrisma() {
             userCreated,
             space,
             testUser,
-            prisma: enhance(prisma, {
-                user: { ...userCreated, currentSpace: currentSpace ?? { id: space.id }, currentSpaceId: space.id },
-            }),
+            prisma: enhancePrisma({ userId: userCreated.id, currentSpaceId: currentSpace?.id ?? space.id }),
         };
     }
 

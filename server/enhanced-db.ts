@@ -4,23 +4,28 @@ import { getServerAuthSession } from './auth';
 import { prisma } from './db';
 import { currentSpaceCookieName } from '@/components/layout/SpaceSwitch';
 
+export function enhancePrisma({ userId, currentSpaceId }: { userId?: string; currentSpaceId?: string }) {
+    let options;
+    if (currentSpaceId) {
+        options = { user: { id: userId, currentSpace: { id: currentSpaceId }, currentSpaceId } };
+    } else if (userId) {
+        options = { user: { id: userId } };
+    } else {
+        options = {};
+    }
+    // @ts-ignore
+    return enhance(prisma, options);
+}
+
 export async function getEnhancedPrisma(ctx: {
     req: GetServerSidePropsContext['req'];
     res: GetServerSidePropsContext['res'];
 }) {
     const session = await getServerAuthSession(ctx);
-    let user;
+    let currentSpaceId;
     if (session?.user) {
         const cookieName = currentSpaceCookieName(session.user.id);
-        const currentSpaceId = ctx.req.cookies[cookieName];
-        if (currentSpaceId) {
-            user = { ...session?.user, currentSpace: { id: currentSpaceId }, currentSpaceId: currentSpaceId };
-        } else {
-            user = session.user;
-        }
+        currentSpaceId = ctx.req.cookies[cookieName];
     }
-    // @ts-ignore
-    return enhance(prisma, {
-        user,
-    });
+    return enhancePrisma({ userId: session?.user.id, currentSpaceId });
 }
