@@ -30,16 +30,8 @@ abstract model SpaceComponent extends IdCreatedUpdatedSpace, Owner {
     name     String   @length(1, 100)
 
 
-    @@deny('read', private && owner != auth())
-
-    // when create, owner must be set to current user, and user must be in the space
-    @@allow('create', owner == auth() && auth().currentSpace == space && space.members?[user == auth()])
-
-    // when create, owner must be set to current user, and user must be in the space
-    @@allow('update', owner == auth() && auth().currentSpace == space && space.members?[user == auth()])
-
-    // can be deleted by owner
-    @@allow('delete', owner == auth())
+    @@deny('all', private && owner != auth())
+    @@allow('all', space == auth().currentSpace && space.members?[user == auth()])
 }
 
 

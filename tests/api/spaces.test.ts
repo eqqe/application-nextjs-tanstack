@@ -1,7 +1,7 @@
 import { assert, it } from 'vitest';
 import { getEnhancedPrisma } from '../mock/enhanced-prisma';
 import { SpaceUserRole } from '@prisma/client';
-import { fakeProperty } from '@/components/Space/GenerateDemonstration';
+import { fakeLease, fakePayment, fakeProperty } from '@/components/Space/GenerateDemonstration';
 import { enhancePrisma } from '@/server/enhanced-db';
 
 it('Should list spaces, and check that only current space components are visible', async () => {
@@ -36,7 +36,7 @@ it('Should list spaces, and check that only current space components are visible
     await checkSpaces([newSpaceName, user1.space.name]);
 
     const property = fakeProperty();
-    await user1.prisma.property.create({
+    const newProperty = await user1.prisma.property.create({
         data: {
             ...property,
             name: 'Property test first space',
@@ -53,12 +53,7 @@ it('Should list spaces, and check that only current space components are visible
 
     const propertyNewSpace = fakeProperty();
 
-    await user1PrismaNewSpace.property.create({
-        data: {
-            ...propertyNewSpace,
-            name: 'Property test first space',
-        },
-    });
+    const newPropertyNewSpace = await user1PrismaNewSpace.property.create({ data: propertyNewSpace });
 
     propertiesNewSpace = await user1PrismaNewSpace.property.findMany();
     assert.equal(propertiesNewSpace.length, 1);
@@ -67,4 +62,32 @@ it('Should list spaces, and check that only current space components are visible
     properties = await user1.prisma.property.findMany();
     assert.equal(properties.length, 1);
     assert.equal(properties[0].address, property.address);
+
+    const lease = await user1.prisma.lease.create({ data: fakeLease(newProperty.id) });
+    assert.equal(lease.propertyId, newProperty.id);
+
+    const leaseNewSpace = await user1PrismaNewSpace.lease.create({ data: fakeLease(newPropertyNewSpace.id) });
+    assert.equal(leaseNewSpace.propertyId, newPropertyNewSpace.id);
+
+    const leasesNewSpace = await user1PrismaNewSpace.lease.findMany();
+    assert.equal(leasesNewSpace.length, 1);
+    assert.equal(leasesNewSpace[0].propertyId, newPropertyNewSpace.id);
+
+    const leases = await user1.prisma.lease.findMany();
+    assert.equal(leases.length, 1);
+    assert.equal(leases[0].propertyId, newProperty.id);
+
+    const payment = await user1.prisma.payment.create({ data: fakePayment(lease.id) });
+    assert.equal(payment.leaseId, lease.id);
+
+    const paymentNewSpace = await user1PrismaNewSpace.payment.create({ data: fakePayment(leaseNewSpace.id) });
+    assert.equal(paymentNewSpace.leaseId, leaseNewSpace.id);
+
+    const paymentsNewSpace = await user1PrismaNewSpace.payment.findMany();
+    assert.equal(paymentsNewSpace.length, 1);
+    assert.equal(paymentsNewSpace[0].leaseId, leaseNewSpace.id);
+
+    const payments = await user1.prisma.payment.findMany();
+    assert.equal(payments.length, 1);
+    assert.equal(payments[0].leaseId, lease.id);
 });

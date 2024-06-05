@@ -31,9 +31,6 @@ plugin hooks {
     version = 'v5'
 }
 
-
-
-
 abstract model IdCreatedUpdated
 {
     id        String      @id @default(uuid())

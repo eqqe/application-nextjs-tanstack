@@ -1,35 +1,17 @@
-import { assert, it } from 'vitest';
-import { fakeProperty } from '@/components/Space/GenerateDemonstration';
+import { assert, expect, it } from 'vitest';
+import { fakeLease, fakePayment, fakeProperty } from '@/components/Space/GenerateDemonstration';
 import { getEnhancedPrisma } from '../../mock/enhanced-prisma';
-import { Type } from '@prisma/client';
 
 it('Should not allow a user to create leases or payments for properties they do not own', async () => {
     const { user1, user2 } = await getEnhancedPrisma();
 
     const property = fakeProperty();
 
-    const newProperty = await user2.prisma.property.create({
-        data: {
-            ...property,
-            name: 'Property test',
-        },
-    });
+    const newProperty = await user2.prisma.property.create({ data: property });
 
-    let error;
-    try {
-        await user1.prisma.lease.create({
-            data: {
-                startDate: new Date(),
-                rentAmount: 1000,
-                propertyId: newProperty.id,
-            },
-        });
-    } catch (e) {
-        error = e;
-    }
-
-    // @ts-ignore
-    assert.equal(error.meta.reason, 'ACCESS_POLICY_VIOLATION');
+    expect(async () => await user1.prisma.lease.create({ data: fakeLease(newProperty.id) })).rejects.toThrow(
+        'denied by policy: lease entities'
+    );
 });
 
 it('Should allow a user to create leases and payments for properties in their space', async () => {
@@ -37,65 +19,24 @@ it('Should allow a user to create leases and payments for properties in their sp
 
     const property = fakeProperty();
 
-    const newProperty = await user2.prisma.property.create({
-        data: {
-            ...property,
-            name: 'user2 Property test',
-        },
-    });
+    const newProperty = await user2.prisma.property.create({ data: property });
 
-    const lease2 = await user2.prisma.lease.create({
-        data: {
-            startDate: new Date(),
-            rentAmount: 1000,
-            propertyId: newProperty.id,
-        },
-    });
+    const lease2 = await user2.prisma.lease.create({ data: fakeLease(newProperty.id) });
     assert.equal(lease2.propertyId, newProperty.id);
 
-    /*const lease3 = await user3.prisma.lease.create({
-        data: {
-            startDate: new Date(),
-            rentAmount: 1000,
-            propertyId: newProperty.id,
-        },
-    });
+    const lease3 = await user3.prisma.lease.create({ data: fakeLease(newProperty.id) });
     assert.equal(lease3.propertyId, newProperty.id);
 
-    const payment2 = await user2.prisma.payment.create({
-        data: {
-            leaseId: lease2.id,
-            amount: 1000,
-            date: new Date(),
-        },
-    });
+    const payment2 = await user2.prisma.payment.create({ data: fakePayment(lease2.id) });
     assert.equal(payment2.leaseId, lease2.id);
 
-    const payment2bis = await user2.prisma.payment.create({
-        data: {
-            leaseId: lease3.id,
-            amount: 1000,
-            date: new Date(),
-        },
-    });
+    const payment2bis = await user2.prisma.payment.create({ data: fakePayment(lease3.id) });
     assert.equal(payment2bis.leaseId, lease3.id);
 
-    const payment3 = await user2.prisma.payment.create({
-        data: {
-            leaseId: lease2.id,
-            amount: 1000,
-            date: new Date(),
-        },
-    });
+    const payment3 = await user2.prisma.payment.create({ data: fakePayment(lease2.id) });
     assert.equal(payment3.leaseId, lease2.id);
 
-    const payment3Bis = await user2.prisma.payment.create({
-        data: {
-            leaseId: lease3.id,
-            amount: 1000,
-            date: new Date(),
-        },
-    });
+    const payment3Bis = await user2.prisma.payment.create({ data: fakePayment(lease3.id) });
     assert.equal(payment3Bis.leaseId, lease3.id);
 
     const include = {
@@ -143,5 +84,5 @@ it('Should allow a user to create leases and payments for properties in their sp
     assert.equal(payments2.length, 4);
 
     const payments3 = await user3.prisma.payment.findMany();
-    assert.equal(payments3.length, 4);*/
+    assert.equal(payments3.length, 4);
 });

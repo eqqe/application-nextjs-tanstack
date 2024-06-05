@@ -17,25 +17,22 @@ export const fakeProperty = (postalCode?: string) => {
         propertyType: PropertyType.COMMERCIAL,
         postalCode: postalCode ?? faker.location.zipCode(),
         country: faker.location.country(),
-        createdAt: faker.date.past(),
     };
 };
 
-const fakeLease = (propertyId: string) => {
+export const fakeLease = (propertyId: string) => {
     return {
         propertyId,
         startDate: faker.date.past(),
         endDate: faker.date.future(),
         rentAmount: faker.number.float({ min: 5, max: 50 }),
-        createdAt: faker.date.past(),
     };
 };
-const fakePayment = (leaseId: string) => {
+export const fakePayment = (leaseId: string) => {
     return {
         leaseId,
         amount: faker.number.bigInt({ min: 500, max: 5000 }),
         date: faker.date.past(),
-        createdAt: faker.date.past(),
     };
 };
 
@@ -47,7 +44,6 @@ const fakeCharge = ({ propertyId, leaseId }: { propertyId: string; leaseId: stri
         amount: faker.number.bigInt({ min: 5, max: 100 }),
         dueDate: faker.date.future(),
         description: faker.lorem.sentence(),
-        createdAt: faker.date.past(),
     };
 };
 

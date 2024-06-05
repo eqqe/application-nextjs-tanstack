@@ -12,8 +12,7 @@ model Todo extends Component {
     listId      String
     title       String    @length(1, 100)
     completedAt DateTime?
-
-    // owner has full access, also space members have full access (if the parent List is not private)
-    @@allow('all', list.owner == auth())
-    @@allow('all', list.space == auth().currentSpace && list.space.members?[user == auth()] && !list.private)
+    
+    @@deny('all', list.private && list.owner != auth())
+    @@allow('all', list.space == auth().currentSpace && list.space.members?[user == auth()])
 }
