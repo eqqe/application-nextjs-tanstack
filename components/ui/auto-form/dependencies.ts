@@ -1,11 +1,11 @@
 import { FieldValues, UseFormWatch } from 'react-hook-form';
 import { Dependency, DependencyType, EnumValues } from './types';
-import * as z from 'zod';
+import { z } from 'zod';
 
 export default function resolveDependencies<SchemaType extends z.infer<z.ZodObject<any, any>>>(
     dependencies: Dependency<SchemaType>[],
     currentFieldName: keyof SchemaType,
-    watch: UseFormWatch<FieldValues>,
+    watch: UseFormWatch<FieldValues>
 ) {
     let isDisabled = false;
     let isHidden = false;

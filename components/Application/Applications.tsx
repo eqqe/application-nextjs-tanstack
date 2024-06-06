@@ -13,7 +13,7 @@ import {
     ApplicationScalarSchema,
 } from '@zenstackhq/runtime/zod/models';
 import { AutoTable } from '../ui/auto-table';
-import * as z from 'zod';
+import { z } from 'zod';
 import { toast } from 'react-toastify';
 import { useQueryClient } from '@tanstack/react-query';
 import { ApplicationVersion } from '@zenstackhq/runtime/models';

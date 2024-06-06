@@ -1,15 +1,18 @@
-import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
-import { ChangeEvent, KeyboardEvent, useState } from 'react';
+import { TrashIcon } from '@heroicons/react/24/outline';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useCurrentSpace, useCurrentUser } from '@/lib/context';
-import { Space, SpaceUserRole } from '@prisma/client';
-import { useCreateSpaceUser, useDeleteSpaceUser, useFindManySpaceUser } from '@/zmodel/lib/hooks';
+import { Profile } from '@prisma/client';
+import { useCreateSpaceUser, useDeleteSpaceUser, useFindManySpaceUser, useFindManyProfile } from '@/zmodel/lib/hooks';
 import { UserAvatar } from '../UserAvatar';
+import { CreateForm } from '../Form/CreateForm';
+import { SpaceUserCreateScalarSchema } from '@zenstackhq/runtime/zod/models';
+import { z } from 'zod';
 
 export default function ManageMembers() {
     const [email, setEmail] = useState('');
     const space = useCurrentSpace();
-    const [role, setRole] = useState<SpaceUserRole>(SpaceUserRole.USER);
+    const [profile, setProfile] = useState<Profile>();
     const user = useCurrentUser();
     const { mutateAsync: createMember } = useCreateSpaceUser();
     const { mutate: deleteMember } = useDeleteSpaceUser();
@@ -17,36 +20,19 @@ export default function ManageMembers() {
     const { data: members } = useFindManySpaceUser({
         include: {
             user: true,
+            profile: true,
         },
         orderBy: {
-            role: 'desc',
+            profile: {
+                role: 'desc',
+            },
         },
     });
+    const { data: profiles } = useFindManyProfile();
 
-    if (!space) {
+    if (!space || !profiles?.length) {
         return <></>;
     }
-    const inviteUser = async () => {
-        try {
-            await createMember({
-                data: {
-                    user: {
-                        connect: {
-                            email,
-                        },
-                    },
-                    space: {
-                        connect: {
-                            id: space.id,
-                        },
-                    },
-                    role,
-                },
-            });
-        } catch (err) {
-            toast.error('Error occurred');
-        }
-    };
 
     const removeMember = (id: string) => {
         // eslint-disable-next-line no-alert
@@ -57,37 +43,36 @@ export default function ManageMembers() {
 
     return (
         <div>
-            <div className="mb-8 flex w-full flex-wrap items-center gap-2">
-                <input
-                    type="text"
-                    placeholder="Type user email and enter to invite"
-                    className="input input-sm input-bordered mr-2 grow"
-                    value={email}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                        setEmail(e.currentTarget.value);
-                    }}
-                    onKeyUp={(e: KeyboardEvent<HTMLInputElement>) => {
-                        if (e.key === 'Enter') {
-                            void inviteUser();
-                        }
-                    }}
-                />
-
-                <select
-                    className="select select-sm mr-2"
-                    value={role}
-                    onChange={(e: ChangeEvent<HTMLSelectElement>) => {
-                        setRole(e.currentTarget.value as SpaceUserRole);
-                    }}
-                >
-                    <option value={SpaceUserRole.USER}>USER</option>
-                    <option value={SpaceUserRole.ADMIN}>ADMIN</option>
-                </select>
-
-                <button onClick={() => void inviteUser()}>
-                    <PlusIcon className="size-6 text-gray-500" />
-                </button>
-            </div>
+            <CreateForm
+                formSchema={z.object({
+                    spaceUser: SpaceUserCreateScalarSchema,
+                    // https://stackoverflow.com/a/73825370/7671079 first element must be defined explicitely
+                    profile: z.enum([profiles[0].id, ...profiles.slice(1).map((profile) => profile.id)]),
+                })}
+                onSubmitData={async (data) => {
+                    await createMember({
+                        data: {
+                            user: {
+                                connect: {
+                                    email,
+                                },
+                            },
+                            space: {
+                                connect: {
+                                    id: space.id,
+                                },
+                            },
+                            profile: {
+                                connect: {
+                                    id: data.profile,
+                                },
+                            },
+                        },
+                    });
+                    toast.success(`${email} added successfully!`);
+                }}
+                title={'Add member List'}
+            />
 
             <ul className="space-y-2">
                 {members?.map((member) => (
@@ -97,7 +82,7 @@ export default function ManageMembers() {
                                 <UserAvatar user={member.user} size={32} />
                             </div>
                             <p className="mr-2 line-clamp-1 w-36 md:w-48">{member.user.name || member.user.email}</p>
-                            <p>{member.role}</p>
+                            <p>{member.profile.role}</p>
                         </div>
                         <div className="flex items-center">
                             {user?.id !== member.user.id && (

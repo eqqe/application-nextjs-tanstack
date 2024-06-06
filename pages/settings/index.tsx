@@ -9,15 +9,12 @@ import { SpaceMembers } from '@/components/Space/SpaceMembers';
 export const Settings: NextPage = () => {
     const currentSpace = useCurrentSpace();
 
-    if (!currentSpace) {
-        return;
-    }
     return (
         <WithNavBar>
             <Card>
                 <CardHeader>
-                    <CardTitle>{currentSpace.name}</CardTitle>
-                    <CardDescription>Applications for {currentSpace.name}</CardDescription>
+                    <CardTitle>{currentSpace?.name}</CardTitle>
+                    <CardDescription>Applications for {currentSpace?.name}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-2">
                     <GenerateDemonstration />

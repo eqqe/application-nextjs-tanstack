@@ -28,6 +28,13 @@ export const fakeLease = (propertyId: string) => {
         rentAmount: faker.number.float({ min: 5, max: 50 }),
     };
 };
+
+export const fakeTenant = ({ userId, leaseId }: { userId: string; leaseId: string }) => {
+    return {
+        leaseId,
+        userId,
+    };
+};
 export const fakePayment = (leaseId: string) => {
     return {
         leaseId,

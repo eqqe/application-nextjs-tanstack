@@ -7,10 +7,7 @@ import { Button } from '@/components/ui/button';
 import { ErrorBoundary } from 'react-error-boundary';
 import { FallbackError } from '../layout/FallbackError';
 
-function ManagementDialog(space?: Space) {
-    if (!space) {
-        return void 0;
-    }
+function ManagementDialog() {
     return (
         <Dialog>
             <DialogTrigger asChild>

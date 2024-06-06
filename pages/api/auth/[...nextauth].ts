@@ -1,5 +1,5 @@
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
-import { SpaceUserRole } from '@prisma/client';
+import { getNewSpace } from '@/lib/getNewSpace';
 import { compare } from 'bcryptjs';
 import NextAuth, { User } from 'next-auth';
 import { NextAuthOptions } from 'next-auth';
@@ -61,19 +61,7 @@ export const authOptions: NextAuthOptions = {
             if (spaceCount > 0) {
                 return;
             }
-            await prisma.space.create({
-                data: {
-                    name: `${user.name || user.email}'s space`,
-                    members: {
-                        create: [
-                            {
-                                userId: user.id,
-                                role: SpaceUserRole.ADMIN,
-                            },
-                        ],
-                    },
-                },
-            });
+            await prisma.space.create(getNewSpace({ user, name: `${user.name || user.email}'s space` }));
         },
     },
 };

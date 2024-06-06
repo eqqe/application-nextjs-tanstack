@@ -46,29 +46,43 @@ abstract model IdCreatedUpdatedSpace extends IdCreatedUpdatedAuth {
     space     Space         @relation(fields: [spaceId], references: [id], onDelete: Cascade)
     spaceId   String        @default(auth().currentSpaceId)
 
-    @@allow('read', auth().currentSpace == space && space.members?[user == auth()])
+    @@allow('read', auth().currentSpace == space && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)])
 }
 enum SpaceUserRole {
     USER
     ADMIN
+    GUEST
 }
 
-model SpaceUser extends IdCreatedUpdatedAuth {
-
+abstract model LinkToSpace extends IdCreatedUpdatedAuth {
     space     Space         @relation(fields: [spaceId], references: [id], onDelete: Cascade)
-    spaceId   String       
+    spaceId   String  
+    
+    @@allow('read', auth().currentSpace == space && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)])
+    // space admin can create/update/delete
+    @@allow('create,update,delete', space.members?[user == auth() && profile.role == ADMIN])
+}
 
-    @@allow('read', auth().currentSpace == space && space.members?[user == auth()])
+model Profile extends LinkToSpace {
+ 
 
+    users      SpaceUser[]
+
+    role SpaceUserRole
+
+}
+
+model SpaceUser extends LinkToSpace {
+
+
+    profile     Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+    profileId   String  
 
 
     user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId    String
-    role      SpaceUserRole
     @@unique([userId, spaceId])
 
-    // space admin can create/update/delete
-    @@allow('create,update,delete', space.members?[user == auth() && role == ADMIN])
 }
 
 model User extends IdCreatedUpdated {
@@ -77,6 +91,7 @@ model User extends IdCreatedUpdated {
     password      String?     @password @omit
     name          String?
     spaces        SpaceUser[]
+    spacesOwned    Space[] @relation("owner")
     currentSpace          Space?         @relation(fields: [currentSpaceId], references: [id], onDelete: Cascade)
     currentSpaceId        String?
     image         String?     @url
@@ -106,7 +121,7 @@ model User extends IdCreatedUpdated {
     @@allow('create', true)
 
     // can be read by users sharing any space
-    @@allow('read', spaces?[auth().currentSpace == space && space.members?[user == auth()]])
+    @@allow('read', spaces?[auth().currentSpace == space && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])
 
     // full access by oneself
     @@allow('all', auth() == this)

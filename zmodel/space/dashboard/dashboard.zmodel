@@ -13,7 +13,7 @@ model PanelRow extends Component {
     panels     Panel[]
 
     @@deny('all', dashboard.private && dashboard.owner != auth())
-    @@allow('all', dashboard.space == auth().currentSpace && dashboard.space.members?[user == auth()])
+    @@allow('all', dashboard.space == auth().currentSpace && dashboard.space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)])
 }
 
 
@@ -24,7 +24,7 @@ model Panel extends Component {
     panelComponents     PanelComponent[]
 
     @@deny('all', panelRow.dashboard.private && panelRow.dashboard.owner != auth())
-    @@allow('all', panelRow.dashboard.space == auth().currentSpace && panelRow.dashboard.space.members?[user == auth()])
+    @@allow('all', panelRow.dashboard.space == auth().currentSpace && panelRow.dashboard.space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)])
 }
 
 enum PanelComponentType {
@@ -42,7 +42,7 @@ model PanelComponent extends Component {
     report PanelComponentReport?
 
     @@deny('all', panel.panelRow.dashboard.private && panel.panelRow.dashboard.owner != auth())
-    @@allow('all', panel.panelRow.dashboard.space == auth().currentSpace && panel.panelRow.dashboard.space.members?[user == auth()])
+    @@allow('all', panel.panelRow.dashboard.space == auth().currentSpace && panel.panelRow.dashboard.space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)])
 }
 
 abstract model PanelComponentRelation extends Component {
@@ -51,7 +51,7 @@ abstract model PanelComponentRelation extends Component {
     tableType Type
 
     @@deny('all', panelComponent.panel.panelRow.dashboard.private && panelComponent.panel.panelRow.dashboard.owner != auth())
-    @@allow('all', panelComponent.panel.panelRow.dashboard.space == auth().currentSpace && panelComponent.panel.panelRow.dashboard.space.members?[user == auth()])
+    @@allow('all', panelComponent.panel.panelRow.dashboard.space == auth().currentSpace && panelComponent.panel.panelRow.dashboard.space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)])
 }
 
 

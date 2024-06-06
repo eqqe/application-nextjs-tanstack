@@ -37,7 +37,7 @@ export function WithNavBar({ children }: Props) {
                         setCookieExists(true);
                         setCookie(cookieName, firstSpace.id);
                     } else {
-                        throw 'Cannot find space';
+                        router.push('/signin');
                     }
                 }
             } else {

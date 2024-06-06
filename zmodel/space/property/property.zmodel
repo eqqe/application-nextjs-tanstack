@@ -25,7 +25,7 @@ abstract model PropertyComponent extends Component {
 
 
     @@deny('all', property.private && property.owner != auth())
-    @@allow('all', auth().currentSpace == property.space && property.space.members?[user == auth()])
+    @@allow('all', auth().currentSpace == property.space && property.space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)])
 }
 
 model Lease extends PropertyComponent {
@@ -35,26 +35,30 @@ model Lease extends PropertyComponent {
     payments    Payment[]
     charges     Charge[]
     tenants     Tenant[]
-    @@allow('read', tenants?[user == auth()])
+    @@allow('read', property.space == auth().currentSpace && tenants?[user == auth()])
 }
 
-model Tenant extends Component
-{
+
+abstract model LeaseComponent extends Component {
+
     lease    Lease   @relation(fields: [leaseId], references: [id], onDelete: Cascade)
     leaseId  String
+    
+    @@deny('all', lease.property.private && lease.property.owner != auth())
+    @@allow('all', lease.property.space == auth().currentSpace && lease.property.space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)])
+
+}
+model Tenant extends LeaseComponent
+{
 
     user    User   @relation("user", fields: [userId], references: [id], onDelete: Cascade)
     userId  String
 }
 
-model Payment extends Component {
-    lease       Lease      @relation(fields: [leaseId], references: [id], onDelete: Cascade)
-    leaseId     String
+model Payment extends LeaseComponent {
     amount      BigInt
     date        DateTime
 
-    @@deny('all', lease.property.private && lease.property.owner != auth())
-    @@allow('all', lease.property.space == auth().currentSpace && lease.property.space.members?[user == auth()])
 }
 enum ChargeType {
     MAINTENANCE

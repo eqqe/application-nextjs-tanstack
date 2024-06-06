@@ -1,8 +1,9 @@
 import { assert, it } from 'vitest';
 import { getEnhancedPrisma } from '../mock/enhanced-prisma';
-import { SpaceUserRole } from '@prisma/client';
 import { fakeLease, fakePayment, fakeProperty } from '@/lib/fake';
 import { enhancePrisma } from '@/server/enhanced-db';
+import { getNewSpace } from '@/lib/getNewSpace';
+import { Space, SpaceUserRole } from '@prisma/client';
 
 it('Should list spaces, and check that only current space components are visible', async () => {
     const { user1 } = await getEnhancedPrisma();
@@ -19,21 +20,10 @@ it('Should list spaces, and check that only current space components are visible
     }
     await checkSpaces([user1.space.name]);
 
-    const newSpaceName = 'new space user 1';
-    const newSpace = await user1.prisma.space.create({
-        data: {
-            name: newSpaceName,
-            members: {
-                create: [
-                    {
-                        userId: user1.userCreated.id,
-                        role: SpaceUserRole.ADMIN,
-                    },
-                ],
-            },
-        },
-    });
-    await checkSpaces([newSpaceName, user1.space.name]);
+    const name = 'new space user 1';
+    const newSpace = await user1.prisma.space.create(getNewSpace({ name, user: user1.userCreated }));
+
+    await checkSpaces([name, user1.space.name]);
 
     const property = fakeProperty();
     const newProperty = await user1.prisma.property.create({

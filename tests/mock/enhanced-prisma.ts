@@ -2,8 +2,11 @@ import { PrismaClient } from '@prisma/client';
 import { nanoid } from 'nanoid';
 import { assert } from 'vitest';
 import { slugAssetsApplication } from '@/zmodel/prisma/applications/createApplications';
-import { Space } from '@zenstackhq/runtime/models';
+import { Space, SpaceUserRole } from '@prisma/client';
 import { enhancePrisma } from '@/server/enhanced-db';
+import { getNewSpace } from '@/lib/getNewSpace';
+import { create } from 'domain';
+import { name } from '@zenstackhq/tanstack-query';
 
 const prisma = new PrismaClient();
 
@@ -14,19 +17,10 @@ export async function getEnhancedPrisma() {
             password: 'demo',
         };
         const userCreated = await prisma.user.create({ data: testUser });
-        const space = await prisma.space.create({
-            data: {
-                name: `Test spaces ${testUser.email}`,
-                members: {
-                    create: [
-                        {
-                            role: 'ADMIN',
-                            userId: userCreated.id,
-                        },
-                    ],
-                },
-            },
-        });
+        const space = await prisma.space.create(
+            getNewSpace({ name: `Test spaces ${testUser.email}`, user: userCreated })
+        );
+
         return {
             userCreated,
             space,
@@ -41,9 +35,14 @@ export async function getEnhancedPrisma() {
     const user3 = await createUserWithSpace({ currentSpace: user2.space });
     await prisma.spaceUser.create({
         data: {
-            role: 'USER',
-            spaceId: user2.space.id,
-            userId: user3.userCreated.id,
+            profile: {
+                create: {
+                    role: SpaceUserRole.USER,
+                    spaceId: user2.space.id,
+                },
+            },
+            space: { connect: { id: user2.space.id } },
+            user: { connect: { id: user3.userCreated.id } },
         },
     });
     assert.notEqual(user1.userCreated.id, user2.userCreated.id);

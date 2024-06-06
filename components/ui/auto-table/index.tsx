@@ -8,7 +8,7 @@ import {
     getObjectFormSchema,
 } from '../auto-form/utils';
 import { DataTable } from '../data-table';
-import * as z from 'zod';
+import { z } from 'zod';
 import { ColumnDef } from '@tanstack/react-table';
 import { replaceArraysWithFirstObject } from '@/lib/utils';
 

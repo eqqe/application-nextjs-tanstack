@@ -28,5 +28,5 @@ export const GenerateDemonstration = () => {
         await createManyCharge.mutateAsync({ data: charges });
     };
 
-    return <button onClick={() => generateDemonstration({ length: 500 })}>Generate Demonstration</button>;
+    return <button onClick={() => generateDemonstration({ length: 15 })}>Generate Demonstration</button>;
 };
