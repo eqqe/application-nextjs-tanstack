@@ -2,6 +2,7 @@ import { Page, expect } from '@playwright/test';
 import { FieldPath, FieldValues } from 'react-hook-form';
 import { beautifyObjectName } from '@/components/ui/auto-form/utils';
 import { faker } from '@faker-js/faker';
+import { Space } from '@zenstackhq/runtime/models';
 
 export async function clickButton(page: Page, name: string) {
     await page.getByRole('button', { name }).click();
@@ -20,9 +21,15 @@ export async function selectFromCombo<T extends FieldValues>(page: Page, label: 
 
 export async function openHome(page: Page) {
     await page.goto('http://localhost:3000/');
-    await page.getByLabel('Email').fill(faker.internet.email());
-    await page.getByLabel('Password').fill(faker.internet.password());
-    await page.getByText('Continue with email').click();
+    await page.getByText('Select space').click();
+    await page.getByText('Create space').click();
+    // Button in menu above, redundant button in page below
+    await page.getByText('Create space').click();
+
+    const name = faker.word.words(5);
+    await getByLabel<Space>(page, 'name').fill(name);
+    await clickSaveChanges(page);
+    await page.getByRole('link', { name }).click();
 }
 
 export async function checkToastCreated(page: Page, name: string) {

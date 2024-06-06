@@ -11,6 +11,7 @@ import { getCookie, setCookie } from 'cookies-next';
 import { currentSpaceCookieName } from './SpaceSwitch';
 import { useCurrentUser } from '@/lib/context';
 import { useRouter } from 'next/router';
+import { signInPath } from '../AuthGuard';
 
 type Props = {
     children: ReactNode | ReactNode[] | undefined;
@@ -37,11 +38,11 @@ export function WithNavBar({ children }: Props) {
                         setCookieExists(true);
                         setCookie(cookieName, firstSpace.id);
                     } else {
-                        router.push('/signin');
+                        router.push(signInPath);
                     }
                 }
             } else {
-                router.push('/signin');
+                router.push(signInPath);
             }
         }
     }, [cookieExists, router, spaces, user?.id]);

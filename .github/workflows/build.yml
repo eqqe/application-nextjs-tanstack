@@ -17,8 +17,6 @@ jobs:
             POSTGRES_URL: postgresql://postgres:admin@postgres:5432/todo?schema=public
             POSTGRES_URL_NON_POOLING: postgresql://postgres:admin@postgres:5432/todo?schema=public
             NEXTAUTH_SECRET: test-secret-ci-insecure
-            DISCORD_CLIENT_ID: test-secret-ci-insecure
-            DISCORD_CLIENT_SECRET: test-secret-ci-insecure
         services:
             postgres:
                 image: postgres:16.3

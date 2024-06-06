@@ -1,12 +1,35 @@
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { getNewSpace } from '@/lib/getNewSpace';
-import { compare } from 'bcryptjs';
 import NextAuth, { User } from 'next-auth';
 import { NextAuthOptions } from 'next-auth';
+import EmailProvider from 'next-auth/providers/email';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import DiscordProvider from 'next-auth/providers/discord';
 import { prisma } from 'server/db';
+import { signInPath } from '@/components/AuthGuard';
+import { Provider } from 'next-auth/providers';
+import { testUser } from '@/lib/testUser';
 
+const providers: Provider[] = [
+    EmailProvider({
+        server: {
+            host: process.env.EMAIL_SERVER_HOST,
+            port: process.env.EMAIL_SERVER_PORT,
+            auth: {
+                user: process.env.EMAIL_SERVER_USER,
+                pass: process.env.EMAIL_SERVER_PASSWORD,
+            },
+        },
+    }),
+];
+
+if (process.env.NODE_ENV === 'development') {
+    providers.push(
+        CredentialsProvider({
+            credentials: {},
+            authorize: authorize(),
+        })
+    );
+}
 export const authOptions: NextAuthOptions = {
     adapter: PrismaAdapter(prisma),
 
@@ -15,29 +38,10 @@ export const authOptions: NextAuthOptions = {
     },
 
     pages: {
-        signIn: '/signin',
+        signIn: signInPath,
     },
 
-    providers: [
-        CredentialsProvider({
-            credentials: {
-                email: {
-                    type: 'email',
-                },
-                password: {
-                    type: 'password',
-                },
-            },
-            authorize: authorize(),
-        }),
-
-        DiscordProvider({
-            clientId: process.env.DISCORD_CLIENT_ID!,
-            clientSecret: process.env.DISCORD_CLIENT_SECRET!,
-            // @ts-ignore
-            scope: 'read:user,user:email',
-        }),
-    ],
+    providers,
 
     callbacks: {
         session({ session, token }) {
@@ -48,6 +52,21 @@ export const authOptions: NextAuthOptions = {
                     id: token.sub!,
                 },
             };
+        },
+
+        async signIn({ user }) {
+            if (!user.email) {
+                return signInPath;
+            }
+            const existingUser = await prisma.user.findUnique({
+                where: {
+                    email: user.email,
+                },
+            });
+            if (existingUser) {
+                return true;
+            }
+            return signInPath;
         },
     },
 
@@ -66,44 +85,25 @@ export const authOptions: NextAuthOptions = {
     },
 };
 
+/* Only for development use */
 function authorize() {
-    return async (credentials: Record<'email' | 'password', string> | undefined) => {
-        if (!credentials) {
-            throw new Error('Missing credentials');
-        }
-
-        if (!credentials.email) {
-            throw new Error('"email" is required in credentials');
-        }
-
-        if (!credentials.password) {
-            throw new Error('"password" is required in credentials');
-        }
-
-        const maybeUser = await prisma.user.findFirst({
+    return async () => {
+        const maybeUser = await prisma.user.findUnique({
             where: {
-                email: credentials.email,
+                email: testUser.email,
             },
             select: {
                 id: true,
-                email: true,
-                password: true,
             },
         });
 
-        if (!maybeUser || !maybeUser.password) {
-            return null;
-        }
-
-        const isValid = await compare(credentials.password, maybeUser.password);
-
-        if (!isValid) {
+        if (!maybeUser) {
             return null;
         }
 
         return {
             id: maybeUser.id,
-            email: maybeUser.email,
+            email: testUser.email,
         };
     };
 }
