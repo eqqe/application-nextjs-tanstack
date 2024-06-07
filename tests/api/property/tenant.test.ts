@@ -1,4 +1,4 @@
-import { assert, expect, it } from 'vitest';
+import { assert, it } from 'vitest';
 import { fakeLease, fakeProperty, fakeTenant } from '@/lib/fake';
 import { getEnhancedPrisma } from '../../mock/enhanced-prisma';
 
@@ -14,9 +14,6 @@ it('Should associate a tenant to a lease', async () => {
     });
 
     assert.equal(tenant.leaseId, lease.id);
-
-    const tenants = await user2.prisma.tenant.findMany();
-    const leases = await user2.prisma.lease.findMany();
 
     const properties = await user2.prisma.property.findMany({
         include: {

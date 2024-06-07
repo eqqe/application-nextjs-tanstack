@@ -1,5 +1,5 @@
 import { GridElementType } from '@prisma/client';
-import { Type, Prisma } from '@prisma/client';
+import { Type, Prisma, TypeTableRequest } from '@prisma/client';
 
 export const assetsv0_1: Prisma.ApplicationVersionCreateWithoutApplicationInput = {
     versionMajor: 0,
@@ -31,6 +31,7 @@ export const assetsv0_1: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                 table: {
                                                                     create: {
                                                                         type: Type.Property,
+                                                                        typeTableRequest: TypeTableRequest.FindMany,
                                                                         columns: ['address', 'propertyType'],
                                                                     },
                                                                 },

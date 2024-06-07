@@ -1,15 +1,37 @@
 import { beautifyObjectName } from '@/components/ui/auto-form/utils';
 import { DataTable } from '@/components/ui/data-table';
 import { Prisma } from '@prisma/client';
-import { getTypeHook } from './hooks';
+import { getTypeHook } from './getTypeHook';
 
-export const GridCardTableInclude = {};
+export const GridCardTableInclude = {
+    include: {
+        groupBy: true,
+    },
+};
 
 export function CardTableComponent({ table }: { table: Prisma.GridCardTableGetPayload<typeof GridCardTableInclude> }) {
-    const { useFindMany } = getTypeHook(table);
+    const useHook = getTypeHook(table);
 
-    // @ts-expect-error useFindMany is called with 0 arguments valid in all cases
-    const { data: rows } = useFindMany();
+    function getParams() {
+        switch (table.typeTableRequest) {
+            case 'Aggregate':
+                return {};
+            case 'FindMany':
+                return {};
+            case 'GroupBy':
+                if (!table.groupBy) {
+                    throw '! table.groupBy';
+                }
+                return {
+                    by: table.groupBy.fields,
+                };
+        }
+    }
+
+    // @ts-expect-error
+    const { data: rows } = useHook(getParams());
+
+    console.log(rows);
 
     if (!rows) {
         return <></>;

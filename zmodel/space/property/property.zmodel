@@ -15,6 +15,7 @@ model Property extends SpaceComponent {
     postalCode  String
     country     String
     leases      Lease[]
+    surface     Int
     charges     Charge[]
 }
 

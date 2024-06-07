@@ -2,33 +2,31 @@ import { expect, test } from '@playwright/test';
 import { faker } from '@faker-js/faker';
 import { clickButton, openHome, getByLabel, selectFromCombo, clickSaveChanges, checkToastCreated } from './utils';
 import { Lease, Property, PropertyType } from '@prisma/client';
+import { fakeProperty } from '@/lib/fake';
 
 test('Should create property', async ({ page }) => {
     async function createProperty({ type }: { type: PropertyType }) {
         await clickButton(page, 'Create Property');
 
-        const address = faker.location.streetAddress();
-        const city = faker.location.city();
-        const postalCode = faker.location.zipCode();
-        const country = faker.location.country();
-        const name = faker.lorem.words(3);
+        const property = fakeProperty();
 
         await selectFromCombo<Property>(page, 'propertyType', type);
 
-        await getByLabel<Property>(page, 'address').fill(address);
-        await getByLabel<Property>(page, 'city').fill(city);
-        await getByLabel<Property>(page, 'postalCode').fill(postalCode);
-        await getByLabel<Property>(page, 'country').fill(country);
-        await getByLabel<Property>(page, 'name').fill(name);
+        await getByLabel<Property>(page, 'address').fill(property.address);
+        await getByLabel<Property>(page, 'city').fill(property.city);
+        await getByLabel<Property>(page, 'postalCode').fill(property.postalCode);
+        await getByLabel<Property>(page, 'country').fill(property.country);
+        await getByLabel<Property>(page, 'name').fill(property.name);
+        await getByLabel<Property>(page, 'surface').fill(property.surface.toString());
         await getByLabel(page, 'private').check();
         await clickSaveChanges(page);
 
-        await checkToastCreated(page, name);
-        await expect(page.getByText(address)).toBeVisible();
+        await checkToastCreated(page, property.name);
+        await expect(page.getByText(property.address)).toBeVisible();
         await expect(page.getByText(`Type: ${type}`)).toBeVisible();
-        await expect(page.getByText(`City: ${city}`)).toBeVisible();
-        await expect(page.getByText(`Postal Code: ${postalCode}`)).toBeVisible();
-        return address;
+        await expect(page.getByText(`City: ${property.city}`)).toBeVisible();
+        await expect(page.getByText(`Postal Code: ${property.postalCode}`)).toBeVisible();
+        return property.address;
     }
 
     async function createLease({ address, startDate }: { address: string; startDate: string }) {

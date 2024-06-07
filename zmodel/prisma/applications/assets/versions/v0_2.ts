@@ -1,5 +1,5 @@
 import { GridCardFooterType, GridElementType } from '@prisma/client';
-import { Type, Prisma } from '@prisma/client';
+import { Type, Prisma, TypeTableRequest } from '@prisma/client';
 
 export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput = {
     versionMajor: 0,
@@ -110,6 +110,50 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                                             table: {
                                                                                                 create: {
                                                                                                     type: Type.Property,
+                                                                                                    typeTableRequest:
+                                                                                                        TypeTableRequest.GroupBy,
+                                                                                                    columns: [
+                                                                                                        'address',
+                                                                                                        'city',
+                                                                                                        'postalCode',
+                                                                                                    ],
+                                                                                                    groupBy: {
+                                                                                                        create: {
+                                                                                                            fields: [
+                                                                                                                'city',
+                                                                                                                'postalCode',
+                                                                                                            ],
+                                                                                                            sum: [
+                                                                                                                'surface',
+                                                                                                            ],
+                                                                                                        },
+                                                                                                    },
+                                                                                                },
+                                                                                            },
+                                                                                        },
+                                                                                    },
+                                                                                },
+                                                                            },
+                                                                        },
+                                                                        {
+                                                                            name: 'Month',
+                                                                            elements: {
+                                                                                create: {
+                                                                                    type: GridElementType.Card,
+                                                                                    card: {
+                                                                                        create: {
+                                                                                            title: 'Your properties',
+                                                                                            titleXl: 4,
+                                                                                            description: 'Table',
+                                                                                            headerPb: 2,
+                                                                                            content: 'Listed here',
+                                                                                            invertTitleDescription:
+                                                                                                true,
+                                                                                            table: {
+                                                                                                create: {
+                                                                                                    type: Type.Property,
+                                                                                                    typeTableRequest:
+                                                                                                        'FindMany',
                                                                                                     columns: [
                                                                                                         'address',
                                                                                                         'city',
@@ -121,9 +165,6 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                                     },
                                                                                 },
                                                                             },
-                                                                        },
-                                                                        {
-                                                                            name: 'Month',
                                                                         },
                                                                         {
                                                                             name: 'Year',

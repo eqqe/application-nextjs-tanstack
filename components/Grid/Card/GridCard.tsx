@@ -8,7 +8,11 @@ import { ErrorBoundary } from 'react-error-boundary';
 
 export const GridCardInclude = {
     include: {
-        table: true,
+        table: {
+            include: {
+                groupBy: true,
+            },
+        },
         footer: GridCardFooterInclude,
     },
 };

@@ -9,14 +9,16 @@ import {
 } from '@/zmodel/lib/hooks';
 import { PropertyType, ChargeType } from '@prisma/client';
 
+export const cities = Array.from({ length: 10 }).map(() => faker.location.city());
 export const fakeProperty = (postalCode?: string) => {
     return {
         name: faker.word.noun(),
         address: faker.location.streetAddress(),
-        city: faker.location.city(),
+        city: cities[Math.floor(Math.random() * cities.length)],
         propertyType: PropertyType.COMMERCIAL,
         postalCode: postalCode ?? faker.location.zipCode(),
         country: faker.location.country(),
+        surface: faker.number.int({ max: 5000, min: 100 }),
     };
 };
 
