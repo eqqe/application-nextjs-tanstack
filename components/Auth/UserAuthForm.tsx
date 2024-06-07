@@ -25,8 +25,6 @@ export function UserAuthForm() {
         resolver: zodResolver(formSchema),
     });
 
-    const router = useRouter();
-
     const signInEmail = useCallback(
         async ({ email }: { email: string }) => {
             await signIn('email', {

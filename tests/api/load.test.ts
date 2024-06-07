@@ -4,7 +4,8 @@ import { generateData } from '@/lib/fake';
 import { PrismaClient } from '@zenstackhq/runtime/models';
 
 test('Load a lot of data for 3 users', async () => {
-    const length = 1000;
+    // Make it fast when running locally, but check it does not timeout on CI with a lot of data
+    const length = process.env.CI ? 500 : 2;
     async function writeFakeData({ prisma }: { prisma: PrismaClient }) {
         const { dashboards, lists, properties, leases, payments, charges } = generateData({ length });
 
@@ -39,4 +40,4 @@ test('Load a lot of data for 3 users', async () => {
     await checkFakeDataCount({ prisma: user1.prisma, factor: 1 });
     await checkFakeDataCount({ prisma: user2.prisma, factor: 2 });
     await checkFakeDataCount({ prisma: user3.prisma, factor: 2 });
-}, 60000);
+}, 45000);
