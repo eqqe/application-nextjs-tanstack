@@ -34,6 +34,34 @@ import {
     useUpdateManyLease,
     useCreateLease,
     useCreateManyLease,
+    useAggregateAssociate,
+    useGroupByAssociate,
+    useFindManyAssociate,
+    useUpdateAssociate,
+    useUpdateManyAssociate,
+    useCreateAssociate,
+    useCreateManyAssociate,
+    useAggregateCharge,
+    useGroupByCharge,
+    useFindManyCharge,
+    useUpdateCharge,
+    useUpdateManyCharge,
+    useCreateCharge,
+    useCreateManyCharge,
+    useAggregatePayment,
+    useGroupByPayment,
+    useFindManyPayment,
+    useUpdatePayment,
+    useUpdateManyPayment,
+    useCreatePayment,
+    useCreateManyPayment,
+    useAggregateTenant,
+    useGroupByTenant,
+    useFindManyTenant,
+    useUpdateTenant,
+    useUpdateManyTenant,
+    useCreateTenant,
+    useCreateManyTenant,
 } from '@/zmodel/lib/hooks';
 import { Type } from '@prisma/client';
 import {
@@ -52,6 +80,18 @@ import {
     LeaseScalarSchema,
     LeaseUpdateScalarSchema,
     LeaseCreateScalarSchema,
+    AssociateScalarSchema,
+    AssociateUpdateScalarSchema,
+    AssociateCreateScalarSchema,
+    ChargeScalarSchema,
+    ChargeUpdateScalarSchema,
+    ChargeCreateScalarSchema,
+    PaymentScalarSchema,
+    PaymentUpdateScalarSchema,
+    PaymentCreateScalarSchema,
+    TenantScalarSchema,
+    TenantUpdateScalarSchema,
+    TenantCreateScalarSchema,
 } from '@zenstackhq/runtime/zod/models';
 
 export function getTypeHook({ type }: { type: Type }) {
@@ -77,6 +117,90 @@ export function getTypeHook({ type }: { type: Type }) {
                     many: useCreateManyProperty,
                 },
                 getLink: (id: string) => `/property/${id}`,
+            };
+        case 'Associate':
+            return {
+                useHook: {
+                    Aggregate: useAggregateAssociate,
+                    GroupBy: useGroupByAssociate,
+                    FindMany: useFindManyAssociate,
+                },
+                schema: {
+                    base: AssociateScalarSchema,
+                    update: AssociateUpdateScalarSchema,
+                    create: AssociateCreateScalarSchema,
+                },
+                useUpdate: {
+                    single: useUpdateAssociate,
+                    many: useUpdateManyAssociate,
+                },
+                useCreate: {
+                    single: useCreateAssociate,
+                    many: useCreateManyAssociate,
+                },
+            };
+        case 'Charge':
+            return {
+                useHook: {
+                    Aggregate: useAggregateCharge,
+                    GroupBy: useGroupByCharge,
+                    FindMany: useFindManyCharge,
+                },
+                schema: {
+                    base: ChargeScalarSchema,
+                    update: ChargeUpdateScalarSchema,
+                    create: ChargeCreateScalarSchema,
+                },
+                useUpdate: {
+                    single: useUpdateCharge,
+                    many: useUpdateManyCharge,
+                },
+                useCreate: {
+                    single: useCreateCharge,
+                    many: useCreateManyCharge,
+                },
+            };
+        case 'Payment':
+            return {
+                useHook: {
+                    Aggregate: useAggregatePayment,
+                    GroupBy: useGroupByPayment,
+                    FindMany: useFindManyPayment,
+                },
+                schema: {
+                    base: PaymentScalarSchema,
+                    update: PaymentUpdateScalarSchema,
+                    create: PaymentCreateScalarSchema,
+                },
+                useUpdate: {
+                    single: useUpdatePayment,
+                    many: useUpdateManyPayment,
+                },
+                useCreate: {
+                    single: useCreatePayment,
+                    many: useCreateManyPayment,
+                },
+            };
+        case 'Tenant':
+            return {
+                useHook: {
+                    Aggregate: useAggregateTenant,
+                    GroupBy: useGroupByTenant,
+                    FindMany: useFindManyTenant,
+                },
+                schema: {
+                    base: TenantScalarSchema,
+                    update: TenantUpdateScalarSchema,
+                    create: TenantCreateScalarSchema,
+                },
+                useUpdate: {
+                    single: useUpdateTenant,
+                    many: useUpdateManyTenant,
+                },
+                useCreate: {
+                    single: useCreateTenant,
+                    many: useCreateManyTenant,
+                },
             };
         case 'Dashboard':
             return {

@@ -1,0 +1,31 @@
+import "../../schema.zmodel"
+import "../space.zmodel"
+import "property"
+
+model Associate extends SpaceComponent {
+    user    User   @relation("user", fields: [userId], references: [id], onDelete: Cascade)
+    userId  String
+    fiscalNumber    String?
+    siret           String?
+    birthDate       DateTime
+    address         String
+    city            String
+    postalCode      String
+    phone           String?
+    propertyAssociates PropertyAssociate[]
+}
+
+abstract model BaseAssociateLink {
+    associate   Associate  @relation(fields: [associateId], references: [id], onDelete: Cascade)
+    associateId String
+
+    @@deny('all', associate.private && associate.owner != auth())
+}
+model PropertyAssociate extends BasePropertyLink, BaseAssociateLink, Component {
+
+    entryDate       DateTime
+    exitDate        DateTime?
+
+    
+    @@allow('all', auth().currentSpace == associate.space && auth().currentSpace == property.space && associate.space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)] && property.space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)])
+}

@@ -6,6 +6,7 @@
         "dev": "next dev",
         "build": "npm run generate && next build",
         "start": "next start",
+        "seed": "npx prisma db seed",
         "db:push": "prisma db push && npx prisma db seed",
         "db:migrate": "prisma migrate dev",
         "db:deploy": "prisma migrate deploy",

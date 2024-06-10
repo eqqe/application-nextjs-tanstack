@@ -1,28 +1,15 @@
-import { PropertyCard } from '@/components/Property/PropertyCard';
 import { SpaceComponentCard } from '@/components/Dashboard/DashboardCard';
 import { CreateForm } from 'components/Form/CreateForm';
-import {
-    PropertyCreateScalarSchema,
-    ListCreateScalarSchema,
-    DashboardCreateScalarSchema,
-} from '@zenstackhq/runtime/zod/models';
+import { ListCreateScalarSchema, DashboardCreateScalarSchema } from '@zenstackhq/runtime/zod/models';
 import { z } from 'zod';
 import { WithNavBar } from '@/components/layout/WithNavBar';
 import { ListCard } from '@/components/List/ListCard';
 import Link from 'next/link';
-import {
-    useCreateDashboard,
-    useCreateList,
-    useCreateProperty,
-    useFindManyDashboard,
-    useFindManyList,
-    useFindManyProperty,
-} from '@/zmodel/lib/hooks';
+import { useCreateDashboard, useCreateList, useFindManyDashboard, useFindManyList } from '@/zmodel/lib/hooks';
 import { toast } from 'react-toastify';
 
 export function SpaceHomeComponent() {
     const createList = useCreateList();
-    const createProperty = useCreateProperty();
     const createDashboard = useCreateDashboard();
     const { data: dashboards } = useFindManyDashboard({
         include: {

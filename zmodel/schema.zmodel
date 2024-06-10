@@ -2,6 +2,8 @@ import "application"
 import "space/space"
 import "space/dashboard/dashboard"
 import "space/property/property"
+import "space/property/lease"
+import "space/property/associate"
 import "space/list/list"
 import "space/view/view"
 
@@ -100,7 +102,6 @@ model User extends IdCreatedUpdated {
     tenants     Tenant[] @relation("user")
     tenantsOwned Tenant[] @relation("owner")
     
-
     leases        Lease[] @relation("owner")
     dashboards  Dashboard[] @relation("owner")
     properties  Property[] @relation("owner")
@@ -113,6 +114,9 @@ model User extends IdCreatedUpdated {
     panelComponents     PanelComponent[] @relation("owner")
     panelComponentsCounter     PanelComponentCounter[] @relation("owner")
     panelComponentsReport     PanelComponentReport[] @relation("owner")
+    associatesOwned  Associate[] @relation("owner")
+    associates  Associate[] @relation("user")
+    propertyAsssociates  PropertyAssociate[] @relation("owner")
     
     // next-auth
     accounts      Account[]
@@ -141,6 +145,10 @@ enum Type {
     Dashboard
     Property
     Lease
+    Associate
+    Payment
+    Tenant
+    Charge
 }
 
 

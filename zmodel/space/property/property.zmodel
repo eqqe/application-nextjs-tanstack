@@ -1,6 +1,8 @@
 
 import "../../schema.zmodel"
 import "../space.zmodel"
+import "associate"
+import "lease"
 
 enum PropertyType {
     APARTMENT
@@ -17,50 +19,22 @@ model Property extends SpaceComponent {
     leases      Lease[]
     surface     Int
     charges     Charge[]
+    propertyAssociates PropertyAssociate[]
 }
 
 
-abstract model PropertyComponent extends Component {
+abstract model BasePropertyLink {
     property    Property   @relation(fields: [propertyId], references: [id], onDelete: Cascade)
     propertyId  String
 
 
     @@deny('all', property.private && property.owner != auth())
+}
+abstract model PropertyComponent extends BasePropertyLink, Component {
+
     @@allow('all', auth().currentSpace == property.space && property.space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)])
 }
 
-model Lease extends PropertyComponent {
-    startDate   DateTime
-    endDate     DateTime?
-    rentAmount  Int
-    payments    Payment[]
-    charges     Charge[]
-    tenants     Tenant[]
-    @@allow('read', property.space == auth().currentSpace && tenants?[user == auth()])
-}
-
-
-abstract model LeaseComponent extends Component {
-
-    lease    Lease   @relation(fields: [leaseId], references: [id], onDelete: Cascade)
-    leaseId  String
-    
-    @@deny('all', lease.property.private && lease.property.owner != auth())
-    @@allow('all', lease.property.space == auth().currentSpace && lease.property.space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)])
-
-}
-model Tenant extends LeaseComponent
-{
-
-    user    User   @relation("user", fields: [userId], references: [id], onDelete: Cascade)
-    userId  String
-}
-
-model Payment extends LeaseComponent {
-    amount      BigInt
-    date        DateTime
-
-}
 enum ChargeType {
     MAINTENANCE
     UTILITIES

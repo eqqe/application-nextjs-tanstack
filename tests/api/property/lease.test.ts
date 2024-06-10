@@ -2,7 +2,7 @@ import { assert, expect, it } from 'vitest';
 import { fakeLease, fakePayment, fakeProperty } from '@/lib/demo/fake';
 import { getEnhancedPrisma } from '@/tests/mock/enhanced-prisma';
 
-it('Should not allow a user to create leases or payments for properties they do not own', async () => {
+it('Should not allow a user to create leases for properties not in their space', async () => {
     const { user1, user2 } = await getEnhancedPrisma();
 
     const property = fakeProperty();

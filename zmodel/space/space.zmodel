@@ -2,6 +2,7 @@ import "../schema"
 import "../application"
 import "dashboard/dashboard"
 import "property/property"
+import "property/associate"
 import "list/list"
 import "view/view"
 
@@ -14,6 +15,7 @@ model Space extends IdCreatedUpdatedAuth, Owner {
     properties Property[]
     lists List[]
     viewed User[]
+    associates Associate[]
 
     // When creating a space, we need to build a manual id with these to create the space, profiles and members at the same time
     @@unique([name, ownerId])
