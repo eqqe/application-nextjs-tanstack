@@ -1,6 +1,6 @@
 import { assert, expect, it } from 'vitest';
-import { fakeLease, fakeProperty } from '@/lib/fake';
-import { getEnhancedPrisma } from '../../mock/enhanced-prisma';
+import { fakeLease, fakeProperty } from '@/lib/demo/fake';
+import { getEnhancedPrisma } from '@/tests/mock/enhanced-prisma';
 
 it('Should create / list properties', async () => {
     const { user1, user2, user3 } = await getEnhancedPrisma();

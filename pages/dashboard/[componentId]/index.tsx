@@ -1,4 +1,4 @@
-import { DashboardDetails } from '@/components/SpaceComponent/Dashboard/DashboardDetails';
+import { DashboardDetails } from '@/components/Dashboard/DashboardDetails';
 import { WithNavBar } from '@/components/layout/WithNavBar';
 
 export default function DashboardDetailsPage() {

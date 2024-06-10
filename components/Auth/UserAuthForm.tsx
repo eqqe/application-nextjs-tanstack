@@ -8,8 +8,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
-import { useRouter } from 'next/router';
-import { testUser } from '@/lib/testUser';
+import { testUser } from '@/lib/demo/testUser';
 
 let formSchema = z.object({
     email: z.string().email({ message: 'Enter a valid email address' }),

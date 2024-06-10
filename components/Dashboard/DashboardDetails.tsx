@@ -1,7 +1,7 @@
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useCurrentSpace, useComponentIdRouter } from '@/lib/context';
-import { PanelComponentRender } from '@/components/SpaceComponent/Dashboard/PanelComponentRender';
-import { PanelRender } from '@/components/SpaceComponent/Dashboard/PanelRender';
+import { PanelComponentRender } from '@/components/Dashboard/PanelComponentRender';
+import { PanelRender } from '@/components/Dashboard/PanelRender';
 import { useFindUniqueDashboard, useCreatePanel, useCreatePanelRow, useDeletePanelRow } from '@/zmodel/lib/hooks';
 import { UserAvatar } from '@/components/UserAvatar';
 

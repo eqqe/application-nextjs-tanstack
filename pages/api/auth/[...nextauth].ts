@@ -7,7 +7,7 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import { prisma } from 'server/db';
 import { signInPath } from '@/components/AuthGuard';
 import { Provider } from 'next-auth/providers';
-import { testUser } from '@/lib/testUser';
+import { testUser } from '@/lib/demo/testUser';
 
 const providers: Provider[] = [
     EmailProvider({
@@ -23,10 +23,29 @@ const providers: Provider[] = [
 ];
 
 if (process.env.NODE_ENV === 'development') {
+    /* Only for development use */
     providers.push(
         CredentialsProvider({
             credentials: {},
-            authorize: authorize(),
+            authorize: async () => {
+                const maybeUser = await prisma.user.findUnique({
+                    where: {
+                        email: testUser.email,
+                    },
+                    select: {
+                        id: true,
+                    },
+                });
+
+                if (!maybeUser) {
+                    return null;
+                }
+
+                return {
+                    id: maybeUser.id,
+                    email: testUser.email,
+                };
+            },
         })
     );
 }
@@ -84,28 +103,5 @@ export const authOptions: NextAuthOptions = {
         },
     },
 };
-
-/* Only for development use */
-function authorize() {
-    return async () => {
-        const maybeUser = await prisma.user.findUnique({
-            where: {
-                email: testUser.email,
-            },
-            select: {
-                id: true,
-            },
-        });
-
-        if (!maybeUser) {
-            return null;
-        }
-
-        return {
-            id: maybeUser.id,
-            email: testUser.email,
-        };
-    };
-}
 
 export default NextAuth(authOptions);

@@ -15,16 +15,17 @@ import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { FallbackError } from '../layout/FallbackError';
+import { CommonFormTable } from '../ui/auto-common/types';
 
 export function CreateForm<SchemaType extends ZodObjectOrWrapped>({
     onSubmitData,
     formSchema,
+    values,
     title,
 }: {
     onSubmitData: (data: z.infer<SchemaType>) => Promise<void>;
     title: string;
-    formSchema: SchemaType;
-}) {
+} & CommonFormTable<SchemaType>) {
     const [open, setOpen] = useState(false);
     const onSubmit = async (data: z.infer<SchemaType>) => {
         toast.dismiss();
@@ -46,7 +47,7 @@ export function CreateForm<SchemaType extends ZodObjectOrWrapped>({
                     <DialogDescription>{title}</DialogDescription>
                 </DialogHeader>
                 <ErrorBoundary fallback={<FallbackError />}>
-                    <AutoForm formSchema={formSchema} onSubmit={onSubmit}>
+                    <AutoForm formSchema={formSchema} values={values} onSubmit={onSubmit}>
                         <div className="modal-action">
                             <DialogFooter>
                                 <Button type="submit">Save changes</Button>

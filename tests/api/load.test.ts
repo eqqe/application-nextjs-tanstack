@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest';
-import { getEnhancedPrisma } from '../mock/enhanced-prisma';
-import { generateData } from '@/lib/fake';
+import { getEnhancedPrisma } from '@/tests/mock/enhanced-prisma';
+import { generateData } from '@/lib/demo/fake';
 import { PrismaClient } from '@zenstackhq/runtime/models';
 
 test('Load a lot of data for 3 users', async () => {

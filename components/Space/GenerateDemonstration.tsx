@@ -6,7 +6,7 @@ import {
     useCreateManyPayment,
     useCreateManyProperty,
 } from '@/zmodel/lib/hooks';
-import { generateData } from '@/lib/fake';
+import { generateData } from '@/lib/demo/fake';
 
 export const GenerateDemonstration = () => {
     const createManyProperty = useCreateManyProperty();

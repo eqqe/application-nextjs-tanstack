@@ -1,15 +1,15 @@
-import { expect, test } from '@playwright/test';
+import { expect } from '@playwright/test';
 import { faker } from '@faker-js/faker';
 import { List } from '@zenstackhq/runtime/models';
-import { clickButton, openHome, getByLabel, clickSaveChanges, checkToastCreated } from './utils';
+import { test } from '@/e2e/utils';
 
-test('should create List', async ({ page }) => {
+test('should create List', async ({ page, utils }) => {
     async function createList() {
-        await clickButton(page, 'Create List');
+        await utils.clickButton('Create List');
         const name = faker.lorem.words(3);
-        await getByLabel<List>(page, 'name').fill(name);
-        await clickSaveChanges(page);
-        await checkToastCreated(page, name);
+        await utils.getByLabel<List>('name').fill(name);
+        await utils.clickSaveChanges();
+        await utils.checkToastCreated(name);
         await expect(page.getByText(name, { exact: true })).toBeVisible();
         return name;
     }
@@ -23,7 +23,7 @@ test('should create List', async ({ page }) => {
         await expect(page.getByText(title)).toBeVisible();
     }
 
-    await openHome(page);
+    await utils.openHomeCreateSpace();
 
     await createList();
     await createList();

@@ -1,5 +1,5 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
-import { CardTableComponent } from '../Table/CardTableComponent';
+import { CardTableComponent, GridCardTableInclude } from '../Table/CardTableComponent';
 import { paddingBottoms, textXl } from '../utils';
 import { Prisma } from '@prisma/client';
 import { GridCardFooterInclude, GridCardFooter } from '@/components/Grid/Card/GridCardFooter';
@@ -8,11 +8,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 
 export const GridCardInclude = {
     include: {
-        table: {
-            include: {
-                groupBy: true,
-            },
-        },
+        table: GridCardTableInclude,
         footer: GridCardFooterInclude,
     },
 };

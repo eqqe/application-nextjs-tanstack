@@ -87,7 +87,6 @@ model GridTabs extends IdCreatedUpdatedAuth {
 }
 
 
-
 model GridTabContent extends BaseGrid {
     tabs GridTabs          @relation(fields: [parentId], references: [id], onDelete: Cascade)
     parentId        String
@@ -97,20 +96,12 @@ model GridTabContent extends BaseGrid {
     @@allow('read', tabs.element.grid.subTab.tab.folder.applicationVersion.activations?[auth().currentSpace == space && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])
     @@allow('read', tabs.element.gridTabContent.tabs.element.grid.subTab.tab.folder.applicationVersion.activations?[auth().currentSpace == space && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])
 }
- 
 
-enum GridCardFooterType {
-    Button
-    Progress
-}
 
 model GridCardFooter extends IdCreatedUpdatedAuth {
 
     card GridCard          @relation(fields: [parentId], references: [id], onDelete: Cascade)
     parentId        String @unique
-
-    type GridCardFooterType
-
     button GridCardFooterButton?
     progress GridCardFooterProgress?
 
@@ -124,6 +115,8 @@ model GridCardFooterButton extends IdCreatedUpdatedAuth {
     parentId        String @unique
 
     text    String
+    table Type
+
     @@allow('read', footer.card.element.grid.subTab.tab.folder.applicationVersion.activations?[auth().currentSpace == space && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])
 }
 model GridCardFooterProgress extends IdCreatedUpdatedAuth {

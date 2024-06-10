@@ -1,27 +1,23 @@
-import { expect, test } from '@playwright/test';
-import { openHome } from './utils';
-test('Should enable application that list properties', async ({ page }) => {
-    async function openSettings() {
-        await page.getByRole('link', { name: 'Settings' }).click();
-    }
-    async function openApplication() {
-        await page.getByText('Application Assets').click();
-    }
-    await openHome(page);
-    await openSettings();
-    await page.getByText('Enable Assets').click();
+import { expect } from '@playwright/test';
+import { test } from '@/e2e/utils';
+
+test('Should enable assets application, rollback, and update', async ({ page, utils }) => {
+    const { openHomeCreateSpace, enableAssets, openApplication, generateDemonstration, openSettings } = utils;
+    await openHomeCreateSpace();
+    await enableAssets();
     await openApplication();
     await expect(page.getByText('This Week')).toBeVisible();
     await expect(page.getByText('Your properties')).toBeVisible();
     await expect(page.getByText('Listed here')).toBeVisible();
+    await page.getByRole('tab', { name: 'Month' }).click();
     await expect(page.getByRole('cell', { name: 'Address' })).toBeVisible();
     await expect(page.getByText('City')).toBeVisible();
     await expect(page.getByText('Postal Code')).toBeVisible();
     await expect(page.getByText('No results.')).toBeVisible();
 
-    await openSettings();
-    await page.getByText('Generate Demonstration').click();
+    await generateDemonstration();
     await openApplication();
+    await page.getByRole('tab', { name: 'Month' }).click();
     const propertyTest = 'Property to find in Playwright test';
     await expect(page.getByText(propertyTest)).toBeVisible();
     await openSettings();
@@ -37,5 +33,6 @@ test('Should enable application that list properties', async ({ page }) => {
     await openApplication();
     // Nav link is not refreshed sometimes
     await openApplication();
+    await page.getByRole('tab', { name: 'Month' }).click();
     await expect(page.getByText(propertyTest)).toBeVisible();
 });

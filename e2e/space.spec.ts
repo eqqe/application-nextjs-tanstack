@@ -1,6 +1,5 @@
-import { test } from '@playwright/test';
-import { openHome } from './utils';
+import { test } from '@/e2e/utils';
 
-test('Should create space', async ({ page }) => {
-    await openHome(page);
+test('Should create space', async ({ utils }) => {
+    await utils.openHomeCreateSpace();
 });

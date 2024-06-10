@@ -7,10 +7,10 @@ export const Counter = ({ counter }: { counter: PanelComponentCounter }) => {
     if (!space) {
         throw '!spaceId';
     }
-    const useAggregate = getTypeHook({ type: counter.tableType, typeTableRequest: 'Aggregate' });
+    const { useHook } = getTypeHook({ type: counter.tableType });
 
     // @ts-expect-error useAggregate is called with 0 arguments valid in all cases
-    const { data } = useAggregate({
+    const { data } = useHook['aggregate']({
         _count: true,
     });
 

@@ -40,7 +40,6 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
     className,
     dependencies,
 }: {
-    values?: Partial<z.infer<SchemaType>>;
     onValuesChange?: (values: Partial<z.infer<SchemaType>>) => void;
     onParsedValuesChange?: (values: Partial<z.infer<SchemaType>>) => void;
     onSubmit?: (values: z.infer<SchemaType>) => void;

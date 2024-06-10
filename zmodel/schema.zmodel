@@ -140,6 +140,7 @@ enum Type {
     Todo
     Dashboard
     Property
+    Lease
 }
 
 

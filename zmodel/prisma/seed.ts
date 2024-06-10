@@ -1,14 +1,13 @@
 import { PrismaClient } from '@prisma/client';
 import { createApplications } from './applications/createApplications';
-import { testUser } from '@/lib/testUser';
+import { testUser } from '@/lib/demo/testUser';
+import { createUserWithSpace } from '@/tests/mock/enhanced-prisma';
 
 const prisma = new PrismaClient();
 async function main() {
-    const user = await prisma.user.findUnique({ where: { email: testUser.email } });
-    if (!user) {
-        await prisma.user.create({ data: testUser });
-    }
     createApplications(prisma);
+    const user = await createUserWithSpace({ email: testUser.email });
+    await user.enableAssets();
 }
 
 main()

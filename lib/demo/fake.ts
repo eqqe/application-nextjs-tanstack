@@ -1,12 +1,4 @@
 import { faker } from '@faker-js/faker';
-import {
-    useCreateManyCharge,
-    useCreateManyDashboard,
-    useCreateManyLease,
-    useCreateManyList,
-    useCreateManyPayment,
-    useCreateManyProperty,
-} from '@/zmodel/lib/hooks';
 import { PropertyType, ChargeType } from '@prisma/client';
 
 export const cities = Array.from({ length: 10 }).map(() => faker.location.city());

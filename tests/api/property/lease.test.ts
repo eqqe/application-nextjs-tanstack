@@ -1,6 +1,6 @@
 import { assert, expect, it } from 'vitest';
-import { fakeLease, fakePayment, fakeProperty } from '@/lib/fake';
-import { getEnhancedPrisma } from '../../mock/enhanced-prisma';
+import { fakeLease, fakePayment, fakeProperty } from '@/lib/demo/fake';
+import { getEnhancedPrisma } from '@/tests/mock/enhanced-prisma';
 
 it('Should not allow a user to create leases or payments for properties they do not own', async () => {
     const { user1, user2 } = await getEnhancedPrisma();

@@ -1,4 +1,4 @@
-import { GridCardFooterType, GridElementType } from '@prisma/client';
+import { GridElementType } from '@prisma/client';
 import { Type, Prisma, TypeTableRequest } from '@prisma/client';
 
 export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput = {
@@ -29,10 +29,10 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                         Management and Insightful Analysis.`,
                                                                 footer: {
                                                                     create: {
-                                                                        type: GridCardFooterType.Button,
                                                                         button: {
                                                                             create: {
-                                                                                text: 'Create New Order',
+                                                                                text: 'Create Property',
+                                                                                table: 'Property',
                                                                             },
                                                                         },
                                                                     },
@@ -52,7 +52,6 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                 headerPb: 2,
                                                                 footer: {
                                                                     create: {
-                                                                        type: GridCardFooterType.Progress,
                                                                         progress: {
                                                                             create: {
                                                                                 value: 25,
@@ -75,7 +74,6 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                 headerPb: 2,
                                                                 footer: {
                                                                     create: {
-                                                                        type: GridCardFooterType.Progress,
                                                                         progress: {
                                                                             create: {
                                                                                 value: 12,
@@ -112,16 +110,10 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                                                     type: Type.Property,
                                                                                                     typeTableRequest:
                                                                                                         TypeTableRequest.GroupBy,
-                                                                                                    columns: [
-                                                                                                        'address',
-                                                                                                        'city',
-                                                                                                        'postalCode',
-                                                                                                    ],
                                                                                                     groupBy: {
                                                                                                         create: {
                                                                                                             fields: [
                                                                                                                 'city',
-                                                                                                                'postalCode',
                                                                                                             ],
                                                                                                             sum: [
                                                                                                                 'surface',

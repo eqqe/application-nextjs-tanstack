@@ -1,8 +1,6 @@
-import { PropertyCard } from '@/components/SpaceComponent/Property/PropertyCard';
-import { SpaceComponentCard } from '@/components/SpaceComponent/Dashboard/DashboardCard';
-import { useRouter } from 'next/router';
+import { PropertyCard } from '@/components/Property/PropertyCard';
+import { SpaceComponentCard } from '@/components/Dashboard/DashboardCard';
 import { CreateForm } from 'components/Form/CreateForm';
-import { Property, List, Dashboard, Space, User, Type } from '@prisma/client';
 import {
     PropertyCreateScalarSchema,
     ListCreateScalarSchema,
@@ -10,7 +8,7 @@ import {
 } from '@zenstackhq/runtime/zod/models';
 import { z } from 'zod';
 import { WithNavBar } from '@/components/layout/WithNavBar';
-import { ListCard } from '@/components/SpaceComponent/List/ListCard';
+import { ListCard } from '@/components/List/ListCard';
 import Link from 'next/link';
 import {
     useCreateDashboard,
@@ -27,14 +25,6 @@ export function SpaceHomeComponent() {
     const createProperty = useCreateProperty();
     const createDashboard = useCreateDashboard();
     const { data: dashboards } = useFindManyDashboard({
-        include: {
-            owner: true,
-        },
-        orderBy: {
-            updatedAt: 'desc',
-        },
-    });
-    const { data: properties } = useFindManyProperty({
         include: {
             owner: true,
         },
@@ -63,18 +53,6 @@ export function SpaceHomeComponent() {
                             toast.success(`${data.list.name} created successfully!`);
                         }}
                         title={'Create List'}
-                    />
-                    <CreateForm
-                        formSchema={z.object({
-                            property: PropertyCreateScalarSchema,
-                        })}
-                        onSubmitData={async (data) => {
-                            await createProperty.mutateAsync({
-                                data: data.property,
-                            });
-                            toast.success(`${data.property.name} created successfully!`);
-                        }}
-                        title={'Create Property'}
                     />
                     <CreateForm
                         formSchema={z.object({ dashboard: DashboardCreateScalarSchema })}
@@ -108,18 +86,6 @@ export function SpaceHomeComponent() {
                                 <Link href={`/list/${list.id}`}>
                                     <SpaceComponentCard spaceComponent={list}>
                                         <ListCard list={list} />
-                                    </SpaceComponentCard>
-                                </Link>
-                            </li>
-                        );
-                    })}
-
-                    {properties?.map((property) => {
-                        return (
-                            <li key={property.id}>
-                                <Link href={`/property/${property.id}`}>
-                                    <SpaceComponentCard spaceComponent={property}>
-                                        <PropertyCard property={property} />
                                     </SpaceComponentCard>
                                 </Link>
                             </li>
