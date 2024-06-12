@@ -27,5 +27,5 @@ model PropertyAssociate extends BasePropertyLink, BaseAssociateLink, Component {
     exitDate        DateTime?
 
     
-    @@allow('all', auth().currentSpace == associate.space && auth().currentSpace == property.space && associate.space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)] && property.space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)])
+    @@allow('all', auth().currentSpaceId == associate.spaceId && auth().currentSpaceId == property.spaceId && associate.space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)] && property.space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)])
 }

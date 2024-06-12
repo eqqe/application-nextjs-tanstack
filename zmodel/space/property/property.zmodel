@@ -32,7 +32,7 @@ abstract model BasePropertyLink {
 }
 abstract model PropertyComponent extends BasePropertyLink, Component {
 
-    @@allow('all', auth().currentSpace == property.space && property.space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)])
+    @@allow('all', auth().currentSpaceId == property.spaceId && property.space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)])
 }
 
 enum ChargeType {

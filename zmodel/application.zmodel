@@ -9,7 +9,7 @@ model SpaceApplicationVersion extends IdCreatedUpdatedSpace {
 
     @@unique([spaceId, applicationVersionId])
 
-    @@allow('create,update,delete',  auth().currentSpace == space && space.members?[user == auth() && profile.role == ADMIN])
+    @@allow('create,update,delete',  auth().currentSpaceId == spaceId && space.members?[user == auth() && profile.role == ADMIN])
 }
 
 
@@ -44,7 +44,7 @@ model FolderApplicationVersion extends IdCreatedUpdatedAuth
     tabs TabFolder[]
 
     path String
-    @@allow('read', applicationVersion.activations?[auth().currentSpace == space && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])
+    @@allow('read', applicationVersion.activations?[auth().currentSpaceId == spaceId && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])
 }
 
 model TabFolder extends IdCreatedUpdatedAuth
@@ -53,7 +53,7 @@ model TabFolder extends IdCreatedUpdatedAuth
     folderId        String
 
     subTabs SubTabFolder[]
-    @@allow('read', folder.applicationVersion.activations?[auth().currentSpace == space && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])
+    @@allow('read', folder.applicationVersion.activations?[auth().currentSpaceId == spaceId && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])
 }
 
 model SubTabFolder extends IdCreatedUpdatedAuth
@@ -63,7 +63,7 @@ model SubTabFolder extends IdCreatedUpdatedAuth
 
     views View[]
     grids Grid[]
-    @@allow('read', tab.folder.applicationVersion.activations?[auth().currentSpace == space && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])
+    @@allow('read', tab.folder.applicationVersion.activations?[auth().currentSpaceId == spaceId && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])
 }
 
 

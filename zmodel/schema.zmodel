@@ -48,7 +48,7 @@ abstract model IdCreatedUpdatedSpace extends IdCreatedUpdatedAuth {
     space     Space         @relation(fields: [spaceId], references: [id], onDelete: Cascade)
     spaceId   String        @default(auth().currentSpaceId)
 
-    @@allow('read', auth().currentSpace == space && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)])
+    @@allow('read', auth().currentSpaceId == spaceId && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)])
 }
 enum SpaceUserRole {
     USER
@@ -60,7 +60,7 @@ abstract model LinkToSpace extends IdCreatedUpdatedAuth {
     space     Space         @relation(fields: [spaceId], references: [id], onDelete: Cascade)
     spaceId   String  
     
-    @@allow('read', auth().currentSpace == space && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)])
+    @@allow('read', auth().currentSpaceId == spaceId && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)])
     // space admin can create/update/delete
     @@allow('create,update,delete', space.members?[user == auth() && profile.role == ADMIN])
 }
@@ -94,8 +94,7 @@ model User extends IdCreatedUpdated {
     name          String?
     spaces        SpaceUser[]
     spacesOwned    Space[] @relation("owner")
-    currentSpace          Space?         @relation(fields: [currentSpaceId], references: [id], onDelete: Cascade)
-    currentSpaceId        String?
+    currentSpaceId        String?   @ignore
     image         String?     @url
     todos         Todo[] @relation("owner")
 
@@ -122,7 +121,7 @@ model User extends IdCreatedUpdated {
     accounts      Account[]
 
     // can be read by users sharing any space
-    @@allow('read', spaces?[auth().currentSpace == space && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])
+    @@allow('read', spaces?[auth().currentSpaceId == spaceId && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])
 
     // full access by oneself
     @@allow('all', auth() == this)

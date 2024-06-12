@@ -14,7 +14,6 @@ model Space extends IdCreatedUpdatedAuth, Owner {
     dashboards Dashboard[]
     properties Property[]
     lists List[]
-    viewed User[]
     associates Associate[]
 
     // When creating a space, we need to build a manual id with these to create the space, profiles and members at the same time
@@ -34,7 +33,7 @@ abstract model SpaceComponent extends IdCreatedUpdatedSpace, Owner {
 
 
     @@deny('all', private && owner != auth())
-    @@allow('all', space == auth().currentSpace && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)])
+    @@allow('all', spaceId == auth().currentSpaceId && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)])
 }
 
 

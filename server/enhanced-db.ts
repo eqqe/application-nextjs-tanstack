@@ -7,7 +7,7 @@ import { currentSpaceCookieName } from '@/components/layout/SpaceSwitch';
 export function enhancePrisma({ userId, currentSpaceId }: { userId?: string; currentSpaceId?: string }) {
     let options;
     if (currentSpaceId) {
-        options = { user: { id: userId, currentSpace: { id: currentSpaceId }, currentSpaceId } };
+        options = { user: { id: userId, currentSpaceId } };
     } else if (userId) {
         options = { user: { id: userId } };
     } else {
