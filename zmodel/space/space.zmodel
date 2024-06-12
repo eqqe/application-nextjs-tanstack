@@ -7,19 +7,19 @@ import "list/list"
 import "view/view"
 
 model Space extends IdCreatedUpdatedAuth, Owner {
-    name      String      @length(4, 50)
-    members   SpaceUser[]
-    profiles   Profile[]
+    name         String                    @length(4, 50)
+    members      SpaceUser[]
+    profiles     Profile[]
     applications SpaceApplicationVersion[]
-    dashboards Dashboard[]
-    properties Property[]
-    lists List[]
-    associates Associate[]
+    dashboards   Dashboard[]
+    properties   Property[]
+    lists        List[]
+    associates   Associate[]
 
     // When creating a space, we need to build a manual id with these to create the space, profiles and members at the same time
     @@unique([name, ownerId])
 
-    @@allow('create', true)
+    @@allow('create', auth() != null)
 
     @@allow('read', members?[user == auth()])
 
@@ -28,8 +28,8 @@ model Space extends IdCreatedUpdatedAuth, Owner {
 
 
 abstract model SpaceComponent extends IdCreatedUpdatedSpace, Owner {
-    private   Boolean  @default(false)
-    name     String   @length(1, 100)
+    private Boolean @default(false)
+    name    String  @length(1, 100)
 
 
     @@deny('all', private && owner != auth())

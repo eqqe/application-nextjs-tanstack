@@ -3,14 +3,14 @@ import "../../schema.zmodel"
 import "../space.zmodel"
 
 model Dashboard extends SpaceComponent {
-    panelRows     PanelRow[]
+    panelRows PanelRow[]
 }
 
 model PanelRow extends Component {
-    dashboard        Dashboard      @relation(fields: [dashboardId], references: [id], onDelete: Cascade)
-    dashboardId      String
+    dashboard   Dashboard @relation(fields: [dashboardId], references: [id], onDelete: Cascade)
+    dashboardId String
     title       String    @length(1, 100)
-    panels     Panel[]
+    panels      Panel[]
 
     @@deny('all', dashboard.private && dashboard.owner != auth())
     @@allow('all', dashboard.spaceId == auth().currentSpaceId && dashboard.space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)])
@@ -18,10 +18,10 @@ model PanelRow extends Component {
 
 
 model Panel extends Component {
-    panelRow        PanelRow      @relation(fields: [panelRowId], references: [id], onDelete: Cascade)
+    panelRow        PanelRow         @relation(fields: [panelRowId], references: [id], onDelete: Cascade)
     panelRowId      String
-    title       String    @length(1, 100)
-    panelComponents     PanelComponent[]
+    title           String           @length(1, 100)
+    panelComponents PanelComponent[]
 
     @@deny('all', panelRow.dashboard.private && panelRow.dashboard.owner != auth())
     @@allow('all', panelRow.dashboard.spaceId == auth().currentSpaceId && panelRow.dashboard.space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)])
@@ -32,14 +32,14 @@ enum PanelComponentType {
     Report
 }
 model PanelComponent extends Component {
-    panel        Panel      @relation(fields: [panelId], references: [id], onDelete: Cascade)
-    panelId      String
-    title       String    @length(1, 100)
-    type PanelComponentType
+    panel   Panel                  @relation(fields: [panelId], references: [id], onDelete: Cascade)
+    panelId String
+    title   String                 @length(1, 100)
+    type    PanelComponentType
 
 
     counter PanelComponentCounter?
-    report PanelComponentReport?
+    report  PanelComponentReport?
 
     @@deny('all', panel.panelRow.dashboard.private && panel.panelRow.dashboard.owner != auth())
     @@allow('all', panel.panelRow.dashboard.spaceId == auth().currentSpaceId && panel.panelRow.dashboard.space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)])
@@ -47,16 +47,15 @@ model PanelComponent extends Component {
 
 abstract model PanelComponentRelation extends Component {
     panelComponent   PanelComponent @relation(fields: [panelComponentId], references: [id], onDelete: Cascade)
-    panelComponentId String   @unique
-    tableType Type
+    panelComponentId String         @unique
+    tableType        Type
 
     @@deny('all', panelComponent.panel.panelRow.dashboard.private && panelComponent.panel.panelRow.dashboard.owner != auth())
     @@allow('all', panelComponent.panel.panelRow.dashboard.spaceId == auth().currentSpaceId && panelComponent.panel.panelRow.dashboard.space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)])
 }
 
 
-enum PanelComponentCounterType
-{
+enum PanelComponentCounterType {
     Sum
     Count
 }

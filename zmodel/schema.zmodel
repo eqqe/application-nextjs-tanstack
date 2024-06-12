@@ -23,7 +23,7 @@ plugin enhancer {
 }
 
 plugin zod {
-  provider = '@core/zod'
+    provider = '@core/zod'
 }
 
 plugin hooks {
@@ -33,20 +33,18 @@ plugin hooks {
     version = 'v5'
 }
 
-abstract model IdCreatedUpdated
-{
-    id        String      @id @default(uuid())
-    createdAt DateTime    @default(now())
-    updatedAt DateTime    @updatedAt
+abstract model IdCreatedUpdated {
+    id        String   @id @default(uuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }
-abstract model IdCreatedUpdatedAuth extends IdCreatedUpdated
-{
+abstract model IdCreatedUpdatedAuth extends IdCreatedUpdated {
     @@deny('all', auth() == null)
 }
 
 abstract model IdCreatedUpdatedSpace extends IdCreatedUpdatedAuth {
-    space     Space         @relation(fields: [spaceId], references: [id], onDelete: Cascade)
-    spaceId   String        @default(auth().currentSpaceId)
+    space   Space  @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+    spaceId String @default(auth().currentSpaceId)
 
     @@allow('read', auth().currentSpaceId == spaceId && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)])
 }
@@ -57,68 +55,66 @@ enum SpaceUserRole {
 }
 
 abstract model LinkToSpace extends IdCreatedUpdatedAuth {
-    space     Space         @relation(fields: [spaceId], references: [id], onDelete: Cascade)
-    spaceId   String  
-    
+    space   Space  @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+    spaceId String
+
     @@allow('read', auth().currentSpaceId == spaceId && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)])
     // space admin can create/update/delete
     @@allow('create,update,delete', space.members?[user == auth() && profile.role == ADMIN])
 }
 
 model Profile extends LinkToSpace {
- 
 
-    users      SpaceUser[]
 
-    role SpaceUserRole
+    users SpaceUser[]
 
+    role  SpaceUserRole
 }
 
 model SpaceUser extends LinkToSpace {
 
 
-    profile     Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
-    profileId   String  
+    profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+    profileId String
 
 
-    user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+    user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId    String
     @@unique([userId, spaceId])
-
 }
 
 model User extends IdCreatedUpdated {
-    email         String      @unique @email
-    emailVerified DateTime?
-    password      String?     @password @omit
-    name          String?
-    spaces        SpaceUser[]
-    spacesOwned    Space[] @relation("owner")
-    currentSpaceId        String?   @ignore
-    image         String?     @url
-    todos         Todo[] @relation("owner")
+    email                  String                  @unique @email
+    emailVerified          DateTime?
+    password               String?                 @password @omit
+    name                   String?
+    spaces                 SpaceUser[]
+    spacesOwned            Space[]                 @relation("owner")
+    currentSpaceId         String?                 @ignore
+    image                  String?                 @url
+    todos                  Todo[]                  @relation("owner")
 
-    tenants     Tenant[] @relation("user")
-    tenantsOwned Tenant[] @relation("owner")
-    
-    leases        Lease[] @relation("owner")
-    dashboards  Dashboard[] @relation("owner")
-    properties  Property[] @relation("owner")
-    lists  List[]  @relation("owner")
-    payments      Payment[] @relation("owner")
+    tenants                Tenant[]                @relation("user")
+    tenantsOwned           Tenant[]                @relation("owner")
 
-    charges         Charge[] @relation("owner")
-    panelRows         PanelRow[] @relation("owner")
-    panels           Panel[] @relation("owner")
-    panelComponents     PanelComponent[] @relation("owner")
-    panelComponentsCounter     PanelComponentCounter[] @relation("owner")
-    panelComponentsReport     PanelComponentReport[] @relation("owner")
-    associatesOwned  Associate[] @relation("owner")
-    associates  Associate[] @relation("user")
-    propertyAsssociates  PropertyAssociate[] @relation("owner")
+    leases                 Lease[]                 @relation("owner")
+    dashboards             Dashboard[]             @relation("owner")
+    properties             Property[]              @relation("owner")
+    lists                  List[]                  @relation("owner")
+    payments               Payment[]               @relation("owner")
+
+    charges                Charge[]                @relation("owner")
+    panelRows              PanelRow[]              @relation("owner")
+    panels                 Panel[]                 @relation("owner")
+    panelComponents        PanelComponent[]        @relation("owner")
+    panelComponentsCounter PanelComponentCounter[] @relation("owner")
+    panelComponentsReport  PanelComponentReport[]  @relation("owner")
+    associatesOwned        Associate[]             @relation("owner")
+    associates             Associate[]             @relation("user")
+    propertyAsssociates    PropertyAssociate[]     @relation("owner")
     
     // next-auth
-    accounts      Account[]
+    accounts               Account[]
 
     // can be read by users sharing any space
     @@allow('read', spaces?[auth().currentSpaceId == spaceId && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])
@@ -128,15 +124,14 @@ model User extends IdCreatedUpdated {
 }
 
 abstract model Owner {
-    owner     User     @relation("owner", fields: [ownerId], references: [id], onDelete: Cascade)
-    ownerId   String   @default(auth().id)
+    owner   User   @relation("owner", fields: [ownerId], references: [id], onDelete: Cascade)
+    ownerId String @default(auth().id)
     @@deny('update', future().owner != owner)
 }
 
 
 
 abstract model Component extends IdCreatedUpdatedAuth, Owner {
-
 }
 enum Type {
     List
@@ -173,9 +168,9 @@ model Account {
 
 // next-auth
 model VerificationToken {
-  identifier String
-  token      String
-  expires    DateTime
- 
-  @@id([identifier, token])
+    identifier String
+    token      String
+    expires    DateTime
+
+    @@id([identifier, token])
 }

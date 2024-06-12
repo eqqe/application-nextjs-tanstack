@@ -11,13 +11,13 @@ enum TypeTableRequest {
 }
 
 model GridCardTable extends IdCreatedUpdatedAuth {
-    parent GridCard          @relation(fields: [parentId], references: [id], onDelete: Cascade)
-    parentId        String @unique
+    parent           GridCard         @relation(fields: [parentId], references: [id], onDelete: Cascade)
+    parentId         String           @unique
 
-    type Type
+    type             Type
     typeTableRequest TypeTableRequest
-    columns String[]
-    groupBy GroupBy?
+    columns          String[]
+    groupBy          GroupBy?
 
     @@allow('read', parent.element.grid.subTab.tab.folder.applicationVersion.activations?[auth().currentSpaceId == spaceId && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])
     @@allow('read', parent.element.gridTabContent.tabs.element.grid.subTab.tab.folder.applicationVersion.activations?[auth().currentSpaceId == spaceId && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])
@@ -25,19 +25,18 @@ model GridCardTable extends IdCreatedUpdatedAuth {
 
 
 model GroupBy extends IdCreatedUpdatedAuth {
-    parent GridCardTable          @relation(fields: [parentId], references: [id], onDelete: Cascade)
-    parentId        String @unique
+    parent   GridCardTable @relation(fields: [parentId], references: [id], onDelete: Cascade)
+    parentId String        @unique
 
 
-    fields    String[]
-    sum   String[]
-    count String[]
-    avg   String[]
-    min   String[]
-    max   String[]
-    orderBy     String?
+    fields   String[]
+    sum      String[]
+    count    String[]
+    avg      String[]
+    min      String[]
+    max      String[]
+    orderBy  String?
 
     @@allow('read', parent.parent.element.grid.subTab.tab.folder.applicationVersion.activations?[auth().currentSpaceId == spaceId && space.members?[user == auth()]])
     @@allow('read', parent.parent.element.gridTabContent.tabs.element.grid.subTab.tab.folder.applicationVersion.activations?[auth().currentSpaceId == spaceId && space.members?[user == auth()]])
-
 }

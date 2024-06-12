@@ -4,7 +4,7 @@ import "../space.zmodel"
 
 
 model List extends SpaceComponent {
-    todos     Todo[]
+    todos Todo[]
 }
 
 model Todo extends Component {
@@ -12,7 +12,7 @@ model Todo extends Component {
     listId      String
     title       String    @length(1, 100)
     completedAt DateTime?
-    
+
     @@deny('all', list.private && list.owner != auth())
     @@allow('all', list.spaceId == auth().currentSpaceId && list.space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)])
 }

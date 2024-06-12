@@ -11,21 +11,21 @@ enum PropertyType {
 }
 
 model Property extends SpaceComponent {
-    propertyType        PropertyType
-    address     String
-    city        String
-    postalCode  String
-    country     String
-    leases      Lease[]
-    surface     Int
-    charges     Charge[]
+    propertyType       PropertyType
+    address            String
+    city               String
+    postalCode         String
+    country            String
+    leases             Lease[]
+    surface            Int
+    charges            Charge[]
     propertyAssociates PropertyAssociate[]
 }
 
 
 abstract model BasePropertyLink {
-    property    Property   @relation(fields: [propertyId], references: [id], onDelete: Cascade)
-    propertyId  String
+    property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+    propertyId String
 
 
     @@deny('all', property.private && property.owner != auth())
@@ -44,7 +44,7 @@ enum ChargeType {
 model Charge  extends PropertyComponent {
     lease       Lease?     @relation(fields: [leaseId], references: [id], onDelete: Cascade)
     leaseId     String?
-    chargeType        ChargeType
+    chargeType  ChargeType
     amount      BigInt
     dueDate     DateTime
     description String?
