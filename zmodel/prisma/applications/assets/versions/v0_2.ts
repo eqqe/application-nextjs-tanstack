@@ -12,9 +12,11 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                     create: {
                         subTabs: {
                             create: {
+                                name: 'Properties subTab',
                                 grids: {
                                     create: [
                                         {
+                                            name: 'Properties Grid',
                                             columns: 6,
                                             elements: {
                                                 create: [
@@ -162,6 +164,31 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                             name: 'Year',
                                                                         },
                                                                     ],
+                                                                },
+                                                            },
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                        {
+                                            name: 'Associates grid',
+                                            columns: 4,
+                                            elements: {
+                                                create: [
+                                                    {
+                                                        type: 'Card',
+                                                        colSpan: 4,
+                                                        card: {
+                                                            create: {
+                                                                title: 'Associates',
+                                                                description:
+                                                                    'List associates in the real estate company',
+                                                                table: {
+                                                                    create: {
+                                                                        typeTableRequest: 'FindMany',
+                                                                        type: 'Associate',
+                                                                    },
                                                                 },
                                                             },
                                                         },

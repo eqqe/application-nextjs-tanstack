@@ -22,10 +22,8 @@ abstract model LeaseComponent extends Component {
     @@deny('all', lease.property.private && lease.property.owner != auth())
     @@allow('all', lease.property.spaceId == auth().currentSpaceId && lease.property.space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)])
 }
-model Tenant extends LeaseComponent {
-
-    user   User   @relation("user", fields: [userId], references: [id], onDelete: Cascade)
-    userId String
+model Tenant extends LeaseComponent, OptionalUser
+{
 }
 
 model Payment extends LeaseComponent {

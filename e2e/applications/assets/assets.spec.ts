@@ -6,7 +6,8 @@ import { Property } from '@zenstackhq/runtime/models';
 test('Should enable assets application, see groups of properties, list them, edit one', async ({ page, utils }) => {
     await utils.openHomeCreateSpace();
     await utils.enableAssets();
-    await utils.openApplication();
+    await utils.openSubTab();
+    await utils.openGrid();
 
     const city = faker.location.city();
     const surface1 = faker.number.int({ max: 5000, min: 100 });
@@ -25,8 +26,8 @@ test('Should enable assets application, see groups of properties, list them, edi
 
     await page.getByRole('tab', { name: 'Month' }).click();
 
-    // '..' is a xPath we use to get the parent element, once for the link, once for the row
-    await page.getByText(otherCity).locator('..').locator('..').getByText('Edit Property').click();
+    // '..' is a xPath we use to get the parent element
+    await page.getByText(otherCity).locator('..').getByText('Edit Property').click();
 
     await expect(page.getByText(otherCity)).toBeVisible();
 

@@ -1,6 +1,5 @@
 import "schema"
 import "space/space.zmodel"
-import "space/view/view"
 import "space/grid/grid"
 
 model SpaceApplicationVersion extends IdCreatedUpdatedSpace {
@@ -52,11 +51,11 @@ model TabFolder extends IdCreatedUpdatedAuth {
     @@allow('read', folder.applicationVersion.activations?[auth().currentSpaceId == spaceId && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])
 }
 
-model SubTabFolder extends IdCreatedUpdatedAuth {
+model SubTabFolder extends IdCreatedUpdatedAuth, Named
+{
     tab   TabFolder @relation(fields: [tabId], references: [id], onDelete: Cascade)
     tabId String
 
-    views View[]
     grids Grid[]
     @@allow('read', tab.folder.applicationVersion.activations?[auth().currentSpaceId == spaceId && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])
 }

@@ -1,10 +1,10 @@
 import { assert, it } from 'vitest';
 import { getEnhancedPrisma } from '@/tests/mock/enhanced-prisma';
-import { GridInclude } from '@/components/Grid';
+import { GridInclude } from '@/components/Grid/Grid';
 
 it('Should get grids', async () => {
     function checkGrids() {
-        assert.equal(grids.length, 1);
+        assert.equal(grids.length, 2);
         assert.equal(grids[0].columns, 6);
         const card = grids[0].elements[0];
         assert.equal(card.type, 'Card');

@@ -1,10 +1,10 @@
 import React from 'react';
 import { DefaultValues } from 'react-hook-form';
-import { z } from 'zod';
+import { ZodRawShape, ZodString, z } from 'zod';
 import { FieldConfig } from './types';
 
 // TODO: This should support recursive ZodEffects but TypeScript doesn't allow circular type definitions.
-export type ZodObjectOrWrapped = z.ZodObject<any, any> | z.ZodEffects<z.ZodObject<any, any>>;
+export type ZodObjectOrWrapped = z.ZodObject<ZodRawShape, any> | z.ZodEffects<z.ZodObject<any, any>>;
 
 export function beautifyObjectName(string: string) {
     return string

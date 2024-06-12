@@ -102,7 +102,7 @@ export const Applications = () => {
                         : null,
                 };
                 async function refetchGrids() {
-                    queryClient.refetchQueries({ queryKey: ['zenstack', 'Grid'] });
+                    queryClient.refetchQueries({ queryKey: ['zenstack', 'SubTabFolder'] });
                 }
                 async function onClickActivate() {
                     if (activated) {
@@ -196,5 +196,12 @@ export const Applications = () => {
             },
         },
     ];
-    return <AutoTable additionalColumns={additionalColumns} data={applications} formSchema={schema} />;
+    return (
+        <AutoTable
+            additionalColumns={additionalColumns}
+            data={applications}
+            onlyAdditionalColumns={false}
+            formSchema={schema}
+        />
+    );
 };

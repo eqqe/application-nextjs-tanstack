@@ -4,10 +4,8 @@ import "dashboard/dashboard"
 import "property/property"
 import "property/associate"
 import "list/list"
-import "view/view"
 
-model Space extends IdCreatedUpdatedAuth, Owner {
-    name         String                    @length(4, 50)
+model Space extends IdCreatedUpdatedAuth, Owner, Named {
     members      SpaceUser[]
     profiles     Profile[]
     applications SpaceApplicationVersion[]
@@ -26,11 +24,12 @@ model Space extends IdCreatedUpdatedAuth, Owner {
     @@allow('update,delete', members?[user == auth() && profile.role == ADMIN])
 }
 
+abstract model Named {
+    name      String      @length(2, 150)
+}
 
-abstract model SpaceComponent extends IdCreatedUpdatedSpace, Owner {
-    private Boolean @default(false)
-    name    String  @length(1, 100)
-
+abstract model SpaceComponent extends IdCreatedUpdatedSpace, Owner, Named {
+    private   Boolean  @default(false)
 
     @@deny('all', private && owner != auth())
     @@allow('all', spaceId == auth().currentSpaceId && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)])

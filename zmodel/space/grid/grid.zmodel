@@ -4,7 +4,7 @@ import "../space.zmodel"
 import "../../application"
 import "table"
 
-abstract model BaseGrid extends IdCreatedUpdatedAuth {
+abstract model BaseGrid extends IdCreatedUpdatedAuth, Named {
     elements GridElement[]
 }
 
@@ -87,8 +87,6 @@ model GridTabs extends IdCreatedUpdatedAuth {
 model GridTabContent extends BaseGrid {
     tabs     GridTabs @relation(fields: [parentId], references: [id], onDelete: Cascade)
     parentId String
-
-    name     String
 
     @@allow('read', tabs.element.grid.subTab.tab.folder.applicationVersion.activations?[auth().currentSpaceId == spaceId && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])
     @@allow('read', tabs.element.gridTabContent.tabs.element.grid.subTab.tab.folder.applicationVersion.activations?[auth().currentSpaceId == spaceId && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])

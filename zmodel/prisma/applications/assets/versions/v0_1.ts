@@ -12,9 +12,11 @@ export const assetsv0_1: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                     create: {
                         subTabs: {
                             create: {
+                                name: 'Properties subTab',
                                 grids: {
                                     create: [
                                         {
+                                            name: 'Properties grid',
                                             columns: 1,
                                             elements: {
                                                 create: [

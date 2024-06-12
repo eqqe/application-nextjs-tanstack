@@ -5,18 +5,26 @@ import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ErrorBoundary } from 'react-error-boundary';
 import { FallbackError } from '../layout/FallbackError';
+import { useRouter } from 'next/router';
 
-interface DataTableProps<TData, TValue> {
+export type Id = {
+    id: string;
+};
+
+interface DataTableProps<TData extends Id, TValue> {
     columns: ColumnDef<TData, TValue>[];
     data: TData[];
+    getRowLink?: (id: string) => string;
 }
 
-export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+export function DataTable<TData extends Id, TValue>({ columns, data, getRowLink }: DataTableProps<TData, TValue>) {
     const table = useReactTable({
         data,
         columns,
         getCoreRowModel: getCoreRowModel(),
     });
+
+    const router = useRouter();
 
     return (
         <div className="rounded-md border">
@@ -42,7 +50,14 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
                             table.getRowModel().rows.map((row) => (
                                 <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
                                     {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id}>
+                                        <TableCell
+                                            key={cell.id}
+                                            onClick={
+                                                cell.column.columnDef.meta?.link && getRowLink
+                                                    ? () => router.push(getRowLink(row.original.id))
+                                                    : undefined
+                                            }
+                                        >
                                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </TableCell>
                                     ))}

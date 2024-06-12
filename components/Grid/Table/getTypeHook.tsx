@@ -1,3 +1,4 @@
+import { getGridUrl } from '@/lib/urls';
 import {
     useAggregateDashboard,
     useAggregateList,
@@ -62,6 +63,13 @@ import {
     useUpdateManyTenant,
     useCreateTenant,
     useCreateManyTenant,
+    useGroupByGrid,
+    useAggregateGrid,
+    useFindManyGrid,
+    useUpdateGrid,
+    useUpdateManyGrid,
+    useCreateGrid,
+    useCreateManyGrid,
 } from '@/zmodel/lib/hooks';
 import { Type } from '@prisma/client';
 import {
@@ -92,6 +100,9 @@ import {
     TenantScalarSchema,
     TenantUpdateScalarSchema,
     TenantCreateScalarSchema,
+    GridScalarSchema,
+    GridUpdateScalarSchema,
+    GridCreateScalarSchema,
 } from '@zenstackhq/runtime/zod/models';
 
 export function getTypeHook({ type }: { type: Type }) {
@@ -285,6 +296,28 @@ export function getTypeHook({ type }: { type: Type }) {
                     single: useCreateLease,
                     many: useCreateManyLease,
                 },
+            };
+        case 'Grid':
+            return {
+                useHook: {
+                    Aggregate: useAggregateGrid,
+                    GroupBy: useGroupByGrid,
+                    FindMany: useFindManyGrid,
+                },
+                schema: {
+                    base: GridScalarSchema,
+                    update: GridUpdateScalarSchema,
+                    create: GridCreateScalarSchema,
+                },
+                useUpdate: {
+                    single: useUpdateGrid,
+                    many: useUpdateManyGrid,
+                },
+                useCreate: {
+                    single: useCreateGrid,
+                    many: useCreateManyGrid,
+                },
+                getLink: getGridUrl,
             };
     }
 }

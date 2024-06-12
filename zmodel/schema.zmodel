@@ -5,7 +5,6 @@ import "space/property/property"
 import "space/property/lease"
 import "space/property/associate"
 import "space/list/list"
-import "space/view/view"
 
 datasource db {
     provider = 'postgresql'
@@ -83,6 +82,8 @@ model SpaceUser extends LinkToSpace {
     @@unique([userId, spaceId])
 }
 
+
+
 model User extends IdCreatedUpdated {
     email                  String                  @unique @email
     emailVerified          DateTime?
@@ -129,6 +130,11 @@ abstract model Owner {
     @@deny('update', future().owner != owner)
 }
 
+abstract model OptionalUser {
+    user    User?   @relation("user", fields: [userId], references: [id], onDelete: Cascade)
+    userId  String?
+}
+
 
 
 abstract model Component extends IdCreatedUpdatedAuth, Owner {
@@ -143,6 +149,7 @@ enum Type {
     Payment
     Tenant
     Charge
+    Grid
 }
 
 

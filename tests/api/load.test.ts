@@ -7,14 +7,16 @@ test('Load a lot of data for 3 users', async () => {
     // Make it fast when running locally, but check it does not timeout on CI with a lot of data
     const length = process.env.CI ? 500 : 2;
     async function writeFakeData({ prisma }: { prisma: PrismaClient }) {
-        const { dashboards, lists, properties, leases, payments, charges } = generateData({ length });
-
+        const { dashboards, lists, properties, leases, payments, charges, associates, propertyAssociates } =
+            generateData({ length });
         await prisma.dashboard.createMany({ data: dashboards });
         await prisma.list.createMany({ data: lists });
         await prisma.property.createMany({ data: properties });
         await prisma.lease.createMany({ data: leases });
         await prisma.payment.createMany({ data: payments });
         await prisma.charge.createMany({ data: charges });
+        await prisma.associate.createMany({ data: associates });
+        await prisma.propertyAssociate.createMany({ data: propertyAssociates });
     }
 
     async function checkFakeDataCount({ prisma, factor }: { prisma: PrismaClient; factor: number }) {
@@ -32,6 +34,8 @@ test('Load a lot of data for 3 users', async () => {
         expect(countPayment._count).toBe(countExpected);
         const countCharge = await prisma.charge.aggregate({ _count: true });
         expect(countCharge._count).toBe(countExpected);
+        const countAssociate = await prisma.associate.aggregate({ _count: true });
+        expect(countAssociate._count).toBe(countExpected);
     }
     const { user1, user2, user3 } = await getEnhancedPrisma();
     await writeFakeData(user1);

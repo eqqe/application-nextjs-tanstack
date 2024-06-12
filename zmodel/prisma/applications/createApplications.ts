@@ -12,11 +12,9 @@ const applications = [
 ];
 
 export async function createApplications(prisma: PrismaClient) {
-    if (process.env.NODE_ENV === 'development') {
-        await prisma.user.deleteMany();
-        await prisma.space.deleteMany();
-        await prisma.application.deleteMany();
-    }
+    await prisma.user.deleteMany();
+    await prisma.space.deleteMany();
+    await prisma.application.deleteMany();
     for (const application of applications) {
         await prisma.application.upsert({
             create: application,

@@ -2,9 +2,7 @@ import "../../schema.zmodel"
 import "../space.zmodel"
 import "property"
 
-model Associate extends SpaceComponent {
-    user               User                @relation("user", fields: [userId], references: [id], onDelete: Cascade)
-    userId             String
+model Associate extends SpaceComponent, OptionalUser {
     fiscalNumber       String?
     siret              String?
     birthDate          DateTime

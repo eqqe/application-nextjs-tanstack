@@ -1,10 +1,10 @@
-import { Grid } from '@/components/Grid/Grid';
+import { SubTab } from '@/components/SubTab/SubTab';
 import { WithNavBar } from '@/components/layout/WithNavBar';
 
-export default function GridIndex() {
+export default function SubTabIndex() {
     return (
         <WithNavBar>
-            <Grid />
+            <SubTab />
         </WithNavBar>
     );
 }

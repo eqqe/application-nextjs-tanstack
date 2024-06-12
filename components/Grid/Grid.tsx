@@ -12,10 +12,10 @@ import { Separator } from '@/components/ui/separator';
 import { Pagination, PaginationContent, PaginationItem } from '@/components/ui/pagination';
 import { useRouter } from 'next/router';
 import { useFindGridDetails } from '@/components/useFindGridDetails';
-import { GridCard, GridCardInclude } from './Grid/Card/GridCard';
-import { GridTabs, GridTabsInclude } from './Grid/Tabs/GridTabs';
-import { gridCols, colSpans, rowStarts, rowEnds, colStarts, colEnds } from './Grid/utils';
-import { FallbackError } from './layout/FallbackError';
+import { GridCard, GridCardInclude } from './Card/GridCard';
+import { GridTabs, GridTabsInclude } from './Tabs/GridTabs';
+import { gridCols, colSpans, rowStarts, rowEnds, colStarts, colEnds } from './utils';
+import { FallbackError } from '../layout/FallbackError';
 import { ErrorBoundary } from 'react-error-boundary';
 
 export const GridInclude = {

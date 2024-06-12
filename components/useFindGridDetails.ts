@@ -1,5 +1,5 @@
 import { useFindUniqueGrid } from '@/zmodel/lib/hooks';
-import { GridInclude } from './Grid';
+import { GridInclude } from './Grid/Grid';
 
 export const useFindUniqueGridParam = (gridId: string) => ({
     where: {

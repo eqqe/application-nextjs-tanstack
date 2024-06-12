@@ -1,6 +1,5 @@
 import { assert, it } from 'vitest';
 import { getEnhancedPrisma } from '@/tests/mock/enhanced-prisma';
-import { findManyGridParams } from '@/hooks/useNavItems';
 import { useFindUniqueGridParam } from '@/components/useFindGridDetails';
 
 it('Should enable an application in space', async () => {
@@ -38,8 +37,8 @@ it('Should enable an application in space', async () => {
     const firstFolder = appDetails[0].applications[0].applicationVersion.folders[0];
     assert.equal(firstFolder.path, '/properties');
 
-    const grids = await prisma.grid.findMany(findManyGridParams);
-    assert.equal(grids.length, 1);
+    const grids = await prisma.grid.findMany();
+    assert.equal(grids.length, 2);
     const firstGrid = grids[0];
     assert.equal(firstGrid.columns, 6);
 

@@ -1,20 +1,31 @@
 import { beautifyObjectName } from '@/components/ui/auto-form/utils';
-import { DataTable } from '@/components/ui/data-table';
 import { Prisma } from '@prisma/client';
 import { getTypeHook } from './getTypeHook';
 import { CreateForm } from '@/components/Form/CreateForm';
 import { FallbackError } from '@/components/layout/FallbackError';
 import { ErrorBoundary } from 'react-error-boundary';
-import { ColumnDef } from '@tanstack/react-table';
+import { ColumnDef, RowData } from '@tanstack/react-table';
 import { EditCardTable } from './EditCardTable';
 import Link from 'next/link';
 import { z } from 'zod';
+import { AutoTable } from '@/components/AutoTable/AutoTable';
+import { ReactNode } from 'react';
+import '@tanstack/react-table';
 
 export const GridCardTableInclude = {
     include: {
         groupBy: true,
     },
 };
+
+export type DisplayLink = {
+    link: boolean;
+};
+
+declare module '@tanstack/react-table' {
+    interface ColumnMeta<TData extends RowData, TValue> extends DisplayLink {}
+}
+
 export type CardTableComponentProps = { table: Prisma.GridCardTableGetPayload<typeof GridCardTableInclude> };
 export function CardTableComponent({ table }: CardTableComponentProps) {
     const { useHook, schema, useUpdate, getLink } = getTypeHook(table);
@@ -73,17 +84,14 @@ export function CardTableComponent({ table }: CardTableComponentProps) {
         return <></>;
     }
 
-    const columnDataTable = columns.map((column) => {
-        const base: ColumnDef<z.infer<typeof schema.base>, string> = {
-            accessorKey: column,
-            header: beautifyObjectName(column),
-        };
-        if (table.typeTableRequest === 'FindMany') {
-            base.cell = ({ renderValue, row }) =>
-                getLink ? <Link href={getLink(row.original.id)}>{renderValue()}</Link> : renderValue;
-        }
-        return base;
-    });
+    type ColumnDefFromSchema = ColumnDef<z.infer<typeof schema.base>, ReactNode>;
+    const columnDataTable: ColumnDefFromSchema[] = columns.map((column) => ({
+        accessorKey: column,
+        meta: {
+            link: table.typeTableRequest === 'FindMany',
+        },
+        header: beautifyObjectName(column),
+    }));
 
     if (table.typeTableRequest === 'FindMany') {
         columnDataTable.push({
@@ -110,7 +118,16 @@ export function CardTableComponent({ table }: CardTableComponentProps) {
     return (
         <div className="container mx-auto py-10">
             <ErrorBoundary fallback={<FallbackError />}>
-                <DataTable columns={columnDataTable} data={rows} />
+                <AutoTable
+                    type={table.type}
+                    formSchema={schema.base}
+                    additionalColumns={columnDataTable}
+                    onlyAdditionalColumns={
+                        (!!table.columns.length && table.typeTableRequest === 'FindMany') ||
+                        table.typeTableRequest !== 'FindMany'
+                    }
+                    data={rows}
+                />
             </ErrorBoundary>
             <ErrorBoundary fallback={<FallbackError />}>
                 <EditCardTable table={table} />
