@@ -70,6 +70,16 @@ import {
     useUpdateManyGrid,
     useCreateGrid,
     useCreateManyGrid,
+    useCountProperty,
+    useCountAssociate,
+    useCountCharge,
+    useCountPayment,
+    useCountTenant,
+    useCountDashboard,
+    useCountList,
+    useCountTodo,
+    useCountLease,
+    useCountGrid,
 } from '@/zmodel/lib/hooks';
 import { Type } from '@prisma/client';
 import {
@@ -119,6 +129,7 @@ export function getTypeHook({ type }: { type: Type }) {
                     update: PropertyUpdateScalarSchema,
                     create: PropertyCreateScalarSchema,
                 },
+                useCount: useCountProperty,
                 useUpdate: {
                     single: useUpdateProperty,
                     many: useUpdateManyProperty,
@@ -141,6 +152,7 @@ export function getTypeHook({ type }: { type: Type }) {
                     update: AssociateUpdateScalarSchema,
                     create: AssociateCreateScalarSchema,
                 },
+                useCount: useCountAssociate,
                 useUpdate: {
                     single: useUpdateAssociate,
                     many: useUpdateManyAssociate,
@@ -162,6 +174,7 @@ export function getTypeHook({ type }: { type: Type }) {
                     update: ChargeUpdateScalarSchema,
                     create: ChargeCreateScalarSchema,
                 },
+                useCount: useCountCharge,
                 useUpdate: {
                     single: useUpdateCharge,
                     many: useUpdateManyCharge,
@@ -183,6 +196,7 @@ export function getTypeHook({ type }: { type: Type }) {
                     update: PaymentUpdateScalarSchema,
                     create: PaymentCreateScalarSchema,
                 },
+                useCount: useCountPayment,
                 useUpdate: {
                     single: useUpdatePayment,
                     many: useUpdateManyPayment,
@@ -204,6 +218,7 @@ export function getTypeHook({ type }: { type: Type }) {
                     update: TenantUpdateScalarSchema,
                     create: TenantCreateScalarSchema,
                 },
+                useCount: useCountTenant,
                 useUpdate: {
                     single: useUpdateTenant,
                     many: useUpdateManyTenant,
@@ -225,6 +240,7 @@ export function getTypeHook({ type }: { type: Type }) {
                     update: DashboardUpdateScalarSchema,
                     create: DashboardCreateScalarSchema,
                 },
+                useCount: useCountDashboard,
                 useUpdate: {
                     single: useUpdateDashboard,
                     many: useUpdateManyDashboard,
@@ -246,6 +262,7 @@ export function getTypeHook({ type }: { type: Type }) {
                     update: ListUpdateScalarSchema,
                     create: ListCreateScalarSchema,
                 },
+                useCount: useCountList,
                 useUpdate: {
                     single: useUpdateList,
                     many: useUpdateManyList,
@@ -271,6 +288,7 @@ export function getTypeHook({ type }: { type: Type }) {
                     single: useUpdateTodo,
                     many: useUpdateManyTodo,
                 },
+                useCount: useCountTodo,
                 useCreate: {
                     single: useCreateTodo,
                     many: useCreateManyTodo,
@@ -288,6 +306,7 @@ export function getTypeHook({ type }: { type: Type }) {
                     update: LeaseUpdateScalarSchema,
                     create: LeaseCreateScalarSchema,
                 },
+                useCount: useCountLease,
                 useUpdate: {
                     single: useUpdateLease,
                     many: useUpdateManyLease,
@@ -309,6 +328,7 @@ export function getTypeHook({ type }: { type: Type }) {
                     update: GridUpdateScalarSchema,
                     create: GridCreateScalarSchema,
                 },
+                useCount: useCountGrid,
                 useUpdate: {
                     single: useUpdateGrid,
                     many: useUpdateManyGrid,

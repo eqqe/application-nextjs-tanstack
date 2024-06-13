@@ -4,14 +4,10 @@ import { getTypeHook } from './getTypeHook';
 import { CreateForm } from '@/components/Form/CreateForm';
 import { FallbackError } from '@/components/layout/FallbackError';
 import { ErrorBoundary } from 'react-error-boundary';
-import { ColumnDef, RowData } from '@tanstack/react-table';
-import { EditCardTable } from './EditCardTable';
-import Link from 'next/link';
+import { ColumnDef, PaginationState, RowData } from '@tanstack/react-table';
 import { z } from 'zod';
 import { AutoTable } from '@/components/AutoTable/AutoTable';
-import { ReactNode } from 'react';
-import '@tanstack/react-table';
-import { useGroupByProperty } from '@/zmodel/lib/hooks';
+import { ReactNode, useState } from 'react';
 
 export const GridCardTableInclude = {
     include: {
@@ -28,8 +24,16 @@ declare module '@tanstack/react-table' {
 }
 
 export type CardTableComponentProps = { table: Prisma.GridCardTableGetPayload<typeof GridCardTableInclude> };
-export function CardTableComponent({ table }: CardTableComponentProps) {
-    const { useHook, schema, useUpdate, getLink } = getTypeHook(table);
+export function CardTableComponent({ table: { type, typeTableRequest, columns, groupBy } }: CardTableComponentProps) {
+    const { useHook, schema, useUpdate, useCount } = getTypeHook({ type });
+
+    let count: number | undefined;
+    // @ts-expect-error
+    count = useCount().data;
+    const [pagination, setPagination] = useState<PaginationState>({
+        pageIndex: 0,
+        pageSize: 5,
+    });
 
     function getParams() {
         function reducer(list: string[]) {
@@ -38,11 +42,11 @@ export function CardTableComponent({ table }: CardTableComponentProps) {
                 return previousValue;
             }, {});
         }
-        switch (table.typeTableRequest) {
+        switch (typeTableRequest) {
             case 'Aggregate':
                 return {
                     params: {},
-                    columns: table.columns,
+                    columns,
                 };
             case 'FindMany':
                 return {
@@ -50,51 +54,54 @@ export function CardTableComponent({ table }: CardTableComponentProps) {
                         orderBy: {
                             updatedAt: 'desc',
                         },
+
+                        take: pagination.pageSize,
+                        skip: pagination.pageSize * pagination.pageIndex,
                     },
-                    columns: table.columns,
+                    columns,
                 };
             case 'GroupBy':
-                if (!table.groupBy) {
+                if (!groupBy) {
                     throw '! table.groupBy';
                 }
-                let columns = table.groupBy.fields;
+                let cols = groupBy.fields;
                 const res: any = {
-                    by: table.groupBy.fields,
+                    by: groupBy.fields,
                 };
                 (['sum', 'count', 'avg', 'min', 'max'] as const).forEach((name) => {
-                    if (!table.groupBy) {
-                        throw '! table.groupBy';
+                    if (!groupBy) {
+                        throw '! groupBy';
                     }
-                    const list = table.groupBy[name];
+                    const list = groupBy[name];
                     if (list.length) {
                         const property = `_${name}`;
                         res[property] = reducer(list);
-                        columns = columns.concat(list.map((column) => `${property}.${column}`));
+                        cols = cols.concat(list.map((column) => `${property}.${column}`));
                     }
                 });
-                return { params: res, columns };
+                return { params: res, columns: cols };
         }
     }
 
     const update = useUpdate.single();
-    const { params, columns } = getParams();
-    // @ts-expect-error
-    const { data: rows } = useHook[table.typeTableRequest](params);
+    const { params, columns: cols } = getParams();
 
-    if (!rows) {
-        return <></>;
-    }
+    const useHookTyped = useHook[typeTableRequest];
+
+    let rows: any[] | undefined;
+    // @ts-expect-error
+    rows = useHookTyped(params).data;
 
     type ColumnDefFromSchema = ColumnDef<z.infer<typeof schema.base>, ReactNode>;
-    const columnDataTable: ColumnDefFromSchema[] = columns.map((column) => ({
+    const columnDataTable: ColumnDefFromSchema[] = cols.map((column) => ({
         accessorKey: column,
         meta: {
-            link: table.typeTableRequest === 'FindMany',
+            link: typeTableRequest === 'FindMany',
         },
         header: beautifyObjectName(column),
     }));
 
-    if (table.typeTableRequest === 'FindMany') {
+    if (typeTableRequest === 'FindMany') {
         columnDataTable.push({
             accessorKey: 'edit',
             header: 'Edit',
@@ -111,27 +118,28 @@ export function CardTableComponent({ table }: CardTableComponentProps) {
                             },
                         });
                     }}
-                    title={`Edit ${table.type}`}
+                    title={`Edit ${type}`}
                 />
             ),
         });
+    }
+
+    if (!rows) {
+        return <></>;
     }
     return (
         <div className="container mx-auto py-10">
             <ErrorBoundary fallback={<FallbackError />}>
                 <AutoTable
-                    type={table.type}
+                    type={type}
                     formSchema={schema.base}
                     additionalColumns={columnDataTable}
                     onlyAdditionalColumns={
-                        (!!table.columns.length && table.typeTableRequest === 'FindMany') ||
-                        table.typeTableRequest !== 'FindMany'
+                        (!!columns.length && typeTableRequest === 'FindMany') || typeTableRequest !== 'FindMany'
                     }
                     data={rows}
+                    pagination={typeTableRequest === 'FindMany' ? { pagination, setPagination, count } : void 0}
                 />
-            </ErrorBoundary>
-            <ErrorBoundary fallback={<FallbackError />}>
-                <EditCardTable table={table} />
             </ErrorBoundary>
         </div>
     );

@@ -21,7 +21,7 @@ export const GenerateDemonstration = () => {
     const generateDemonstration = async ({ length }: { length: number }) => {
         const updateSpaceArgs = generateData({ length, currentSpace });
 
-        updateSpaceArgs.data.properties.create[0].city = cityPlaywrightTest;
+        updateSpaceArgs.data.properties.create[length - 1].city = cityPlaywrightTest;
 
         await updateSpace.mutateAsync(updateSpaceArgs);
     };

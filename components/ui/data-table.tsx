@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { ErrorBoundary } from 'react-error-boundary';
 import { FallbackError } from '../layout/FallbackError';
 import { useRouter } from 'next/router';
-import { useInfiniteFindManyProperty } from '@/zmodel/lib/hooks';
+import { PaginationProps } from '../AutoTable/AutoTable';
 
 export type Id = {
     id: string;
@@ -15,33 +15,52 @@ interface DataTableProps<TData extends Id, TValue> {
     columns: ColumnDef<TData, TValue>[];
     data: TData[];
     getRowLink?: (id: string) => string;
+    pagination?: PaginationProps;
 }
 
-export function DataTable<TData extends Id, TValue>({ columns, data, getRowLink }: DataTableProps<TData, TValue>) {
+export function DataTable<TData extends Id, TValue>({
+    columns,
+    data,
+    getRowLink,
+    pagination,
+}: DataTableProps<TData, TValue>) {
     const table = useReactTable({
         data,
         columns,
         getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
+        manualPagination: true,
+        rowCount: pagination?.count,
+        state: {
+            pagination: pagination?.pagination,
+        },
+        onPaginationChange: pagination?.setPagination,
     });
 
     const router = useRouter();
 
     return (
         <>
-            <div className="flex items-center justify-end space-x-2 py-4">
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => table.previousPage()}
-                    disabled={!table.getCanPreviousPage()}
-                >
-                    Previous
-                </Button>
-                <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
-                    Next
-                </Button>
-            </div>
+            {pagination && (
+                <div className="flex items-center justify-end space-x-2 py-4">
+                    {(pagination.pagination?.pageIndex ?? 0) + 1}/{table.getPageCount()}
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => table.previousPage()}
+                        disabled={!table.getCanPreviousPage()}
+                    >
+                        Previous
+                    </Button>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => table.nextPage()}
+                        disabled={!table.getCanNextPage()}
+                    >
+                        Next
+                    </Button>
+                </div>
+            )}
             <div className="rounded-md border">
                 <Table>
                     <ErrorBoundary fallback={<FallbackError />}>

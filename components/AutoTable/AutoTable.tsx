@@ -9,10 +9,16 @@ import {
     getObjectFormSchema,
 } from '@/components/ui/auto-form/utils';
 import { CommonFormTable } from '../ui/auto-common/types';
-import { ColumnDef } from '@tanstack/react-table';
-import { ReactNode, useMemo } from 'react';
 import { Type } from '@prisma/client';
 import { getTypeHook } from '@/components/Grid/Table/getTypeHook';
+import { ColumnDef, PaginationState } from '@tanstack/react-table';
+import { Dispatch, ReactNode, SetStateAction, useMemo, useState } from 'react';
+
+export type PaginationProps = {
+    count?: number;
+    pagination?: PaginationState;
+    setPagination?: Dispatch<SetStateAction<PaginationState>>;
+};
 
 export function AutoTable<SchemaType extends ZodObjectOrWrapped>({
     formSchema,
@@ -20,11 +26,13 @@ export function AutoTable<SchemaType extends ZodObjectOrWrapped>({
     data,
     onlyAdditionalColumns,
     type,
+    pagination,
 }: CommonFormTable<SchemaType> & {
     additionalColumns: ColumnDef<z.infer<typeof formSchema> & Id, ReactNode>[];
     data: (Partial<z.infer<SchemaType>> & Id)[];
     onlyAdditionalColumns: boolean;
     type?: Type;
+    pagination?: PaginationProps;
 }) {
     const getRowLink = useMemo(() => (type ? getTypeHook({ type })?.getLink : undefined), [type]);
     const objectFormSchema = getObjectFormSchema(formSchema);
@@ -71,5 +79,5 @@ export function AutoTable<SchemaType extends ZodObjectOrWrapped>({
 
     const columns = onlyAdditionalColumns ? additionalColumns : getAccessor(objectFormSchema).concat(additionalColumns);
 
-    return <DataTable columns={columns} data={data} getRowLink={getRowLink} />;
+    return <DataTable pagination={pagination} columns={columns} data={data} getRowLink={getRowLink} />;
 }
