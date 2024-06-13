@@ -10,12 +10,16 @@ enum PropertyType {
     COMMERCIAL
 }
 
-model Property extends SpaceComponent {
+abstract model Address {
+    streetAddress String
+    city          String
+    postalCode    String
+    country       String
+    state         String?
+}
+
+model Property extends Address, SpaceComponent {
     propertyType       PropertyType
-    address            String
-    city               String
-    postalCode         String
-    country            String
     leases             Lease[]
     surface            Int
     charges            Charge[]
@@ -45,7 +49,7 @@ model Charge  extends PropertyComponent {
     lease       Lease?     @relation(fields: [leaseId], references: [id], onDelete: Cascade)
     leaseId     String?
     chargeType  ChargeType
-    amount      BigInt
+    amount      Int
     dueDate     DateTime
     description String?
 }

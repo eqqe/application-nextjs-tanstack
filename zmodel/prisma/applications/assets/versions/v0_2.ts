@@ -149,7 +149,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                                                     typeTableRequest:
                                                                                                         'FindMany',
                                                                                                     columns: [
-                                                                                                        'address',
+                                                                                                        'streetAddress',
                                                                                                         'city',
                                                                                                         'postalCode',
                                                                                                     ],

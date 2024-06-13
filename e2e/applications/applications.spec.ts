@@ -1,5 +1,6 @@
 import { expect } from '@playwright/test';
 import { test } from '@/e2e/utils';
+import { cityPlaywrightTest } from '@/lib/demo/fake';
 
 test('Should enable assets application, rollback, and update', async ({ page, utils }) => {
     const { openHomeCreateSpace, enableAssets, openSubTab, openGrid, generateDemonstration, openSettings } = utils;
@@ -20,8 +21,7 @@ test('Should enable assets application, rollback, and update', async ({ page, ut
     await openSubTab();
     await openGrid();
     await page.getByRole('tab', { name: 'Month' }).click();
-    const propertyTest = 'Property to find in Playwright test';
-    await expect(page.getByText(propertyTest)).toBeVisible();
+    await expect(page.getByText(cityPlaywrightTest)).toBeVisible();
     await openSettings();
     const rollbackButtonText = 'Rollback to version 0.1';
     await page.getByText(rollbackButtonText).click();
@@ -38,5 +38,5 @@ test('Should enable assets application, rollback, and update', async ({ page, ut
     await openSubTab();
     await openGrid();
     await page.getByRole('tab', { name: 'Month' }).click();
-    await expect(page.getByText(propertyTest)).toBeVisible();
+    await expect(page.getByText(cityPlaywrightTest)).toBeVisible();
 });

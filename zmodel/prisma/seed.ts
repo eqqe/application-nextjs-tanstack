@@ -5,6 +5,8 @@ import { createUserWithSpace } from '@/tests/mock/enhanced-prisma';
 
 const prisma = new PrismaClient();
 async function main() {
+    await prisma.user.deleteMany();
+    await prisma.application.deleteMany();
     createApplications(prisma);
     const user = await createUserWithSpace({ email: testUser.email });
     await user.enableAssets();

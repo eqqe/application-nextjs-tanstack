@@ -32,7 +32,7 @@ export function PropertyDetails() {
 
     return (
         <>
-            <h1 className="mb-4 text-2xl font-semibold">{property?.address}</h1>
+            <h1 className="mb-4 text-2xl font-semibold">{property?.streetAddress}</h1>
             <div className="flex space-x-2">
                 <div className="mb-8 flex w-full flex-col space-y-4 md:flex-row md:space-x-4 md:space-y-0">
                     <CreateForm

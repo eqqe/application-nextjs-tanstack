@@ -12,7 +12,6 @@ model Space extends IdCreatedUpdatedAuth, Owner, Named {
     dashboards   Dashboard[]
     properties   Property[]
     lists        List[]
-    associates   Associate[]
 
     // When creating a space, we need to build a manual id with these to create the space, profiles and members at the same time
     @@unique([name, ownerId])
@@ -25,11 +24,11 @@ model Space extends IdCreatedUpdatedAuth, Owner, Named {
 }
 
 abstract model Named {
-    name      String      @length(2, 150)
+    name String @length(2, 150)
 }
 
 abstract model SpaceComponent extends IdCreatedUpdatedSpace, Owner, Named {
-    private   Boolean  @default(false)
+    private Boolean @default(false)
 
     @@deny('all', private && owner != auth())
     @@allow('all', spaceId == auth().currentSpaceId && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)])

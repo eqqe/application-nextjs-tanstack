@@ -2,6 +2,7 @@
 import "../../schema.zmodel"
 import "../space.zmodel"
 import "property"
+import "associate"
 
 model Lease extends PropertyComponent {
     startDate  DateTime
@@ -22,11 +23,12 @@ abstract model LeaseComponent extends Component {
     @@deny('all', lease.property.private && lease.property.owner != auth())
     @@allow('all', lease.property.spaceId == auth().currentSpaceId && lease.property.space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)])
 }
-model Tenant extends LeaseComponent, OptionalUser
-{
+model Tenant extends LeaseComponent, OptionalUser {
+    person   Person @relation(fields: [personId], references: [id], onDelete: Cascade)
+    personId String
 }
 
 model Payment extends LeaseComponent {
-    amount BigInt
+    amount Int
     date   DateTime
 }

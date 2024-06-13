@@ -3,6 +3,7 @@ import { getEnhancedPrisma } from '@/tests/mock/enhanced-prisma';
 import { fakeLease, fakePayment, fakeProperty } from '@/lib/demo/fake';
 import { enhancePrisma } from '@/server/enhanced-db';
 import { getNewSpace } from '@/lib/getNewSpace';
+import { findManyPropertyArgs } from './utils/findManyPropertyArgs';
 
 it('Should list spaces, and check that only current space components are visible', async () => {
     const { user1 } = await getEnhancedPrisma();
@@ -26,36 +27,40 @@ it('Should list spaces, and check that only current space components are visible
 
     const property = fakeProperty();
     const newProperty = await user1.prisma.property.create({
-        data: {
-            ...property,
-            name: 'Property test first space',
-        },
+        data: property,
     });
 
-    let properties = await user1.prisma.property.findMany();
+    let properties = await user1.prisma.property.findMany(findManyPropertyArgs);
     assert.equal(properties.length, 1);
-    assert.equal(properties[0].address, property.address);
+    assert.equal(properties[0].surface, property.surface);
+    assert.equal(properties[0].streetAddress, property.streetAddress);
 
     const user1PrismaNewSpace = enhancePrisma({ userId: user1.userCreated.id, currentSpaceId: newSpace.id });
-    let propertiesNewSpace = await user1PrismaNewSpace.property.findMany();
+    let propertiesNewSpace = await user1PrismaNewSpace.property.findMany(findManyPropertyArgs);
     assert.equal(propertiesNewSpace.length, 0);
 
     const propertyNewSpace = fakeProperty();
 
-    const newPropertyNewSpace = await user1PrismaNewSpace.property.create({ data: propertyNewSpace });
+    const newPropertyNewSpace = await user1PrismaNewSpace.property.create({
+        data: propertyNewSpace,
+    });
 
-    propertiesNewSpace = await user1PrismaNewSpace.property.findMany();
+    propertiesNewSpace = await user1PrismaNewSpace.property.findMany(findManyPropertyArgs);
     assert.equal(propertiesNewSpace.length, 1);
-    assert.equal(propertiesNewSpace[0].address, propertyNewSpace.address);
+    assert.equal(propertiesNewSpace[0].surface, propertyNewSpace.surface);
+    assert.equal(propertiesNewSpace[0].streetAddress, propertyNewSpace.streetAddress);
 
-    properties = await user1.prisma.property.findMany();
+    properties = await user1.prisma.property.findMany(findManyPropertyArgs);
     assert.equal(properties.length, 1);
-    assert.equal(properties[0].address, property.address);
+    assert.equal(properties[0].surface, property.surface);
+    assert.equal(properties[0].streetAddress, property.streetAddress);
 
-    const lease = await user1.prisma.lease.create({ data: fakeLease(newProperty.id) });
+    const lease = await user1.prisma.lease.create({ data: { ...fakeLease(), propertyId: newProperty.id } });
     assert.equal(lease.propertyId, newProperty.id);
 
-    const leaseNewSpace = await user1PrismaNewSpace.lease.create({ data: fakeLease(newPropertyNewSpace.id) });
+    const leaseNewSpace = await user1PrismaNewSpace.lease.create({
+        data: { ...fakeLease(), propertyId: newPropertyNewSpace.id },
+    });
     assert.equal(leaseNewSpace.propertyId, newPropertyNewSpace.id);
 
     const leasesNewSpace = await user1PrismaNewSpace.lease.findMany();
@@ -66,10 +71,12 @@ it('Should list spaces, and check that only current space components are visible
     assert.equal(leases.length, 1);
     assert.equal(leases[0].propertyId, newProperty.id);
 
-    const payment = await user1.prisma.payment.create({ data: fakePayment(lease.id) });
+    const payment = await user1.prisma.payment.create({ data: { ...fakePayment(), leaseId: lease.id } });
     assert.equal(payment.leaseId, lease.id);
 
-    const paymentNewSpace = await user1PrismaNewSpace.payment.create({ data: fakePayment(leaseNewSpace.id) });
+    const paymentNewSpace = await user1PrismaNewSpace.payment.create({
+        data: { ...fakePayment(), leaseId: leaseNewSpace.id },
+    });
     assert.equal(paymentNewSpace.leaseId, leaseNewSpace.id);
 
     const paymentsNewSpace = await user1PrismaNewSpace.payment.findMany();

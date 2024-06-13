@@ -4,44 +4,31 @@ import { generateData } from '@/lib/demo/fake';
 import { PrismaClient } from '@zenstackhq/runtime/models';
 
 test('Load a lot of data for 3 users', async () => {
+    const { user1, user2, user3 } = await getEnhancedPrisma();
     // Make it fast when running locally, but check it does not timeout on CI with a lot of data
-    const length = process.env.CI ? 500 : 2;
-    async function writeFakeData({ prisma }: { prisma: PrismaClient }) {
-        const { dashboards, lists, properties, leases, payments, charges, associates, propertyAssociates } =
-            generateData({ length });
-        await prisma.dashboard.createMany({ data: dashboards });
-        await prisma.list.createMany({ data: lists });
-        await prisma.property.createMany({ data: properties });
-        await prisma.lease.createMany({ data: leases });
-        await prisma.payment.createMany({ data: payments });
-        await prisma.charge.createMany({ data: charges });
-        await prisma.associate.createMany({ data: associates });
-        await prisma.propertyAssociate.createMany({ data: propertyAssociates });
+    const length = process.env.CI ? 5 : 1;
+    async function writeFakeData({ prisma, currentSpace }: typeof user1) {
+        for (const _ of Array.from({ length })) {
+            const updateSpaceArgs = generateData({ length, currentSpace });
+            await prisma.space.update(updateSpaceArgs);
+        }
     }
 
     async function checkFakeDataCount({ prisma, factor }: { prisma: PrismaClient; factor: number }) {
         // User2 and user3 share a space so they will find other user data
-        const countExpected = length * factor;
-        const countDashboards = await prisma.dashboard.aggregate({ _count: true });
-        expect(countDashboards._count).toBe(countExpected);
-        const countList = await prisma.list.aggregate({ _count: true });
-        expect(countList._count).toBe(countExpected);
         const countProperty = await prisma.property.aggregate({ _count: true });
-        expect(countProperty._count).toBe(countExpected);
+        expect(countProperty._count).toBe(length * length * factor);
         const countLease = await prisma.lease.aggregate({ _count: true });
-        expect(countLease._count).toBe(countExpected);
+        expect(countLease._count).toBe(length * length * length * factor);
         const countPayment = await prisma.payment.aggregate({ _count: true });
-        expect(countPayment._count).toBe(countExpected);
+        expect(countPayment._count).toBe(length * length * length * length * factor);
         const countCharge = await prisma.charge.aggregate({ _count: true });
-        expect(countCharge._count).toBe(countExpected);
-        const countAssociate = await prisma.associate.aggregate({ _count: true });
-        expect(countAssociate._count).toBe(countExpected);
+        expect(countCharge._count).toBe(length * length * length * factor);
     }
-    const { user1, user2, user3 } = await getEnhancedPrisma();
     await writeFakeData(user1);
     await writeFakeData(user2);
     await writeFakeData(user3);
     await checkFakeDataCount({ prisma: user1.prisma, factor: 1 });
     await checkFakeDataCount({ prisma: user2.prisma, factor: 2 });
     await checkFakeDataCount({ prisma: user3.prisma, factor: 2 });
-}, 45000);
+}, 30000);

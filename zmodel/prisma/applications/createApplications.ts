@@ -12,9 +12,6 @@ const applications = [
 ];
 
 export async function createApplications(prisma: PrismaClient) {
-    await prisma.user.deleteMany();
-    await prisma.space.deleteMany();
-    await prisma.application.deleteMany();
     for (const application of applications) {
         await prisma.application.upsert({
             create: application,

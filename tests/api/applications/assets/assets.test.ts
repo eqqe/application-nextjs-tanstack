@@ -61,7 +61,7 @@ it('Should enable an application in space', async () => {
 
     const cardTableList = tabsElement.tabs?.tabsContent[1].elements[0].card?.table;
 
-    assert.deepEqual(cardTableList?.columns, ['address', 'city', 'postalCode']);
+    assert.deepEqual(cardTableList?.columns, ['streetAddress', 'city', 'postalCode']);
     assert.equal(cardTableList?.typeTableRequest, 'FindMany');
     assert.notOk(cardTableList?.groupBy);
 });

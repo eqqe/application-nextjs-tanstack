@@ -34,7 +34,7 @@ export const assetsv0_1: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                     create: {
                                                                         type: Type.Property,
                                                                         typeTableRequest: TypeTableRequest.FindMany,
-                                                                        columns: ['address', 'propertyType'],
+                                                                        columns: ['streetAddress', 'propertyType'],
                                                                     },
                                                                 },
                                                             },

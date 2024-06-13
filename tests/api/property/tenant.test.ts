@@ -1,16 +1,33 @@
 import { assert, it } from 'vitest';
-import { fakeLease, fakeProperty, fakeTenant } from '@/lib/demo/fake';
+import { fakeLease, fakePerson, fakeProperty } from '@/lib/demo/fake';
 import { getEnhancedPrisma } from '@/tests/mock/enhanced-prisma';
 
 it('Should associate a tenant to a lease', async () => {
     const { user1, user2 } = await getEnhancedPrisma();
 
-    const property = await user2.prisma.property.create({ data: fakeProperty() });
+    const property = await user2.prisma.property.create({
+        data: fakeProperty(),
+    });
 
-    const lease = await user2.prisma.lease.create({ data: fakeLease(property.id) });
+    const lease = await user2.prisma.lease.create({ data: { ...fakeLease(), propertyId: property.id } });
 
+    const person = fakePerson();
     const tenant = await user2.prisma.tenant.create({
-        data: fakeTenant({ leaseId: lease.id, userId: user1.userCreated.id }),
+        data: {
+            lease: {
+                connect: {
+                    id: lease.id,
+                },
+            },
+            person: {
+                create: person,
+            },
+            user: {
+                connect: {
+                    id: user1.userCreated.id,
+                },
+            },
+        },
     });
 
     assert.equal(tenant.leaseId, lease.id);
@@ -19,7 +36,12 @@ it('Should associate a tenant to a lease', async () => {
         include: {
             leases: {
                 include: {
-                    tenants: true,
+                    tenants: {
+                        include: {
+                            person: true,
+                            lease: true,
+                        },
+                    },
                 },
             },
         },
@@ -30,4 +52,6 @@ it('Should associate a tenant to a lease', async () => {
     assert.deepEqual(leasesUser1, []);
 
     assert.equal(properties[0].leases[0].tenants[0].userId, user1.userCreated.id);
+    assert.deepEqual(properties[0].leases[0].tenants[0].person.birthDate, person.birthDate);
+    assert.deepEqual(properties[0].leases[0].tenants[0].lease.startDate, lease.startDate);
 });

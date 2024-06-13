@@ -11,6 +11,7 @@ import { z } from 'zod';
 import { AutoTable } from '@/components/AutoTable/AutoTable';
 import { ReactNode } from 'react';
 import '@tanstack/react-table';
+import { useGroupByProperty } from '@/zmodel/lib/hooks';
 
 export const GridCardTableInclude = {
     include: {

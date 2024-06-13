@@ -2,127 +2,110 @@ import { faker } from '@faker-js/faker';
 import { PropertyType, ChargeType } from '@prisma/client';
 import { z } from 'zod';
 import {
-    AssociateCreateSchema,
-    ChargeCreateSchema,
-    LeaseCreateSchema,
-    PaymentCreateSchema,
-    PropertyAssociateCreateSchema,
-    PropertyCreateSchema,
-    TenantCreateSchema,
+    CompanyCreateScalarSchema,
+    PropertyCreateScalarSchema,
+    PropertyAssociateCreateScalarSchema,
+    ChargeCreateScalarSchema,
+    LeaseCreateScalarSchema,
+    PersonCreateScalarSchema,
+    PaymentCreateScalarSchema,
 } from '@zenstackhq/runtime/zod/models';
+import { Space } from '@zenstackhq/runtime/models';
+
+export const cityPlaywrightTest = 'City to find in Playwright test';
 
 const cities = Array.from({ length: 10 }).map(() => faker.location.city());
-export const fakeProperty = (postalCode?: string): z.infer<typeof PropertyCreateSchema> => ({
+export const fakeProperty = (): z.infer<typeof PropertyCreateScalarSchema> => ({
+    ...fakeAddress(),
     name: faker.word.noun(),
-    address: faker.location.streetAddress(),
-    city: cities[Math.floor(Math.random() * cities.length)],
     propertyType: PropertyType.COMMERCIAL,
-    postalCode: postalCode ?? faker.location.zipCode(),
-    country: faker.location.country(),
-    surface: faker.number.int({ max: 5000, min: 100 }),
+    surface: faker.number.int({ max: 50000, min: 100 }),
 });
 
-export const fakeLease = (propertyId: string): z.infer<typeof LeaseCreateSchema> => ({
-    propertyId,
+export const fakeLease = (): z.infer<typeof LeaseCreateScalarSchema> => ({
     startDate: faker.date.past(),
     endDate: faker.date.future(),
-    rentAmount: faker.number.float({ min: 5, max: 50 }),
+    rentAmount: faker.number.int({ min: 5, max: 50000 }),
 });
 
-export const fakeAssociate = (userId?: string): z.infer<typeof AssociateCreateSchema> => ({
-    name: faker.person.fullName(),
-    address: faker.location.streetAddress(),
-    birthDate: faker.date.birthdate(),
-    city: faker.location.city(),
-    postalCode: faker.location.zipCode(),
-    fiscalNumber: faker.finance.accountNumber(),
-    phone: faker.phone.number(),
+export const fakeCompany = (): z.infer<typeof CompanyCreateScalarSchema> => ({
+    ...fakeAddress(),
     siret: faker.finance.accountNumber(),
-    ...(userId && { userId }),
+    siren: faker.finance.accountNumber(),
+    codeNafApe: faker.finance.accountNumber(),
+    intraCommunityVAT: faker.finance.accountNumber(),
+    lei: faker.finance.accountNumber(),
+    rcs: faker.finance.accountNumber(),
 });
 
-export const fakePropertyAssociate = ({
-    associateId,
-    propertyId,
-}: {
-    associateId: string;
-    propertyId: string;
-}): z.infer<typeof PropertyAssociateCreateSchema> => {
+export const fakePerson = (): z.infer<typeof PersonCreateScalarSchema> => ({
+    birthDate: faker.date.birthdate(),
+});
+
+const fakeAddress = () => ({
+    streetAddress: faker.location.streetAddress(),
+    city: cities[Math.floor(Math.random() * cities.length)],
+    postalCode: faker.location.zipCode(),
+    country: faker.location.country(),
+    state: faker.location.state(),
+});
+
+export const fakePropertyAssociate = (): z.infer<typeof PropertyAssociateCreateScalarSchema> => {
     return {
-        associateId,
-        propertyId,
         entryDate: faker.date.past(),
+        exitDate: faker.date.recent(),
     };
 };
 
-export const fakeTenant = ({
-    userId,
-    leaseId,
-}: {
-    userId?: string;
-    leaseId: string;
-}): z.infer<typeof TenantCreateSchema> => ({ leaseId, userId });
-
-export const fakePayment = (leaseId: string): z.infer<typeof PaymentCreateSchema> => ({
-    leaseId,
-    amount: faker.number.bigInt({ min: 500, max: 5000 }),
+export const fakePayment = (): z.infer<typeof PaymentCreateScalarSchema> => ({
+    amount: faker.number.int({ min: 500, max: 5000 }),
     date: faker.date.past(),
 });
 
-const fakeCharge = ({
-    propertyId,
-    leaseId,
-}: {
-    propertyId: string;
-    leaseId: string;
-}): z.infer<typeof ChargeCreateSchema> => ({
-    propertyId,
-    leaseId,
+export const fakeCharge = (): z.infer<typeof ChargeCreateScalarSchema> => ({
     chargeType: ChargeType.UTILITIES,
-    amount: faker.number.bigInt({ min: 5, max: 100 }),
+    amount: faker.number.int({ min: 5, max: 100 }),
     dueDate: faker.date.future(),
     description: faker.lorem.sentence(),
 });
 
-export const generateData = ({ length }: { length: number }) => {
-    const prefix = `demo_${Date.now()}_`;
-
-    const dashboards = Array.from({ length }).map((_, index) => ({
-        name: `${prefix}Dashboard${index}`,
-    }));
-
-    const lists = Array.from({ length }).map((_, index) => ({
-        name: `${prefix}List${index}`,
-    }));
-
-    const properties = Array.from({ length }).map((_, index) => ({
-        ...fakeProperty(index === 0 ? 'Property to find in Playwright test' : void 0),
-        id: `${prefix}Property${index}`,
-        name: `${prefix}Property${index}`,
-    }));
-
-    const propertyId = `${prefix}Property${0}`;
-    const leases = Array.from({ length }).map((_, index) => ({
-        ...fakeLease(propertyId),
-        id: `${prefix}Lease${index}`,
-    }));
-
-    const leaseId = `${prefix}Lease${0}`;
-    const payments = Array.from({ length }, () => fakePayment(leaseId));
-    const charges = Array.from({ length }, () => fakeCharge({ propertyId, leaseId }));
-
-    const associates = Array.from({ length }).map((_, index) => ({
-        ...fakeAssociate(),
-        id: `${prefix}Associate${index}`,
-    }));
-
-    const propertyAssociates = Array.from({ length }).map((_, index) => ({
-        ...fakePropertyAssociate({
-            associateId: `${prefix}Associate${index}`,
-            propertyId: `${prefix}Property${index}`,
-        }),
-        id: `${prefix}PropertyAssociate${index}`,
-    }));
-
-    return { dashboards, lists, properties, leases, payments, charges, associates, propertyAssociates };
+export const generateData = ({ length, currentSpace }: { length: number; currentSpace: Space }) => {
+    return {
+        where: {
+            id: currentSpace.id,
+        },
+        data: {
+            properties: {
+                create: Array.from({ length }).map((_) => ({
+                    ...fakeProperty(),
+                    charges: {
+                        create: Array.from({ length }).map((_) => fakeCharge()),
+                    },
+                    leases: {
+                        create: Array.from({ length }).map((_) => ({
+                            ...fakeLease(),
+                            payments: {
+                                create: Array.from({ length }).map((_) => fakePayment()),
+                            },
+                        })),
+                    },
+                    propertyAssociates: {
+                        create: Array.from({ length }).map((_) => ({
+                            ...fakePropertyAssociate(),
+                            associate: {
+                                create: {
+                                    company: {
+                                        create: fakeCompany(),
+                                    },
+                                    person: {
+                                        create: fakePerson(),
+                                    },
+                                },
+                            },
+                        })),
+                    },
+                })),
+            },
+        },
+    };
 };

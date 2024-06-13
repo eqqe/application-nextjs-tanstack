@@ -1,8 +1,8 @@
 import { SpaceUserRole } from '@prisma/client';
 import { User } from 'next-auth';
-
+import { v4 as uuid } from 'uuid';
 export function getNewSpace({ user, name }: { user: User; name: string }) {
-    const spaceId = `space-${name}-ownedby-${user.id}`;
+    const spaceId = uuid();
     return {
         data: {
             id: spaceId,

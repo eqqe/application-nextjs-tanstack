@@ -38,31 +38,32 @@ function getUtils(page: Page) {
         await clickButton('Create Property');
 
         const propertyFake = fakeProperty();
-        const address = property.address ?? propertyFake.address;
+        const streetAddress = property.streetAddress ?? propertyFake.streetAddress;
         await selectFromCombo<Property>('propertyType', property.propertyType ?? propertyFake.propertyType);
 
-        await getByLabel<Property>('address').fill(address);
+        await getByLabel<Property>('streetAddress').fill(streetAddress);
         await getByLabel<Property>('city').fill(property.city ?? propertyFake.city);
         await getByLabel<Property>('postalCode').fill(property.postalCode ?? propertyFake.postalCode);
         await getByLabel<Property>('country').fill(property.country ?? propertyFake.country);
+        await getByLabel<Property>('state').fill(property.state ?? propertyFake.state ?? '');
         await getByLabel<Property>('name').fill(property.name ?? propertyFake.name);
         await getByLabel<Property>('surface').fill((property.surface ?? propertyFake.surface).toString());
         await getByLabel('private').check();
         await clickSaveChanges();
 
         await checkToastCreated('Property');
-        return address;
+        return streetAddress;
     }
 
-    async function createLease({ address, startDate }: { address: string; startDate: string }) {
+    async function createLease({ streetAddress, startDate }: { streetAddress: string; startDate: string }) {
         await clickButton('Create Lease');
 
-        const rentAmount = faker.number.bigInt({ max: 50000 });
+        const rentAmount = faker.number.int({ max: 50000 });
         await getByLabel<Lease>('startDate').fill(startDate);
         await getByLabel<Lease>('rentAmount').fill(rentAmount.toString());
         await clickSaveChanges();
 
-        await expect(page.getByText(address)).toBeVisible();
+        await expect(page.getByText(streetAddress)).toBeVisible();
         await expect(page.getByText(`Start Date: ${startDate}`)).toBeVisible();
         await expect(page.getByText(`$${rentAmount}`)).toBeVisible();
     }

@@ -113,6 +113,8 @@ model User extends IdCreatedUpdated {
     associatesOwned        Associate[]             @relation("owner")
     associates             Associate[]             @relation("user")
     propertyAsssociates    PropertyAssociate[]     @relation("owner")
+    companyOwned           Company[]               @relation("owner")
+    personOwned            Person[]                @relation("owner")
     
     // next-auth
     accounts               Account[]
@@ -131,8 +133,8 @@ abstract model Owner {
 }
 
 abstract model OptionalUser {
-    user    User?   @relation("user", fields: [userId], references: [id], onDelete: Cascade)
-    userId  String?
+    user   User?   @relation("user", fields: [userId], references: [id], onDelete: Cascade)
+    userId String?
 }
 
 

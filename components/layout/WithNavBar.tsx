@@ -12,6 +12,7 @@ import { currentSpaceCookieName } from './SpaceSwitch';
 import { useCurrentUser } from '@/lib/context';
 import { useRouter } from 'next/router';
 import { signInPath } from '../AuthGuard';
+import { TopLoadingBar } from './TopLoadingBar';
 
 type Props = {
     children: ReactNode | ReactNode[] | undefined;
@@ -84,6 +85,9 @@ export function WithNavBar({ children }: Props) {
                     </nav>
                 </aside>
                 <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
+                    <ErrorBoundary fallback={<FallbackError />}>
+                        <TopLoadingBar />
+                    </ErrorBoundary>
                     <ErrorBoundary fallback={<FallbackError />}>
                         <Header />
                     </ErrorBoundary>

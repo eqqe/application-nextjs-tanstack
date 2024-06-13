@@ -9,9 +9,9 @@ it('Should not allow a user to create leases for properties not in their space',
 
     const newProperty = await user2.prisma.property.create({ data: property });
 
-    expect(async () => await user1.prisma.lease.create({ data: fakeLease(newProperty.id) })).rejects.toThrow(
-        'denied by policy: lease entities'
-    );
+    expect(
+        async () => await user1.prisma.lease.create({ data: { ...fakeLease(), propertyId: newProperty.id } })
+    ).rejects.toThrow('denied by policy: lease entities');
 });
 
 it('Should allow a user to create leases and payments for properties in their space', async () => {
@@ -21,22 +21,22 @@ it('Should allow a user to create leases and payments for properties in their sp
 
     const newProperty = await user2.prisma.property.create({ data: property });
 
-    const lease2 = await user2.prisma.lease.create({ data: fakeLease(newProperty.id) });
+    const lease2 = await user2.prisma.lease.create({ data: { ...fakeLease(), propertyId: newProperty.id } });
     assert.equal(lease2.propertyId, newProperty.id);
 
-    const lease3 = await user3.prisma.lease.create({ data: fakeLease(newProperty.id) });
+    const lease3 = await user3.prisma.lease.create({ data: { ...fakeLease(), propertyId: newProperty.id } });
     assert.equal(lease3.propertyId, newProperty.id);
 
-    const payment2 = await user2.prisma.payment.create({ data: fakePayment(lease2.id) });
+    const payment2 = await user2.prisma.payment.create({ data: { ...fakePayment(), leaseId: lease2.id } });
     assert.equal(payment2.leaseId, lease2.id);
 
-    const payment2bis = await user2.prisma.payment.create({ data: fakePayment(lease3.id) });
+    const payment2bis = await user2.prisma.payment.create({ data: { ...fakePayment(), leaseId: lease3.id } });
     assert.equal(payment2bis.leaseId, lease3.id);
 
-    const payment3 = await user2.prisma.payment.create({ data: fakePayment(lease2.id) });
+    const payment3 = await user2.prisma.payment.create({ data: { ...fakePayment(), leaseId: lease2.id } });
     assert.equal(payment3.leaseId, lease2.id);
 
-    const payment3Bis = await user2.prisma.payment.create({ data: fakePayment(lease3.id) });
+    const payment3Bis = await user2.prisma.payment.create({ data: { ...fakePayment(), leaseId: lease3.id } });
     assert.equal(payment3Bis.leaseId, lease3.id);
 
     const include = {
