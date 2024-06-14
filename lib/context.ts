@@ -2,7 +2,7 @@ import { useFindManySpace } from '@/zmodel/lib/hooks';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { getCookie, setCookie } from 'cookies-next';
-import { currentSpaceCookieName } from '@/components/layout/SpaceSwitch';
+import { currentSpaceIdsCookieName } from '@/components/layout/SpaceSwitch';
 
 export function useCurrentUser() {
     const { data: session } = useSession();
@@ -14,9 +14,9 @@ export function useCurrentSpace() {
     if (!spaces || !user?.id) {
         return;
     }
-    const currentSpaceId = getCookie(currentSpaceCookieName(user.id));
-    if (currentSpaceId) {
-        return spaces.find((space) => space.id === currentSpaceId);
+    const currentSpaceIds = getCookie(currentSpaceIdsCookieName(user.id));
+    if (currentSpaceIds) {
+        return spaces.find((space) => space.id === currentSpaceIds);
     }
 }
 

@@ -14,5 +14,5 @@ model Todo extends Component {
     completedAt DateTime?
 
     @@deny('all', list.private && list.owner != auth())
-    @@allow('all', list.spaceId == auth().currentSpaceId && list.space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)])
+    @@allow('all', list.spaceId in auth().currentSpaceIds && list.space.profiles?[profile.users?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])
 }

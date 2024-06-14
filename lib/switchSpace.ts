@@ -1,4 +1,4 @@
-import { currentSpaceCookieName } from '@/components/layout/SpaceSwitch';
+import { currentSpaceIdsCookieName } from '@/components/layout/SpaceSwitch';
 import { useQueryClient } from '@tanstack/react-query';
 import { Space } from '@zenstackhq/runtime/models';
 import { setCookie } from 'cookies-next';
@@ -11,7 +11,7 @@ export function useSwitchSpace() {
     const queryClient = useQueryClient();
     return (space: Space) => {
         if (currentUser) {
-            setCookie(currentSpaceCookieName(currentUser.id), space.id);
+            setCookie(currentSpaceIdsCookieName(currentUser.id), space.id);
             queryClient.refetchQueries({ queryKey: ['zenstack'] });
         } else {
             toast('Error cannot find current user');
