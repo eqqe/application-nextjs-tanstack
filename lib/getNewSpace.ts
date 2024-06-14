@@ -9,7 +9,7 @@ export function getNewSpace({ user, name }: { user: User; name: string }) {
                     id: user.id,
                 },
             },
-            pprofiles: {
+            profiles: {
                 create: {
                     role: ProfileRole.ADMIN,
                     users: {
