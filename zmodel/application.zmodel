@@ -2,15 +2,6 @@ import "schema"
 import "space/space.zmodel"
 import "space/grid/grid"
 
-model SpaceApplicationVersion extends IdCreatedUpdatedSpace {
-    applicationVersion   ApplicationVersion @relation(fields: [applicationVersionId], references: [id], onDelete: Cascade)
-    applicationVersionId String
-
-    @@unique([spaceId, applicationVersionId])
-
-    @@allow('create,update,delete',  spaceId in auth().currentSpaceIds && space.profiles?[profile.users?[user == auth() && (profile.role == ADMIN)]])
-}
-
 
 model Application extends IdCreatedUpdatedAuth {
     slug     String               @unique @regex('^[0-9a-zA-Z]{4,16}$')
@@ -28,7 +19,7 @@ model ApplicationVersion extends IdCreatedUpdatedAuth {
     versionMinor    Int
 
     @@unique([applicationSlug, versionMinor, versionMajor])
-    activations     SpaceApplicationVersion[]
+    activations     Space[]
     folders         FolderApplicationVersion[]
 
     @@allow('read', auth() != null)
@@ -40,7 +31,7 @@ model FolderApplicationVersion extends IdCreatedUpdatedAuth {
     tabs                 TabFolder[]
 
     path                 String
-    @@allow('read', applicationVersion.activations?[spaceId in auth().currentSpaceIds && space.profiles?[profile.users?[user == auth() && (profile.role == ADMIN || profile.role == USER)]]])
+    @@allow('read', applicationVersion.activations?[id in auth().currentSpaceIds && profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
 }
 
 model TabFolder extends IdCreatedUpdatedAuth {
@@ -48,7 +39,7 @@ model TabFolder extends IdCreatedUpdatedAuth {
     folderId String
 
     subTabs  SubTabFolder[]
-    @@allow('read', folder.applicationVersion.activations?[spaceId in auth().currentSpaceIds && space.profiles?[profile.users?[user == auth() && (profile.role == ADMIN || profile.role == USER)]]])
+    @@allow('read', folder.applicationVersion.activations?[id in auth().currentSpaceIds && profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
 }
 
 model SubTabFolder extends IdCreatedUpdatedAuth, Named {
@@ -56,7 +47,7 @@ model SubTabFolder extends IdCreatedUpdatedAuth, Named {
     tabId String
 
     grids Grid[]
-    @@allow('read', tab.folder.applicationVersion.activations?[spaceId in auth().currentSpaceIds && space.profiles?[profile.users?[user == auth() && (profile.role == ADMIN || profile.role == USER)]]])
+    @@allow('read', tab.folder.applicationVersion.activations?[id in auth().currentSpaceIds && profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
 }
 
 

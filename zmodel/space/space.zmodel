@@ -6,8 +6,8 @@ import "property/associate"
 import "list/list"
 
 model Space extends IdCreatedUpdatedAuth, Owner, Named {
-    profiles     SpaceProfile[]
-    applications SpaceApplicationVersion[]
+    profiles     Profile[]
+    applications ApplicationVersion[]
     dashboards   Dashboard[]
     properties   Property[]
     lists        List[]
@@ -17,9 +17,9 @@ model Space extends IdCreatedUpdatedAuth, Owner, Named {
 
     @@allow('create', auth() != null)
 
-    @@allow('read', profiles?[profile.users?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])
+    @@allow('read', profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)])
 
-    @@allow('update,delete', profiles?[profile.users?[user == auth() && (profile.role == ADMIN)]])
+    @@allow('update,delete', profiles?[users?[id == auth().id] && role == ADMIN])
 }
 
 abstract model Named {
@@ -30,7 +30,7 @@ abstract model SpaceComponent extends IdCreatedUpdatedSpace, Owner, Named {
     private Boolean @default(false)
 
     @@deny('all', private && owner != auth())
-    @@allow('all', spaceId in auth().currentSpaceIds && space.profiles?[profile.users?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])
+    @@allow('all', spaceId in auth().currentSpaceIds && space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)])
 }
 
 

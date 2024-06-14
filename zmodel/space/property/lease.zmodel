@@ -21,7 +21,7 @@ abstract model LeaseComponent extends Component {
     leaseId String
 
     @@deny('all', lease.property.private && lease.property.owner != auth())
-    @@allow('all', lease.property.spaceId in auth().currentSpaceIds && lease.property.space.profiles?[profile.users?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])
+    @@allow('all', lease.property.spaceId in auth().currentSpaceIds && lease.property.space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)])
 }
 model Tenant extends LeaseComponent, OptionalUser {
     person   Person @relation(fields: [personId], references: [id], onDelete: Cascade)

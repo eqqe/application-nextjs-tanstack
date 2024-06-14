@@ -13,7 +13,7 @@ model PanelRow extends Component {
     panels      Panel[]
 
     @@deny('all', dashboard.private && dashboard.owner != auth())
-    @@allow('all', dashboard.spaceId in auth().currentSpaceIds && dashboard.space.profiles?[profile.users?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])
+    @@allow('all', dashboard.spaceId in auth().currentSpaceIds && dashboard.space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)])
 }
 
 
@@ -24,7 +24,7 @@ model Panel extends Component {
     panelComponents PanelComponent[]
 
     @@deny('all', panelRow.dashboard.private && panelRow.dashboard.owner != auth())
-    @@allow('all', panelRow.dashboard.spaceId in auth().currentSpaceIds && panelRow.dashboard.space.profiles?[profile.users?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])
+    @@allow('all', panelRow.dashboard.spaceId in auth().currentSpaceIds && panelRow.dashboard.space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)])
 }
 
 enum PanelComponentType {
@@ -42,7 +42,7 @@ model PanelComponent extends Component {
     report  PanelComponentReport?
 
     @@deny('all', panel.panelRow.dashboard.private && panel.panelRow.dashboard.owner != auth())
-    @@allow('all', panel.panelRow.dashboard.spaceId in auth().currentSpaceIds && panel.panelRow.dashboard.space.profiles?[profile.users?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])
+    @@allow('all', panel.panelRow.dashboard.spaceId in auth().currentSpaceIds && panel.panelRow.dashboard.space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)])
 }
 
 abstract model PanelComponentRelation extends Component {
@@ -51,7 +51,7 @@ abstract model PanelComponentRelation extends Component {
     tableType        Type
 
     @@deny('all', panelComponent.panel.panelRow.dashboard.private && panelComponent.panel.panelRow.dashboard.owner != auth())
-    @@allow('all', panelComponent.panel.panelRow.dashboard.spaceId in auth().currentSpaceIds && panelComponent.panel.panelRow.dashboard.space.profiles?[profile.users?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])
+    @@allow('all', panelComponent.panel.panelRow.dashboard.spaceId in auth().currentSpaceIds && panelComponent.panel.panelRow.dashboard.space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)])
 }
 
 
