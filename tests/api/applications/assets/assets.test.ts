@@ -23,7 +23,11 @@ it('Should enable an application in space', async () => {
         include: {
             applications: {
                 include: {
-                    folders: true,
+                    applicationVersion: {
+                        include: {
+                            folders: true,
+                        },
+                    },
                 },
             },
         },

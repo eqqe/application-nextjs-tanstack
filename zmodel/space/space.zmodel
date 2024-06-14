@@ -7,7 +7,7 @@ import "list/list"
 
 model Space extends IdCreatedUpdatedAuth, Owner, Named {
     profiles     Profile[]
-    applications ApplicationVersion[]
+    applications SpaceApplicationVersion[]
     dashboards   Dashboard[]
     properties   Property[]
     lists        List[]

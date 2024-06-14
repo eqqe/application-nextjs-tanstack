@@ -31,18 +31,20 @@ export async function createUserWithSpace({ currentSpace, email }: { currentSpac
         assert(application);
         assert(application.versions.length);
 
-        await enhancedPrisma.space.update({
-            where: {
-                id: currentSpace?.id,
-            },
+        const spaceApplication = await enhancedPrisma.spaceApplicationVersion.create({
             data: {
-                applications: {
-                    connect: {
-                        id: application.versions[0].id,
+                applicationVersionId: application.versions[0].id,
+            },
+            include: {
+                applicationVersion: {
+                    include: {
+                        application: true,
                     },
                 },
             },
         });
+
+        assert.equal(spaceApplication.applicationVersion.applicationSlug, application.slug);
     }
     return {
         userCreated,
@@ -92,18 +94,22 @@ export async function getEnhancedPrisma() {
     const version02 = application.versions.find((version) => version.versionMajor === 0 && version.versionMinor === 2);
     assert(version02);
 
-    await prisma.space.update({
-        where: {
-            id: user2.space.id,
-        },
+    const spaceApplication = await prisma.spaceApplicationVersion.create({
         data: {
-            applications: {
-                connect: {
-                    id: version02.id,
+            applicationVersionId: version02.id,
+            spaceId: user2.space.id,
+        },
+        include: {
+            applicationVersion: {
+                include: {
+                    application: true,
                 },
             },
         },
     });
+
+    assert.equal(spaceApplication.spaceId, user2.space.id);
+    assert.equal(spaceApplication.applicationVersion.applicationSlug, application.slug);
 
     return {
         user1,

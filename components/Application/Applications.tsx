@@ -1,4 +1,10 @@
-import { useFindManyApplication, useUpdateSpace } from '@/zmodel/lib/hooks';
+import {
+    useCreateSpaceApplicationVersion,
+    useDeleteSpaceApplicationVersion,
+    useFindManyApplication,
+    useFindManySpaceApplicationVersion,
+    useUpdateSpaceApplicationVersion,
+} from '@/zmodel/lib/hooks';
 import { Button } from '@/components/ui/button';
 import { ApplicationScalarSchema, ApplicationVersionScalarSchema } from '@zenstackhq/runtime/zod/models';
 import { z } from 'zod';
@@ -7,13 +13,16 @@ import { useQueryClient } from '@tanstack/react-query';
 import { ColumnDef } from '@tanstack/react-table';
 import { Prisma } from '@prisma/client';
 import { AutoTable } from '@/components/AutoTable/AutoTable';
-import { useCurrentSpace } from '@/lib/context';
 
 export const findManyApplicationArgs = {
     include: {
         versions: {
             include: {
-                activations: true,
+                activations: {
+                    include: {
+                        space: true,
+                    },
+                },
             },
             orderBy: [
                 {
@@ -29,12 +38,21 @@ export const findManyApplicationArgs = {
 export const Applications = () => {
     const { data: applications } = useFindManyApplication(findManyApplicationArgs);
 
-    const updateSpace = useUpdateSpace();
-
-    const space = useCurrentSpace();
+    const activate = useCreateSpaceApplicationVersion();
+    const desactivate = useDeleteSpaceApplicationVersion();
+    const update = useUpdateSpaceApplicationVersion();
+    const { data: spaceApplications } = useFindManySpaceApplicationVersion({
+        include: {
+            applicationVersion: {
+                include: {
+                    application: true,
+                },
+            },
+        },
+    });
 
     const queryClient = useQueryClient();
-    if (!applications || !space) {
+    if (!applications) {
         return <>Loading...</>;
     }
 
@@ -49,19 +67,21 @@ export const Applications = () => {
             header: 'Actions',
             cell: ({ row }) => {
                 const application = row.original;
-                const activated = space?.applications.find(
-                    (spaceApplication) => spaceApplication.applicationSlug === application.slug
+                const activated = spaceApplications?.find(
+                    (spaceApplication) => spaceApplication.applicationVersion.applicationSlug === application.slug
                 );
                 /* Application are ordered by descending version, so the latest version should be found */
                 const updatable = {
                     major: activated
-                        ? application.versions.find((version) => version.versionMajor > (activated.versionMajor ?? 0))
+                        ? application.versions.find(
+                              (version) => version.versionMajor > (activated.applicationVersion.versionMajor ?? 0)
+                          )
                         : null,
                     minor: activated
                         ? application.versions.find(
                               (version) =>
-                                  version.versionMinor > (activated.versionMinor ?? 0) &&
-                                  version.versionMajor === activated.versionMajor
+                                  version.versionMinor > (activated.applicationVersion.versionMinor ?? 0) &&
+                                  version.versionMajor === activated.applicationVersion.versionMajor
                           )
                         : null,
                 };
@@ -69,13 +89,15 @@ export const Applications = () => {
                 /* Application are ordered by descending version, so the closest previous version should be found */
                 const rollbackable = {
                     major: activated
-                        ? application.versions.find((version) => version.versionMajor < (activated.versionMajor ?? 0))
+                        ? application.versions.find(
+                              (version) => version.versionMajor < (activated.applicationVersion.versionMajor ?? 0)
+                          )
                         : null,
                     minor: activated
                         ? application.versions.find(
                               (version) =>
-                                  version.versionMinor < (activated.versionMinor ?? 0) &&
-                                  version.versionMajor === activated.versionMajor
+                                  version.versionMinor < (activated.applicationVersion.versionMinor ?? 0) &&
+                                  version.versionMajor === activated.applicationVersion.versionMajor
                           )
                         : null,
                 };
@@ -83,30 +105,11 @@ export const Applications = () => {
                     await queryClient.refetchQueries({ queryKey: ['zenstack', 'SubTabFolder'] });
                 }
                 async function onClickActivate() {
-                    if (!space) {
-                        return;
-                    }
-                    if (activated && space) {
-                        await updateSpace.mutateAsync({
-                            where: { id: space.id },
-                            data: {
-                                applications: {
-                                    disconnect: {
-                                        id: activated.id,
-                                    },
-                                },
-                            },
-                        });
+                    if (activated) {
+                        await desactivate.mutateAsync({ where: { id: activated.id } });
                     } else if (application.versions.length) {
-                        await updateSpace.mutateAsync({
-                            where: { id: space.id },
-                            data: {
-                                applications: {
-                                    connect: {
-                                        id: application.versions[0].id,
-                                    },
-                                },
-                            },
+                        await activate.mutateAsync({
+                            data: { applicationVersionId: application.versions[0].id },
                         });
                     } else {
                         toast('No version available for this application');
@@ -115,22 +118,15 @@ export const Applications = () => {
                 }
 
                 async function updateToVersion(applicationVersionId: string) {
-                    if (!activated || !space) {
+                    if (!activated) {
                         return;
                     }
-                    await updateSpace.mutateAsync({
-                        where: { id: space.id },
+                    await update.mutateAsync({
                         data: {
-                            applications: {
-                                update: {
-                                    where: {
-                                        id: activated.id,
-                                    },
-                                    data: {
-                                        id: applicationVersionId,
-                                    },
-                                },
-                            },
+                            applicationVersionId,
+                        },
+                        where: {
+                            id: activated.id,
                         },
                     });
                     refetchGrids();

@@ -10,5 +10,5 @@ model View extends IdCreatedUpdatedAuth {
 
     table    Type
 
-    @@allow('read', subTab.tab.folder.applicationVersion.activations?[id in auth().currentSpaceIds && profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
+    @@allow('read', subTab.tab.folder.applicationVersion.activations?[spaceId in auth().currentSpaceIds && space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
 }
