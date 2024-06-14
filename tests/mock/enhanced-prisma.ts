@@ -25,11 +25,7 @@ export async function createUserWithSpace({ currentSpace, email }: { currentSpac
         createSpaceId: currentSpace.id,
     });
     async function enableAssets() {
-        const applications = await enhancedPrisma.application.findMany({
-            include: {
-                versions: true,
-            },
-        });
+        const applications = await enhancedPrisma.application.findMany(findManyApplicationArgs);
 
         const application = applications.find((app) => app.slug === slugAssetsApplication);
         assert(application);
