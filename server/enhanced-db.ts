@@ -15,7 +15,7 @@ export function enhancePrisma({
 }) {
     let options;
     if (createSpaceId && currentSpaceIds) {
-        options = { user: { id: userId, createSpaceId, curentSpaceIds: currentSpaceIds } };
+        options = { user: { id: userId, createSpaceId, currentSpaceIds } };
     } else if (userId) {
         options = { user: { id: userId } };
     } else {

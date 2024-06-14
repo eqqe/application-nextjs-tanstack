@@ -34,7 +34,7 @@ it('Should enable an application in space', async () => {
     });
     assert.equal(appDetails.length, 1);
 
-    const firstFolder = appDetails[0].applications[0].folders[0];
+    const firstFolder = appDetails[0].applications[0].applicationVersion.folders[0];
     assert.equal(firstFolder.path, '/properties');
 
     const grids = await prisma.grid.findMany();
