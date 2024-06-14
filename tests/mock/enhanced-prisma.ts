@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import { nanoid } from 'nanoid';
 import { slugAssetsApplication } from '@/zmodel/prisma/applications/createApplications';
-import { Space, SpaceUserRole } from '@prisma/client';
+import { Space, ProfileRole } from '@prisma/client';
 import { enhancePrisma } from '@/server/enhanced-db';
 import { getNewSpace } from '@/lib/getNewSpace';
 import assert from 'assert';
@@ -31,20 +31,18 @@ export async function createUserWithSpace({ currentSpace, email }: { currentSpac
         assert(application);
         assert(application.versions.length);
 
-        const spaceApplication = await enhancedPrisma.spaceApplicationVersion.create({
-            data: {
-                applicationVersionId: application.versions[0].id,
+        await enhancedPrisma.space.update({
+            where: {
+                id: currentSpace?.id,
             },
-            include: {
-                applicationVersion: {
-                    include: {
-                        application: true,
+            data: {
+                applications: {
+                    connect: {
+                        id: application.versions[0].id,
                     },
                 },
             },
         });
-
-        assert.equal(spaceApplication.applicationVersion.applicationSlug, application.slug);
     }
     return {
         userCreated,
@@ -61,17 +59,19 @@ export async function getEnhancedPrisma() {
     const user2 = await createUserWithSpace({});
     /* User3 is a member of User2's space and he is currently viewing the space */
     const user3 = await createUserWithSpace({ currentSpace: user2.space });
-    await prisma.spaceProfile.create({
+    await prisma.space.update({
+        where: {
+            id: user2.space.id,
+        },
         data: {
-            profile: {
+            profiles: {
                 create: {
-                    role: SpaceUserRole.USER,
+                    role: ProfileRole.USER,
                     users: {
                         connect: { id: user3.userCreated.id },
                     },
                 },
             },
-            space: { connect: { id: user2.space.id } },
         },
     });
     assert.notEqual(user1.userCreated.id, user2.userCreated.id);
@@ -92,22 +92,18 @@ export async function getEnhancedPrisma() {
     const version02 = application.versions.find((version) => version.versionMajor === 0 && version.versionMinor === 2);
     assert(version02);
 
-    const spaceApplication = await prisma.spaceApplicationVersion.create({
-        data: {
-            applicationVersionId: version02.id,
-            spaceId: user2.space.id,
+    await prisma.space.update({
+        where: {
+            id: user2.space.id,
         },
-        include: {
-            applicationVersion: {
-                include: {
-                    application: true,
+        data: {
+            applications: {
+                connect: {
+                    id: version02.id,
                 },
             },
         },
     });
-
-    assert.equal(spaceApplication.spaceId, user2.space.id);
-    assert.equal(spaceApplication.applicationVersion.applicationSlug, application.slug);
 
     return {
         user1,

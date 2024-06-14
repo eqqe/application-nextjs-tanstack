@@ -8,7 +8,6 @@ import { prisma } from 'server/db';
 import { signInPath } from '@/components/AuthGuard';
 import { Provider } from 'next-auth/providers';
 import { testUser } from '@/lib/demo/testUser';
-import { SpaceUserRole } from '@prisma/client';
 
 const providers: Provider[] = [
     EmailProvider({
@@ -96,11 +95,9 @@ export const authOptions: NextAuthOptions = {
                 where: {
                     profiles: {
                         some: {
-                            profile: {
-                                users: {
-                                    some: {
-                                        id: user.id,
-                                    },
+                            users: {
+                                some: {
+                                    id: user.id,
                                 },
                             },
                         },

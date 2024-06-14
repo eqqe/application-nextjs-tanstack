@@ -1,4 +1,4 @@
-import { SpaceUserRole } from '@prisma/client';
+import { ProfileRole } from '@prisma/client';
 import { User } from 'next-auth';
 export function getNewSpace({ user, name }: { user: User; name: string }) {
     return {
@@ -9,16 +9,12 @@ export function getNewSpace({ user, name }: { user: User; name: string }) {
                     id: user.id,
                 },
             },
-            profiles: {
+            pprofiles: {
                 create: {
-                    profile: {
-                        create: {
-                            role: SpaceUserRole.ADMIN,
-                            users: {
-                                connect: {
-                                    id: user.id,
-                                },
-                            },
+                    role: ProfileRole.ADMIN,
+                    users: {
+                        connect: {
+                            id: user.id,
                         },
                     },
                 },
