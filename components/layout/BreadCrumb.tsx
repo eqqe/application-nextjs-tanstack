@@ -8,7 +8,6 @@ import {
     BreadcrumbPage,
     BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
-import { getSpaceUrl } from '@/lib/urls';
 
 export function TopBreadCrumb() {
     const space = useCurrentSpace();
