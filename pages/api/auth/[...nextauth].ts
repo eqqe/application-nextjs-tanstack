@@ -8,6 +8,7 @@ import { prisma } from 'server/db';
 import { signInPath } from '@/components/AuthGuard';
 import { Provider } from 'next-auth/providers';
 import { testUser } from '@/lib/demo/testUser';
+import { SpaceUserRole } from '@prisma/client';
 
 const providers: Provider[] = [
     EmailProvider({
@@ -91,9 +92,19 @@ export const authOptions: NextAuthOptions = {
 
     events: {
         async signIn({ user }: { user: User }) {
-            const spaceCount = await prisma.spaceUser.count({
+            const spaceCount = await prisma.space.count({
                 where: {
-                    userId: user.id,
+                    profiles: {
+                        some: {
+                            profile: {
+                                users: {
+                                    some: {
+                                        id: user.id,
+                                    },
+                                },
+                            },
+                        },
+                    },
                 },
             });
             if (spaceCount > 0) {

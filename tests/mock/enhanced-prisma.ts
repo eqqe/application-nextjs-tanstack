@@ -61,16 +61,17 @@ export async function getEnhancedPrisma() {
     const user2 = await createUserWithSpace({});
     /* User3 is a member of User2's space and he is currently viewing the space */
     const user3 = await createUserWithSpace({ currentSpace: user2.space });
-    await prisma.spaceUser.create({
+    await prisma.spaceProfile.create({
         data: {
             profile: {
                 create: {
                     role: SpaceUserRole.USER,
-                    spaceId: user2.space.id,
+                    users: {
+                        connect: { id: user3.userCreated.id },
+                    },
                 },
             },
             space: { connect: { id: user2.space.id } },
-            user: { connect: { id: user3.userCreated.id } },
         },
     });
     assert.notEqual(user1.userCreated.id, user2.userCreated.id);

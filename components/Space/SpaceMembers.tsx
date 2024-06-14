@@ -1,6 +1,4 @@
 import { useCurrentSpace } from '@/lib/context';
-import { useFindManySpaceUser } from '@/zmodel/lib/hooks';
-import { Space } from '@prisma/client';
 import ManageMembers from './ManageMembers';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
