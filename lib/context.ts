@@ -9,11 +9,7 @@ export function useCurrentUser() {
     return session?.user;
 }
 export function useCurrentSpace() {
-    const { data: spaces } = useFindManySpace({
-        include: {
-            applications: true,
-        },
-    });
+    const { data: spaces } = useFindManySpace();
     const user = useCurrentUser();
     if (!spaces || !user?.id) {
         return;

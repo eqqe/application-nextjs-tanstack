@@ -28,18 +28,18 @@ export const useCurrentSpaceIdsFromCookie = () => {
     const user = useCurrentUser();
     const { data: spaces } = useFindManySpace();
 
-    const [cookieExists, setCookieExists] = useState<CurrentSpaceIdsCookie | undefined>(void 0);
+    const [currentSpaceIds, setCurrentSpaceIds] = useState<CurrentSpaceIdsCookie | undefined>(void 0);
 
     const router = useRouter();
     useEffect(() => {
-        if (!cookieExists) {
+        if (!currentSpaceIds) {
             if (user?.id) {
                 const cookieName = currentSpaceIdsCookieName(user.id);
                 const currentSpaceIdsCookie = getCookie(cookieName);
                 if (currentSpaceIdsCookie) {
                     try {
                         const currentSpaceIds = JSON.parse(currentSpaceIdsCookie) as CurrentSpaceIdsCookie;
-                        setCookieExists(currentSpaceIds);
+                        setCurrentSpaceIds(currentSpaceIds);
                         return;
                     } catch {}
                 } else if (spaces) {
@@ -52,7 +52,7 @@ export const useCurrentSpaceIdsFromCookie = () => {
                             },
                         ];
                         setCookie(cookieName, JSON.stringify(currentSpaceIds));
-                        setCookieExists(currentSpaceIds);
+                        setCurrentSpaceIds(currentSpaceIds);
                     } else {
                         router.push(signInPath);
                     }
@@ -61,9 +61,9 @@ export const useCurrentSpaceIdsFromCookie = () => {
                 router.push(signInPath);
             }
         }
-    }, [cookieExists, router, spaces, user?.id]);
+    }, [currentSpaceIds, router, spaces, user?.id]);
 
-    return cookieExists;
+    return currentSpaceIds;
 };
 export const currentSpaceIdsCookieName = (userId: string) => `${userId}-currentSpaceIds`;
 
