@@ -99,7 +99,7 @@
         "eslint-plugin-tailwindcss": "^3.17.3",
         "eslint-plugin-testing-library": "^6.2.2",
         "jsdom": "^24.1.0",
-        "lower-case-first": "^2.0.2",
+        "lower-case-first": "^3.0.0",
         "next-router-mock": "^0.9.13",
         "postcss": "^8.4.38",
         "react-numeric-input": "^2.2.3",
