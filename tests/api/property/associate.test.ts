@@ -56,6 +56,7 @@ it('Should allow a user to create associates for properties in their space', asy
     assert.deepEqual(associates[0].person.birthDate, person.birthDate);
     assert.equal(associates[0].companies[0].company.properties.length, 1);
     assert.equal(associates[0].companies[0].company.properties[0].property.surface, property.surface);
+    assert.equal(associates[0].companies[0].company.properties[0].ownerId, user3.userCreated.id);
     assert.equal(associates[0].companies[0].company.properties[0].property.ownerId, user2.userCreated.id);
 
     const properties = await user2.prisma.property.findMany({

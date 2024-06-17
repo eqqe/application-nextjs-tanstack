@@ -9,10 +9,10 @@ export const GenerateDemonstration = () => {
     const generateDemonstration = async ({ length }: { length: number }) => {
         const updateSpaceArgs = generateData({ length, spaceId: selectedSpaces[0] });
 
-        updateSpaceArgs.data.properties.create[length - 1].city = cityPlaywrightTest;
+        updateSpaceArgs.data.properties.create[0].city = cityPlaywrightTest;
 
         await updateSpace.mutateAsync(updateSpaceArgs);
     };
 
-    return <button onClick={() => generateDemonstration({ length: 7 })}>Generate Demonstration</button>;
+    return <button onClick={() => generateDemonstration({ length: 6 })}>Generate Demonstration</button>;
 };
