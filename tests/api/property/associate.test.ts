@@ -1,5 +1,5 @@
 import { assert, expect, it } from 'vitest';
-import { fakeProperty, fakePropertyAssociate, fakeCompany, fakePerson } from '@/lib/demo/fake';
+import { fakeProperty, fakeCompany, fakePerson, fakeCompanyAssociate } from '@/lib/demo/fake';
 import { getEnhancedPrisma } from '@/tests/mock/enhanced-prisma';
 
 it('Should not allow a user to create associate for properties not in their space', async () => {
@@ -11,34 +11,41 @@ it('Should not allow a user to create associate for properties not in their spac
 
     expect(
         async () =>
-            await user1.prisma.propertyAssociate.create({
+            await user1.prisma.propertyOwner.create({
                 data: {
-                    ...fakePropertyAssociate(),
                     property: {
                         connect: {
                             id: newProperty.id,
                         },
                     },
-                    associate: {
+                    type: 'Company',
+                    company: {
                         create: {
-                            user: {
-                                connect: {
-                                    id: user1.userCreated.id,
-                                },
-                            },
-                            company: {
+                            ...fakeCompany(),
+                            associates: {
                                 create: {
-                                    ...fakeCompany(),
+                                    ...fakeCompanyAssociate(),
+                                    associate: {
+                                        create: {
+                                            person: {
+                                                create: {
+                                                    ...fakePerson(),
+                                                    user: {
+                                                        connect: {
+                                                            id: user1.userCreated.id,
+                                                        },
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    },
                                 },
-                            },
-                            person: {
-                                create: fakePerson(),
                             },
                         },
                     },
                 },
             })
-    ).rejects.toThrow('denied by policy: propertyAssociate entities');
+    ).rejects.toThrow("denied by policy: propertyOwner entities failed 'create' check");
 
     const associates = await user2.prisma.associate.findMany();
     assert.notOk(associates.length);
@@ -54,29 +61,17 @@ it('Should allow a user to create associates for properties in their space', asy
     const company = fakeCompany();
     const person = fakePerson();
 
-    await user3.prisma.propertyAssociate.create({
+    await user3.prisma.propertyOwner.create({
         data: {
-            ...fakePropertyAssociate(),
             property: {
                 connect: {
                     id: newProperty.id,
                 },
             },
-            associate: {
+            type: 'Person',
+            person: {
                 create: {
-                    user: {
-                        connect: {
-                            id: user1.userCreated.id,
-                        },
-                    },
-                    company: {
-                        create: {
-                            ...company,
-                        },
-                    },
-                    person: {
-                        create: person,
-                    },
+                    ...fakePerson(),
                 },
             },
         },
@@ -84,33 +79,47 @@ it('Should allow a user to create associates for properties in their space', asy
 
     const associates = await user2.prisma.associate.findMany({
         include: {
-            propertyAssociates: {
+            companies: {
                 include: {
-                    property: true,
+                    company: {
+                        include: {
+                            properties: {
+                                include: {
+                                    property: true,
+                                },
+                            },
+                        },
+                    },
                 },
             },
             person: true,
-            company: true,
         },
     });
     assert.equal(associates.length, 1);
-    assert.equal(associates[0].company.siret, company.siret);
-    assert.equal(associates[0].propertyAssociates.length, 1);
+    assert.equal(associates[0].companies[0].company.siret, company.siret);
     assert.deepEqual(associates[0].person.birthDate, person.birthDate);
-    assert.equal(associates[0].propertyAssociates[0].property.surface, property.surface);
-    assert.equal(associates[0].propertyAssociates[0].ownerId, user3.userCreated.id);
+    assert.equal(associates[0].companies[0].company.properties.length, 1);
+    assert.equal(associates[0].companies[0].company.properties[0].property.surface, property.surface);
+    assert.equal(associates[0].companies[0].company.properties[0].property.ownerId, user3.userCreated.id);
 
     const properties = await user2.prisma.property.findMany({
         include: {
-            propertyAssociates: {
+            owners: {
                 include: {
-                    associate: {
+                    company: {
                         include: {
-                            company: true,
-                            person: true,
+                            associates: {
+                                include: {
+                                    associate: {
+                                        include: {
+                                            person: true,
+                                        },
+                                    },
+                                },
+                            },
                         },
                     },
-                    property: true,
+                    person: true,
                 },
             },
         },
@@ -118,9 +127,10 @@ it('Should allow a user to create associates for properties in their space', asy
 
     assert.equal(properties.length, 1);
     assert.equal(properties[0].spaceId, user2.space.id);
-    assert.equal(properties[0].propertyAssociates.length, 1);
-    assert.deepEqual(properties[0].propertyAssociates[0].associate.person.birthDate, person.birthDate);
-    assert.equal(properties[0].propertyAssociates[0].property.surface, property.surface);
-    assert.equal(properties[0].propertyAssociates[0].ownerId, user3.userCreated.id);
-    assert.equal(properties[0].propertyAssociates[0].associate.company.intraCommunityVAT, company.intraCommunityVAT);
+    assert.equal(properties[0].owners.length, 1);
+    assert.equal(properties[0].surface, property.surface);
+    assert.equal(properties[0].owners[0].ownerId, user3.userCreated.id);
+    assert.deepEqual(properties[0].owners[0].type, 'Company');
+    assert.deepEqual(properties[0].owners[0].company?.associates[0].associate.person.birthDate, person.birthDate);
+    assert.equal(properties[0].owners[0].company?.intraCommunityVAT, company.intraCommunityVAT);
 });
