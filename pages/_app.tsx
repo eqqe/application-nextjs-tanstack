@@ -9,6 +9,7 @@ import '../styles/globals.css';
 import { ReactElement } from 'react';
 import { ThemeProvider } from 'next-themes';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import { SelectedSpacesProvider } from '@/lib/context';
 
 // import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
@@ -22,12 +23,14 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
                 <TooltipProvider>
                     <ZenStackHooksProvider value={{ endpoint: '/api/model', logging: true }}>
                         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-                            <AppContent>
-                                <div className="h-100 grow">
-                                    <Component {...pageProps} />
-                                    <ToastContainer position="top-center" autoClose={2000} hideProgressBar={true} />
-                                </div>
-                            </AppContent>
+                            <SelectedSpacesProvider>
+                                <AppContent>
+                                    <div className="h-100 grow">
+                                        <Component {...pageProps} />
+                                        <ToastContainer position="top-center" autoClose={2000} hideProgressBar={true} />
+                                    </div>
+                                </AppContent>
+                            </SelectedSpacesProvider>
                         </ThemeProvider>
                     </ZenStackHooksProvider>
                 </TooltipProvider>

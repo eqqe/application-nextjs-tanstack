@@ -69,10 +69,10 @@ export const fakeCharge = (): z.infer<typeof ChargeCreateScalarSchema> => ({
     description: faker.lorem.sentence(),
 });
 
-export const generateData = ({ length, currentSpace }: { length: number; currentSpace: Space }) => {
+export const generateData = ({ length, spaceId }: { length: number; spaceId: string }) => {
     return {
         where: {
-            id: currentSpace.id,
+            id: spaceId,
         },
         data: {
             properties: {

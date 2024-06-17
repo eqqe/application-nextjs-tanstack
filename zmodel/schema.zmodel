@@ -45,7 +45,7 @@ abstract model IdCreatedUpdatedSpace extends IdCreatedUpdatedAuth {
     space   Space  @relation(fields: [spaceId], references: [id], onDelete: Cascade)
     spaceId String @default(auth().createSpaceId)
 
-    @@allow('read', spaceId in auth().currentSpaceIds && space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)])
+    @@allow('read', spaceId in auth().selectedSpaces && space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)])
 }
 
 enum ProfileRole {
@@ -79,7 +79,7 @@ model User extends IdCreatedUpdated {
     profiles               Profile[]
     spacesOwned            Space[]                 @relation("owner")
     createSpaceId          String?                 @ignore
-    currentSpaceIds        String[]                @ignore
+    selectedSpaces         String[]                @ignore
     image                  String?                 @url
     todos                  Todo[]                  @relation("owner")
 

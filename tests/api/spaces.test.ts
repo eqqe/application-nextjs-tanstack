@@ -37,8 +37,7 @@ it('Should list spaces, and check that only current space components are visible
 
     const user1PrismaNewSpace = enhancePrisma({
         userId: user1.userCreated.id,
-        createSpaceId: newSpace.id,
-        currentSpaceIds: [newSpace.id],
+        selectedSpaces: [newSpace.id],
     });
     let propertiesNewSpace = await user1PrismaNewSpace.property.findMany(findManyPropertyArgs);
     assert.equal(propertiesNewSpace.length, 0);

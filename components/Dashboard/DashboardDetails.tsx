@@ -1,12 +1,11 @@
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
-import { useCurrentSpace, useComponentIdRouter } from '@/lib/context';
+import { useComponentIdRouter } from '@/lib/context';
 import { PanelComponentRender } from '@/components/Dashboard/PanelComponentRender';
 import { PanelRender } from '@/components/Dashboard/PanelRender';
 import { useFindUniqueDashboard, useCreatePanel, useCreatePanelRow, useDeletePanelRow } from '@/zmodel/lib/hooks';
 import { UserAvatar } from '@/components/UserAvatar';
 
 export function DashboardDetails() {
-    const space = useCurrentSpace();
     const componentId = useComponentIdRouter();
 
     const { data: dashboard } = useFindUniqueDashboard(
@@ -41,7 +40,7 @@ export function DashboardDetails() {
     const createPanelRow = useCreatePanelRow();
     const deletePanelRow = useDeletePanelRow();
 
-    if (!space || !dashboard) {
+    if (!dashboard) {
         return <></>;
     }
     return (

@@ -21,8 +21,7 @@ export async function createUserWithSpace({ currentSpace, email }: { currentSpac
     currentSpace = currentSpace ?? space;
     const enhancedPrisma = enhancePrisma({
         userId: userCreated.id,
-        currentSpaceIds: [currentSpace.id],
-        createSpaceId: currentSpace.id,
+        selectedSpaces: [currentSpace.id],
     });
     async function enableAssets() {
         const applications = await enhancedPrisma.application.findMany(findManyApplicationArgs);

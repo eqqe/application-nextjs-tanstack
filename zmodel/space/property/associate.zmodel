@@ -14,7 +14,7 @@ model Company extends Address, Component {
     intraCommunityVAT String?
     associates        Associate[]
 
-    @@allow('all', associates?[propertyAssociates?[property.spaceId in auth().currentSpaceIds && property.space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]]])
+    @@allow('all', associates?[propertyAssociates?[property.spaceId in auth().selectedSpaces && property.space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]]])
 }
 
 model Person extends Component {
@@ -22,8 +22,8 @@ model Person extends Component {
     phone      String?
     associates Associate[]
     tenants    Tenant[]
-    @@allow('all', associates?[propertyAssociates?[property.spaceId in auth().currentSpaceIds &&  property.space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]]])
-    @@allow('all', tenants?[lease.property.spaceId in auth().currentSpaceIds &&  lease.property.space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
+    @@allow('all', associates?[propertyAssociates?[property.spaceId in auth().selectedSpaces &&  property.space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]]])
+    @@allow('all', tenants?[lease.property.spaceId in auth().selectedSpaces &&  lease.property.space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
 }
 
 model Associate extends Component, OptionalUser {
@@ -32,14 +32,14 @@ model Associate extends Component, OptionalUser {
     person             Person              @relation(fields: [personId], references: [id], onDelete: Cascade)
     personId           String
     propertyAssociates PropertyAssociate[]
-    @@allow('all', propertyAssociates?[property.spaceId in auth().currentSpaceIds &&  property.space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
+    @@allow('all', propertyAssociates?[property.spaceId in auth().selectedSpaces &&  property.space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
 }
 
 abstract model BaseAssociateLink {
     associate   Associate @relation(fields: [associateId], references: [id], onDelete: Cascade)
     associateId String
 
-    @@allow('all', associate.propertyAssociates?[property.spaceId in auth().currentSpaceIds &&  property.space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
+    @@allow('all', associate.propertyAssociates?[property.spaceId in auth().selectedSpaces &&  property.space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
 }
 model PropertyAssociate extends BasePropertyLink, BaseAssociateLink, Component {
     entryDate DateTime

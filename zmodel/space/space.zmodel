@@ -30,7 +30,7 @@ abstract model SpaceComponent extends IdCreatedUpdatedSpace, Owner, Named {
     private Boolean @default(false)
 
     @@deny('all', private && owner != auth())
-    @@allow('all', spaceId in auth().currentSpaceIds && space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)])
+    @@allow('all', spaceId in auth().selectedSpaces && space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)])
 }
 
 

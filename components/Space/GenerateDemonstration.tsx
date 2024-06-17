@@ -1,25 +1,13 @@
-import { useCreateProperty, useUpdateSpace } from '@/zmodel/lib/hooks';
-import {
-    cityPlaywrightTest,
-    fakeCharge,
-    fakeLease,
-    fakePayment,
-    fakePerson,
-    fakeProperty,
-    fakePropertyAssociate,
-    generateData,
-} from '@/lib/demo/fake';
-import { useCurrentSpace } from '@/lib/context';
+import { useUpdateSpace } from '@/zmodel/lib/hooks';
+import { cityPlaywrightTest, generateData } from '@/lib/demo/fake';
+import { useSelectedSpaces } from '@/lib/context';
 
 export const GenerateDemonstration = () => {
-    const currentSpace = useCurrentSpace();
     const updateSpace = useUpdateSpace();
-    if (!currentSpace) {
-        return <></>;
-    }
 
+    const { selectedSpaces } = useSelectedSpaces();
     const generateDemonstration = async ({ length }: { length: number }) => {
-        const updateSpaceArgs = generateData({ length, currentSpace });
+        const updateSpaceArgs = generateData({ length, spaceId: selectedSpaces[0] });
 
         updateSpaceArgs.data.properties.create[length - 1].city = cityPlaywrightTest;
 

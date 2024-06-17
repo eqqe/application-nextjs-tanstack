@@ -15,7 +15,7 @@ model Grid extends BaseGrid {
 
     columns  Int          @gte(1) @lte(12)
 
-    @@allow('read', subTab.tab.folder.applicationVersion.activations?[spaceId in auth().currentSpaceIds && space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
+    @@allow('read', subTab.tab.folder.applicationVersion.activations?[spaceId in auth().selectedSpaces && space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
 }
 
 
@@ -43,8 +43,8 @@ model GridElement extends IdCreatedUpdatedAuth {
     card             GridCard?
     tabs             GridTabs?
 
-    @@allow('read', grid.subTab.tab.folder.applicationVersion.activations?[spaceId in auth().currentSpaceIds && space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
-    @@allow('read', gridTabContent.tabs.element.grid.subTab.tab.folder.applicationVersion.activations?[spaceId in auth().currentSpaceIds && space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
+    @@allow('read', grid.subTab.tab.folder.applicationVersion.activations?[spaceId in auth().selectedSpaces && space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
+    @@allow('read', gridTabContent.tabs.element.grid.subTab.tab.folder.applicationVersion.activations?[spaceId in auth().selectedSpaces && space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
 }
 
 
@@ -69,8 +69,8 @@ model GridCard extends IdCreatedUpdatedAuth {
 
     footer                 GridCardFooter?
 
-    @@allow('read', element.grid.subTab.tab.folder.applicationVersion.activations?[spaceId in auth().currentSpaceIds && space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
-    @@allow('read', element.gridTabContent.tabs.element.grid.subTab.tab.folder.applicationVersion.activations?[spaceId in auth().currentSpaceIds && space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
+    @@allow('read', element.grid.subTab.tab.folder.applicationVersion.activations?[spaceId in auth().selectedSpaces && space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
+    @@allow('read', element.gridTabContent.tabs.element.grid.subTab.tab.folder.applicationVersion.activations?[spaceId in auth().selectedSpaces && space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
 }
 
 model GridTabs extends IdCreatedUpdatedAuth {
@@ -80,7 +80,7 @@ model GridTabs extends IdCreatedUpdatedAuth {
 
     tabsContent GridTabContent[]
 
-    @@allow('read', element.grid.subTab.tab.folder.applicationVersion.activations?[spaceId in auth().currentSpaceIds && space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
+    @@allow('read', element.grid.subTab.tab.folder.applicationVersion.activations?[spaceId in auth().selectedSpaces && space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
 }
 
 
@@ -88,8 +88,8 @@ model GridTabContent extends BaseGrid {
     tabs     GridTabs @relation(fields: [parentId], references: [id], onDelete: Cascade)
     parentId String
 
-    @@allow('read', tabs.element.grid.subTab.tab.folder.applicationVersion.activations?[spaceId in auth().currentSpaceIds && space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
-    @@allow('read', tabs.element.gridTabContent.tabs.element.grid.subTab.tab.folder.applicationVersion.activations?[spaceId in auth().currentSpaceIds && space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
+    @@allow('read', tabs.element.grid.subTab.tab.folder.applicationVersion.activations?[spaceId in auth().selectedSpaces && space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
+    @@allow('read', tabs.element.gridTabContent.tabs.element.grid.subTab.tab.folder.applicationVersion.activations?[spaceId in auth().selectedSpaces && space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
 }
 
 
@@ -100,7 +100,7 @@ model GridCardFooter extends IdCreatedUpdatedAuth {
     button   GridCardFooterButton?
     progress GridCardFooterProgress?
 
-    @@allow('read', card.element.grid.subTab.tab.folder.applicationVersion.activations?[spaceId in auth().currentSpaceIds && space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
+    @@allow('read', card.element.grid.subTab.tab.folder.applicationVersion.activations?[spaceId in auth().selectedSpaces && space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
 }
 
 model GridCardFooterButton extends IdCreatedUpdatedAuth {
@@ -111,7 +111,7 @@ model GridCardFooterButton extends IdCreatedUpdatedAuth {
     text     String
     table    Type
 
-    @@allow('read', footer.card.element.grid.subTab.tab.folder.applicationVersion.activations?[spaceId in auth().currentSpaceIds && space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
+    @@allow('read', footer.card.element.grid.subTab.tab.folder.applicationVersion.activations?[spaceId in auth().selectedSpaces && space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
 }
 model GridCardFooterProgress extends IdCreatedUpdatedAuth {
 
@@ -119,6 +119,6 @@ model GridCardFooterProgress extends IdCreatedUpdatedAuth {
     parentId String         @unique
 
     value    Int
-    @@allow('read', footer.card.element.grid.subTab.tab.folder.applicationVersion.activations?[spaceId in auth().currentSpaceIds && space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
+    @@allow('read', footer.card.element.grid.subTab.tab.folder.applicationVersion.activations?[spaceId in auth().selectedSpaces && space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
 }
 

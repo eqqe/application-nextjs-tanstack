@@ -13,68 +13,15 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { FallbackError } from '../layout/FallbackError';
 import { useFindManySpace } from '@/zmodel/lib/hooks';
 import { useRouter } from 'next/navigation';
-import { useCurrentSpace, useCurrentUser } from '@/lib/context';
+import { useSelectedSpaces } from '@/lib/context';
 import { Badge } from '@/components/ui/badge';
-import { useSwitchSpace } from '@/lib/switchSpace';
-import { getCookie, setCookie } from 'cookies-next';
-import { useEffect, useState } from 'react';
-import { signInPath } from '../AuthGuard';
-
-export type CurrentSpaceIdsCookie = {
-    spaceId: string;
-    create: boolean;
-}[];
-export const useCurrentSpaceIdsFromCookie = () => {
-    const user = useCurrentUser();
-    const { data: spaces } = useFindManySpace();
-
-    const [currentSpaceIds, setCurrentSpaceIds] = useState<CurrentSpaceIdsCookie | undefined>(void 0);
-
-    const router = useRouter();
-    useEffect(() => {
-        if (!currentSpaceIds) {
-            if (user?.id) {
-                const cookieName = currentSpaceIdsCookieName(user.id);
-                const currentSpaceIdsCookie = getCookie(cookieName);
-                if (currentSpaceIdsCookie) {
-                    try {
-                        const currentSpaceIds = JSON.parse(currentSpaceIdsCookie) as CurrentSpaceIdsCookie;
-                        setCurrentSpaceIds(currentSpaceIds);
-                        return;
-                    } catch {}
-                } else if (spaces) {
-                    if (spaces.length) {
-                        const firstSpace = spaces[0];
-                        const currentSpaceIds: CurrentSpaceIdsCookie = [
-                            {
-                                create: true,
-                                spaceId: firstSpace.id,
-                            },
-                        ];
-                        setCookie(cookieName, JSON.stringify(currentSpaceIds));
-                        setCurrentSpaceIds(currentSpaceIds);
-                    } else {
-                        router.push(signInPath);
-                    }
-                }
-            } else {
-                router.push(signInPath);
-            }
-        }
-    }, [currentSpaceIds, router, spaces, user?.id]);
-
-    return currentSpaceIds;
-};
-export const currentSpaceIdsCookieName = (userId: string) => `${userId}-currentSpaceIds`;
 
 export function SpaceSwitch() {
     const { data: spaces } = useFindManySpace();
 
     const router = useRouter();
 
-    const currentSpace = useCurrentSpace();
-
-    const switchSpace = useSwitchSpace();
+    const { selectedSpaces, switchSpace } = useSelectedSpaces();
 
     return (
         <ErrorBoundary fallback={<FallbackError />}>
@@ -90,9 +37,9 @@ export function SpaceSwitch() {
                     <DropdownMenuSeparator />
                     <DropdownMenuGroup>
                         {spaces?.map((space) => (
-                            <DropdownMenuItem key={space.id} onClick={() => switchSpace(space)}>
+                            <DropdownMenuItem key={space.id} onClick={() => switchSpace({ space })}>
                                 <IceCreamIcon className="mr-2 size-4" />
-                                {space.id === currentSpace?.id ? (
+                                {space.id === selectedSpaces[0] ? (
                                     <Badge variant={'outline'}>{space.name}</Badge>
                                 ) : (
                                     space.name

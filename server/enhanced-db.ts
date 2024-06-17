@@ -2,20 +2,18 @@ import { enhance } from '@zenstackhq/runtime';
 import type { GetServerSidePropsContext } from 'next';
 import { getServerAuthSession } from './auth';
 import { prisma } from './db';
-import { CurrentSpaceIdsCookie, currentSpaceIdsCookieName } from '@/components/layout/SpaceSwitch';
+import { SelectedSpaces, selectedSpacesCookieName } from '@/lib/context';
 
-export function enhancePrisma({
-    userId,
-    createSpaceId,
-    currentSpaceIds,
-}: {
-    userId?: string;
-    createSpaceId?: string;
-    currentSpaceIds?: string[];
-}) {
+export function enhancePrisma({ userId, selectedSpaces }: { userId?: string; selectedSpaces?: SelectedSpaces }) {
     let options;
-    if (createSpaceId && currentSpaceIds) {
-        options = { user: { id: userId, createSpaceId, currentSpaceIds } };
+    if (selectedSpaces && selectedSpaces.length) {
+        options = {
+            user: {
+                id: userId,
+                selectedSpaces: selectedSpaces,
+                createSpaceId: selectedSpaces[0],
+            },
+        };
     } else if (userId) {
         options = { user: { id: userId } };
     } else {
@@ -30,19 +28,18 @@ export async function getEnhancedPrisma(ctx: {
     res: GetServerSidePropsContext['res'];
 }) {
     const session = await getServerAuthSession(ctx);
-    let currentSpaceIdsCookie: CurrentSpaceIdsCookie = [];
+    let selectedSpaces: SelectedSpaces | undefined;
     if (session?.user) {
-        const cookieName = currentSpaceIdsCookieName(session.user.id);
-        const currentSpaceIdsCookieRaw = ctx.req.cookies[cookieName];
-        if (currentSpaceIdsCookieRaw) {
+        const cookieName = selectedSpacesCookieName(session.user.id);
+        const selectedSpacesCookieRaw = ctx.req.cookies[cookieName];
+        if (selectedSpacesCookieRaw) {
             try {
-                currentSpaceIdsCookie = JSON.parse(currentSpaceIdsCookieRaw);
+                selectedSpaces = JSON.parse(selectedSpacesCookieRaw);
             } catch {}
         }
     }
     return enhancePrisma({
         userId: session?.user.id,
-        currentSpaceIds: currentSpaceIdsCookie.map((c) => c.spaceId),
-        createSpaceId: currentSpaceIdsCookie.find((c) => c.create)?.spaceId,
+        selectedSpaces,
     });
 }

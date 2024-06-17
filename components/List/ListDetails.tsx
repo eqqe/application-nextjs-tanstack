@@ -1,12 +1,10 @@
 import { PlusIcon } from '@heroicons/react/24/outline';
-import { useCurrentSpace, useComponentIdRouter } from '@/lib/context';
+import { useComponentIdRouter } from '@/lib/context';
 import { useCreateTodo, useFindUniqueList } from '@/zmodel/lib/hooks';
 import TodoComponent from 'components/Todo';
 import { ChangeEvent, KeyboardEvent, useState } from 'react';
-import { Type } from '@prisma/client';
 
 export function ListDetails() {
-    const space = useCurrentSpace();
     const componentId = useComponentIdRouter();
     const { data: list } = useFindUniqueList(
         {
@@ -32,7 +30,7 @@ export function ListDetails() {
     const [title, setTitle] = useState('');
     const createTodo = useCreateTodo({ optimisticUpdate: true });
 
-    if (!space || !list) {
+    if (!list) {
         return <></>;
     }
 

@@ -1,17 +1,11 @@
 import Header from '@/components/layout/header';
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode } from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Package, Settings } from 'lucide-react';
 import Link from 'next/link';
 import { useNavItems } from '@/hooks/useNavItems';
 import { ErrorBoundary } from 'react-error-boundary';
 import { FallbackError } from './FallbackError';
-import { useFindManySpace } from '@/zmodel/lib/hooks';
-import { getCookie, setCookie } from 'cookies-next';
-import { currentSpaceIdsCookieName, useCurrentSpaceIdsFromCookie } from './SpaceSwitch';
-import { useCurrentUser } from '@/lib/context';
-import { useRouter } from 'next/router';
-import { signInPath } from '../AuthGuard';
 import { TopLoadingBar } from './TopLoadingBar';
 
 type Props = {
@@ -19,10 +13,6 @@ type Props = {
 };
 
 export function WithNavBar({ children }: Props) {
-    const user = useCurrentUser();
-
-    const currentSpaceIds = useCurrentSpaceIdsFromCookie();
-
     const items = useNavItems();
     return (
         <ErrorBoundary fallback={<FallbackError />}>
