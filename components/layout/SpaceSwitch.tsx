@@ -13,20 +13,15 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { FallbackError } from '../layout/FallbackError';
 import { useFindManySpace } from '@/zmodel/lib/hooks';
 import { useRouter } from 'next/navigation';
-import { useCurrentSpace } from '@/lib/context';
+import { useSelectedSpaces } from '@/lib/context';
 import { Badge } from '@/components/ui/badge';
-import { useSwitchSpace } from '@/lib/switchSpace';
-
-export const currentSpaceCookieName = (userId: string) => `${userId}-currentSpaceId`;
 
 export function SpaceSwitch() {
     const { data: spaces } = useFindManySpace();
 
     const router = useRouter();
 
-    const currentSpace = useCurrentSpace();
-
-    const switchSpace = useSwitchSpace();
+    const { selectedSpaces, switchSpace } = useSelectedSpaces();
 
     return (
         <ErrorBoundary fallback={<FallbackError />}>
@@ -42,9 +37,9 @@ export function SpaceSwitch() {
                     <DropdownMenuSeparator />
                     <DropdownMenuGroup>
                         {spaces?.map((space) => (
-                            <DropdownMenuItem key={space.id} onClick={() => switchSpace(space)}>
+                            <DropdownMenuItem key={space.id} onClick={() => switchSpace({ space })}>
                                 <IceCreamIcon className="mr-2 size-4" />
-                                {space.id === currentSpace?.id ? (
+                                {space.id === selectedSpaces[0] ? (
                                     <Badge variant={'outline'}>{space.name}</Badge>
                                 ) : (
                                     space.name

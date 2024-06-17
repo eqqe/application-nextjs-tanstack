@@ -1,17 +1,11 @@
 import Header from '@/components/layout/header';
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode } from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Package, Settings } from 'lucide-react';
 import Link from 'next/link';
 import { useNavItems } from '@/hooks/useNavItems';
 import { ErrorBoundary } from 'react-error-boundary';
 import { FallbackError } from './FallbackError';
-import { useFindManySpace } from '@/zmodel/lib/hooks';
-import { getCookie, setCookie } from 'cookies-next';
-import { currentSpaceCookieName } from './SpaceSwitch';
-import { useCurrentUser } from '@/lib/context';
-import { useRouter } from 'next/router';
-import { signInPath } from '../AuthGuard';
 import { TopLoadingBar } from './TopLoadingBar';
 
 type Props = {
@@ -19,35 +13,6 @@ type Props = {
 };
 
 export function WithNavBar({ children }: Props) {
-    const { data: spaces } = useFindManySpace();
-    const user = useCurrentUser();
-
-    const [cookieExists, setCookieExists] = useState(false);
-
-    const router = useRouter();
-    useEffect(() => {
-        if (!cookieExists) {
-            if (user?.id) {
-                const cookieName = currentSpaceCookieName(user?.id);
-                const currentSpaceId = getCookie(cookieName);
-                if (currentSpaceId) {
-                    setCookieExists(true);
-                    return;
-                } else if (spaces) {
-                    if (spaces.length) {
-                        const firstSpace = spaces[0];
-                        setCookieExists(true);
-                        setCookie(cookieName, firstSpace.id);
-                    } else {
-                        router.push(signInPath);
-                    }
-                }
-            } else {
-                router.push(signInPath);
-            }
-        }
-    }, [cookieExists, router, spaces, user?.id]);
-
     const items = useNavItems();
     return (
         <ErrorBoundary fallback={<FallbackError />}>

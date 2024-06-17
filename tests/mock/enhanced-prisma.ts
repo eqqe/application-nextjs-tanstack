@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import { nanoid } from 'nanoid';
 import { slugAssetsApplication } from '@/zmodel/prisma/applications/createApplications';
-import { Space, SpaceUserRole } from '@prisma/client';
+import { Space, ProfileRole } from '@prisma/client';
 import { enhancePrisma } from '@/server/enhanced-db';
 import { getNewSpace } from '@/lib/getNewSpace';
 import assert from 'assert';
@@ -19,7 +19,10 @@ export async function createUserWithSpace({ currentSpace, email }: { currentSpac
     const space = await prisma.space.create(getNewSpace({ name: `Test spaces ${testUser.email}`, user: userCreated }));
 
     currentSpace = currentSpace ?? space;
-    const enhancedPrisma = enhancePrisma({ userId: userCreated.id, currentSpaceId: currentSpace.id });
+    const enhancedPrisma = enhancePrisma({
+        userId: userCreated.id,
+        selectedSpaces: [currentSpace.id],
+    });
     async function enableAssets() {
         const applications = await enhancedPrisma.application.findMany(findManyApplicationArgs);
 
@@ -57,16 +60,19 @@ export async function getEnhancedPrisma() {
     const user2 = await createUserWithSpace({});
     /* User3 is a member of User2's space and he is currently viewing the space */
     const user3 = await createUserWithSpace({ currentSpace: user2.space });
-    await prisma.spaceUser.create({
+    await prisma.space.update({
+        where: {
+            id: user2.space.id,
+        },
         data: {
-            profile: {
+            profiles: {
                 create: {
-                    role: SpaceUserRole.USER,
-                    spaceId: user2.space.id,
+                    role: ProfileRole.USER,
+                    users: {
+                        connect: { id: user3.userCreated.id },
+                    },
                 },
             },
-            space: { connect: { id: user2.space.id } },
-            user: { connect: { id: user3.userCreated.id } },
         },
     });
     assert.notEqual(user1.userCreated.id, user2.userCreated.id);

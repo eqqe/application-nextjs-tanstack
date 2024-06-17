@@ -1,4 +1,4 @@
-import { useCurrentSpace, useComponentIdRouter } from '@/lib/context';
+import { useComponentIdRouter } from '@/lib/context';
 import { useCreateLease, useFindUniqueProperty } from '@/zmodel/lib/hooks';
 import LeaseDetail from 'components/Lease/LeaseList';
 import { LeaseCreateScalarSchema } from '@zenstackhq/runtime/zod/models';

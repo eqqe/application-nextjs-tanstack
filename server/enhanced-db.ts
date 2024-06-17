@@ -2,12 +2,18 @@ import { enhance } from '@zenstackhq/runtime';
 import type { GetServerSidePropsContext } from 'next';
 import { getServerAuthSession } from './auth';
 import { prisma } from './db';
-import { currentSpaceCookieName } from '@/components/layout/SpaceSwitch';
+import { SelectedSpaces, selectedSpacesCookieName } from '@/lib/context';
 
-export function enhancePrisma({ userId, currentSpaceId }: { userId?: string; currentSpaceId?: string }) {
+export function enhancePrisma({ userId, selectedSpaces }: { userId?: string; selectedSpaces?: SelectedSpaces }) {
     let options;
-    if (currentSpaceId) {
-        options = { user: { id: userId, currentSpaceId } };
+    if (selectedSpaces && selectedSpaces.length) {
+        options = {
+            user: {
+                id: userId,
+                selectedSpaces: selectedSpaces,
+                createSpaceId: selectedSpaces[0],
+            },
+        };
     } else if (userId) {
         options = { user: { id: userId } };
     } else {
@@ -22,10 +28,18 @@ export async function getEnhancedPrisma(ctx: {
     res: GetServerSidePropsContext['res'];
 }) {
     const session = await getServerAuthSession(ctx);
-    let currentSpaceId;
+    let selectedSpaces: SelectedSpaces | undefined;
     if (session?.user) {
-        const cookieName = currentSpaceCookieName(session.user.id);
-        currentSpaceId = ctx.req.cookies[cookieName];
+        const cookieName = selectedSpacesCookieName(session.user.id);
+        const selectedSpacesCookieRaw = ctx.req.cookies[cookieName];
+        if (selectedSpacesCookieRaw) {
+            try {
+                selectedSpaces = JSON.parse(selectedSpacesCookieRaw);
+            } catch {}
+        }
     }
-    return enhancePrisma({ userId: session?.user.id, currentSpaceId });
+    return enhancePrisma({
+        userId: session?.user.id,
+        selectedSpaces,
+    });
 }

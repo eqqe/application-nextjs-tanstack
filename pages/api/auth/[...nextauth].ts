@@ -91,9 +91,17 @@ export const authOptions: NextAuthOptions = {
 
     events: {
         async signIn({ user }: { user: User }) {
-            const spaceCount = await prisma.spaceUser.count({
+            const spaceCount = await prisma.space.count({
                 where: {
-                    userId: user.id,
+                    profiles: {
+                        some: {
+                            users: {
+                                some: {
+                                    id: user.id,
+                                },
+                            },
+                        },
+                    },
                 },
             });
             if (spaceCount > 0) {

@@ -9,7 +9,7 @@ test('Load a lot of data for 3 users', async () => {
     const length = process.env.CI ? 5 : 1;
     async function writeFakeData({ prisma, currentSpace }: typeof user1) {
         for (const _ of Array.from({ length })) {
-            const updateSpaceArgs = generateData({ length, currentSpace });
+            const updateSpaceArgs = generateData({ length, spaceId: currentSpace.id });
             await prisma.space.update(updateSpaceArgs);
         }
     }

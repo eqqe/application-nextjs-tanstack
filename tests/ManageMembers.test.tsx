@@ -1,9 +1,9 @@
 import { test } from 'vitest';
 import { screen } from '@testing-library/react';
 import { renderProvide } from './create-wrapper';
-import { SpaceHomeComponent } from '@/components/Space/SpaceHomeComponent';
+import ManageMembers from '@/components/Space/ManageMembers';
 
 test('Page', () => {
-    renderProvide(<SpaceHomeComponent />);
-    screen.getByText('Components');
+    renderProvide(<ManageMembers />);
+    screen.getByText('Profiles');
 });

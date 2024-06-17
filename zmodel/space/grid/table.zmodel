@@ -19,8 +19,8 @@ model GridCardTable extends IdCreatedUpdatedAuth {
     columns          String[]
     groupBy          GroupBy?
 
-    @@allow('read', parent.element.grid.subTab.tab.folder.applicationVersion.activations?[auth().currentSpaceId == spaceId && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])
-    @@allow('read', parent.element.gridTabContent.tabs.element.grid.subTab.tab.folder.applicationVersion.activations?[auth().currentSpaceId == spaceId && space.members?[user == auth() && (profile.role == ADMIN || profile.role == USER)]])
+    @@allow('read', parent.element.grid.subTab.tab.folder.applicationVersion.activations?[spaceId in auth().selectedSpaces && space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
+    @@allow('read', parent.element.gridTabContent.tabs.element.grid.subTab.tab.folder.applicationVersion.activations?[spaceId in auth().selectedSpaces && space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
 }
 
 
@@ -37,6 +37,6 @@ model GroupBy extends IdCreatedUpdatedAuth {
     max      String[]
     orderBy  String?
 
-    @@allow('read', parent.parent.element.grid.subTab.tab.folder.applicationVersion.activations?[auth().currentSpaceId == spaceId && space.members?[user == auth()]])
-    @@allow('read', parent.parent.element.gridTabContent.tabs.element.grid.subTab.tab.folder.applicationVersion.activations?[auth().currentSpaceId == spaceId && space.members?[user == auth()]])
+    @@allow('read', parent.parent.element.grid.subTab.tab.folder.applicationVersion.activations?[spaceId in auth().selectedSpaces && space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
+    @@allow('read', parent.parent.element.gridTabContent.tabs.element.grid.subTab.tab.folder.applicationVersion.activations?[spaceId in auth().selectedSpaces && space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
 }
