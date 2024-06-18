@@ -32,7 +32,7 @@ export function CardTableComponent({ table: { type, typeTableRequest, columns, g
     count = useCount().data;
     const [pagination, setPagination] = useState<PaginationState>({
         pageIndex: 0,
-        pageSize: 20,
+        pageSize: 50,
     });
 
     function getParams() {
@@ -128,7 +128,7 @@ export function CardTableComponent({ table: { type, typeTableRequest, columns, g
         return <></>;
     }
     return (
-        <div className="container mx-auto py-10">
+        <div className="container mx-auto py-5">
             <ErrorBoundary fallback={<FallbackError />}>
                 <AutoTable
                     type={type}

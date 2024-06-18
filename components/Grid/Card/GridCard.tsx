@@ -35,16 +35,14 @@ export function GridCard({ card }: { card: Prisma.GridCardGetPayload<typeof Grid
                     )}
                 </CardHeader>
             </ErrorBoundary>
-            <ErrorBoundary fallback={<FallbackError />}>
-                {card.content && (
-                    <CardContent>
-                        <div className="text-muted-foreground text-xs">{card.content}</div>
-                    </CardContent>
-                )}
-            </ErrorBoundary>
-            <ErrorBoundary fallback={<FallbackError />}>
-                {card.table && <CardTableComponent table={card.table} />}
-            </ErrorBoundary>
+            <CardContent>
+                <ErrorBoundary fallback={<FallbackError />}>
+                    {card.content && <div className="text-muted-foreground text-xs">{card.content}</div>}
+                </ErrorBoundary>
+                <ErrorBoundary fallback={<FallbackError />}>
+                    {card.table && <CardTableComponent table={card.table} />}
+                </ErrorBoundary>
+            </CardContent>
             <ErrorBoundary fallback={<FallbackError />}>
                 {card.footer && <GridCardFooter footer={card.footer} />}
             </ErrorBoundary>
