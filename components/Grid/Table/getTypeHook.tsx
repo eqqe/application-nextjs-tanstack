@@ -1,33 +1,12 @@
 import { getGridUrl } from '@/lib/urls';
 import {
-    useAggregateDashboard,
-    useAggregateList,
     useAggregateProperty,
-    useAggregateTodo,
-    useFindManyDashboard,
-    useFindManyList,
     useFindManyProperty,
-    useFindManyTodo,
     useGroupByProperty,
-    useGroupByDashboard,
-    useGroupByList,
-    useGroupByTodo,
-    useUpdateDashboard,
-    useUpdateManyDashboard,
     useUpdateProperty,
     useUpdateManyProperty,
-    useUpdateList,
-    useUpdateManyList,
-    useUpdateManyTodo,
-    useUpdateTodo,
     useCreateProperty,
     useCreateManyProperty,
-    useCreateDashboard,
-    useCreateList,
-    useCreateManyDashboard,
-    useCreateManyList,
-    useCreateManyTodo,
-    useCreateTodo,
     useAggregateLease,
     useGroupByLease,
     useFindManyLease,
@@ -59,9 +38,6 @@ import {
     useCountProperty,
     useCountCharge,
     useCountPayment,
-    useCountDashboard,
-    useCountList,
-    useCountTodo,
     useCountLease,
     useCountGrid,
     useAggregateLeaseTenant,
@@ -132,17 +108,8 @@ import {
 import { Type } from '@prisma/client';
 import {
     PropertyUpdateScalarSchema,
-    DashboardUpdateScalarSchema,
-    ListUpdateScalarSchema,
-    TodoUpdateScalarSchema,
     PropertyCreateScalarSchema,
-    DashboardCreateScalarSchema,
-    ListCreateScalarSchema,
-    TodoCreateScalarSchema,
     PropertyScalarSchema,
-    DashboardScalarSchema,
-    ListScalarSchema,
-    TodoScalarSchema,
     LeaseScalarSchema,
     LeaseUpdateScalarSchema,
     LeaseCreateScalarSchema,
@@ -270,72 +237,6 @@ export function getTypeHook({ type }: { type: Type }) {
                 useCreate: {
                     single: useCreateLeaseTenant,
                     many: useCreateManyLeaseTenant,
-                },
-            };
-        case 'Dashboard':
-            return {
-                useHook: {
-                    Aggregate: useAggregateDashboard,
-                    GroupBy: useGroupByDashboard,
-                    FindMany: useFindManyDashboard,
-                },
-                schema: {
-                    base: DashboardScalarSchema,
-                    update: DashboardUpdateScalarSchema,
-                    create: DashboardCreateScalarSchema,
-                },
-                useCount: useCountDashboard,
-                useUpdate: {
-                    single: useUpdateDashboard,
-                    many: useUpdateManyDashboard,
-                },
-                useCreate: {
-                    single: useCreateDashboard,
-                    many: useCreateManyDashboard,
-                },
-            };
-        case 'List':
-            return {
-                useHook: {
-                    Aggregate: useAggregateList,
-                    GroupBy: useGroupByList,
-                    FindMany: useFindManyList,
-                },
-                schema: {
-                    base: ListScalarSchema,
-                    update: ListUpdateScalarSchema,
-                    create: ListCreateScalarSchema,
-                },
-                useCount: useCountList,
-                useUpdate: {
-                    single: useUpdateList,
-                    many: useUpdateManyList,
-                },
-                useCreate: {
-                    single: useCreateList,
-                    many: useCreateManyList,
-                },
-            };
-        case 'Todo':
-            return {
-                useHook: {
-                    Aggregate: useAggregateTodo,
-                    GroupBy: useGroupByTodo,
-                    FindMany: useFindManyTodo,
-                },
-                schema: {
-                    base: TodoScalarSchema,
-                    update: TodoUpdateScalarSchema,
-                    create: TodoCreateScalarSchema,
-                },
-                useUpdate: {
-                    single: useUpdateTodo,
-                    many: useUpdateManyTodo,
-                },
-                useCount: useCountTodo,
-                useCreate: {
-                    single: useCreateTodo,
-                    many: useCreateManyTodo,
                 },
             };
         case 'Lease':
