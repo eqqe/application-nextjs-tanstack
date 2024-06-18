@@ -42,8 +42,8 @@ export function CreateForm<SchemaType extends ZodObjectOrWrapped>({
             <DialogTrigger asChild>
                 <Button variant="outline">{title}</Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-                <ScrollArea className="max-h-[80vh] p-6">
+            <DialogContent className="sm:max-w-[625px]">
+                <ScrollArea className="max-h-[80vh] pl-2 pr-6 pt-2">
                     <DialogHeader>
                         <DialogTitle>{title}</DialogTitle>
                         <DialogDescription>{title}</DialogDescription>
