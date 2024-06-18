@@ -6,7 +6,7 @@ import { PrismaClient } from '@zenstackhq/runtime/models';
 test('Load a lot of data for 3 users', async () => {
     const { user1, user2, user3 } = await getEnhancedPrisma();
     // Make it fast when running locally, but check it does not timeout on CI with a lot of data
-    const length = process.env.CI ? 5 : 2;
+    const length = process.env.CI ? 5 : 1;
     async function writeFakeData({ prisma, currentSpace }: typeof user1) {
         const spaceId = currentSpace.id;
         for (const _ of Array.from({ length })) {
@@ -35,7 +35,18 @@ test('Load a lot of data for 3 users', async () => {
     await writeFakeData(user1);
     await writeFakeData(user2);
     await writeFakeData(user3);
-    await checkFakeDataCount({ prisma: user1.prisma, factor: 1 });
-    await checkFakeDataCount({ prisma: user2.prisma, factor: 2 });
-    await checkFakeDataCount({ prisma: user3.prisma, factor: 2 });
-}, 30000);
+
+    const promises: Promise<void>[] = [];
+
+    // Read a lot of data in parallel
+    for (const _ of Array.from({ length })) {
+        for (const _ of Array.from({ length })) {
+            for (const _ of Array.from({ length })) {
+                promises.push(checkFakeDataCount({ prisma: user1.prisma, factor: 1 }));
+                promises.push(checkFakeDataCount({ prisma: user2.prisma, factor: 2 }));
+                promises.push(checkFakeDataCount({ prisma: user3.prisma, factor: 2 }));
+            }
+        }
+    }
+    await Promise.all(promises);
+}, 45000);
