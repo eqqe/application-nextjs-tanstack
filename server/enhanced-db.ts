@@ -6,16 +6,14 @@ import { SelectedSpaces, selectedSpacesCookieName } from '@/lib/context';
 
 export function enhancePrisma({ userId, selectedSpaces }: { userId?: string; selectedSpaces?: SelectedSpaces }) {
     let options;
-    if (selectedSpaces && selectedSpaces.length) {
+    if (userId) {
         options = {
             user: {
                 id: userId,
-                selectedSpaces: selectedSpaces,
-                createSpaceId: selectedSpaces[0],
+                selectedSpaces: selectedSpaces ?? [],
+                createSpaceId: selectedSpaces?.length ? selectedSpaces[0] : [],
             },
         };
-    } else if (userId) {
-        options = { user: { id: userId } };
     } else {
         options = {};
     }
