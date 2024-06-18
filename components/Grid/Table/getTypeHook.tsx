@@ -1,4 +1,4 @@
-import { getGridUrl } from '@/lib/urls';
+import { getGridUrl, getSubTabFolderUrl } from '@/lib/urls';
 import {
     useAggregateProperty,
     useFindManyProperty,
@@ -104,6 +104,14 @@ import {
     useGroupByUser,
     useUpdateManyUser,
     useUpdateUser,
+    useAggregateSubTabFolder,
+    useCountSubTabFolder,
+    useCreateManySubTabFolder,
+    useCreateSubTabFolder,
+    useFindManySubTabFolder,
+    useGroupBySubTabFolder,
+    useUpdateManySubTabFolder,
+    useUpdateSubTabFolder,
 } from '@/zmodel/lib/hooks';
 import { Type } from '@prisma/client';
 import {
@@ -146,6 +154,9 @@ import {
     UserCreateScalarSchema,
     UserScalarSchema,
     UserUpdateScalarSchema,
+    SubTabFolderCreateScalarSchema,
+    SubTabFolderScalarSchema,
+    SubTabFolderUpdateScalarSchema,
 } from '@zenstackhq/runtime/zod/models';
 
 export function getTypeHook({ type }: { type: Type }) {
@@ -415,6 +426,29 @@ export function getTypeHook({ type }: { type: Type }) {
                     many: useCreateManyGrid,
                 },
                 getLink: getGridUrl,
+            };
+        case 'SubTabFolder':
+            return {
+                useHook: {
+                    Aggregate: useAggregateSubTabFolder,
+                    GroupBy: useGroupBySubTabFolder,
+                    FindMany: useFindManySubTabFolder,
+                },
+                schema: {
+                    base: SubTabFolderScalarSchema,
+                    update: SubTabFolderUpdateScalarSchema,
+                    create: SubTabFolderCreateScalarSchema,
+                },
+                useCount: useCountSubTabFolder,
+                useUpdate: {
+                    single: useUpdateSubTabFolder,
+                    many: useUpdateManySubTabFolder,
+                },
+                useCreate: {
+                    single: useCreateSubTabFolder,
+                    many: useCreateManySubTabFolder,
+                },
+                getLink: getSubTabFolderUrl,
             };
         case 'User':
             return {

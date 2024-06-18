@@ -124,12 +124,13 @@ abstract model OptionalUser {
 abstract model Component extends IdCreatedUpdatedAuth, Owner {
 }
 enum Type {
+    SubTabFolder
+    Grid
     Property
     Lease
     Payment
     LeaseTenant
     Charge
-    Grid
     Person
     User
     Profile

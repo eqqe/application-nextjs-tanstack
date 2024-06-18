@@ -28,9 +28,9 @@ export function AutoTable<SchemaType extends ZodObjectOrWrapped>({
     type,
     pagination,
 }: CommonFormTable<SchemaType> & {
-    additionalColumns: ColumnDef<z.infer<typeof formSchema> & Id, ReactNode>[];
+    additionalColumns?: ColumnDef<z.infer<typeof formSchema> & Id, ReactNode>[];
     data: (Partial<z.infer<SchemaType>> & Id)[];
-    onlyAdditionalColumns: boolean;
+    onlyAdditionalColumns?: boolean;
     type?: Type;
     pagination?: PaginationProps;
 }) {
@@ -77,7 +77,9 @@ export function AutoTable<SchemaType extends ZodObjectOrWrapped>({
         });
     }
 
-    const columns = onlyAdditionalColumns ? additionalColumns : getAccessor(objectFormSchema).concat(additionalColumns);
+    const columns = onlyAdditionalColumns
+        ? additionalColumns ?? []
+        : getAccessor(objectFormSchema).concat(additionalColumns ?? []);
 
     return <DataTable pagination={pagination} columns={columns} data={data} getRowLink={getRowLink} />;
 }

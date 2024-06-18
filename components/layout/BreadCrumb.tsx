@@ -9,7 +9,7 @@ import {
     BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import { useCurrentSubTab } from '@/hooks/useCurrentSubTab';
-import { getGridUrl, getSubTabUrl } from '@/lib/urls';
+import { getGridUrl, getSubTabFolderUrl } from '@/lib/urls';
 import { useCurrentGrid } from '@/hooks/useCurrentGrid';
 
 export function TopBreadCrumb() {
@@ -22,7 +22,7 @@ export function TopBreadCrumb() {
     const subTabInfo = subTab || grid?.subTab;
     if (subTabInfo) {
         items.push({
-            link: getSubTabUrl(subTabInfo.id),
+            link: getSubTabFolderUrl(subTabInfo.id),
             text: subTabInfo.name,
         });
     }
