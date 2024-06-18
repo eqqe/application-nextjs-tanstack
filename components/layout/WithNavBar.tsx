@@ -57,7 +57,7 @@ export function WithNavBar({ children }: Props) {
                         <Header />
                     </ErrorBoundary>
                     <ErrorBoundary fallback={<FallbackError />}>
-                        <main className="p-6">{children}</main>
+                        <main className="px-6 pt-6">{children}</main>
                     </ErrorBoundary>
                 </div>
             </div>
