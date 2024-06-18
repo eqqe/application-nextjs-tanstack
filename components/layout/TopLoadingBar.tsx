@@ -31,7 +31,11 @@ export function TopLoadingBar() {
 
     return (
         <div className="fixed left-0 top-0 z-50 w-full">
-            {queryClient.isFetching() ? <Progress value={progress} className="h-1 w-full" /> : ''}
+            {queryClient.isFetching() || queryClient.isMutating() ? (
+                <Progress value={progress} className="h-1 w-full" />
+            ) : (
+                ''
+            )}
         </div>
     );
 }

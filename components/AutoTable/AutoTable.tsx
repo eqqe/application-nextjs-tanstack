@@ -16,8 +16,8 @@ import { Dispatch, ReactNode, SetStateAction, useMemo, useState } from 'react';
 
 export type PaginationProps = {
     count?: number;
-    pagination?: PaginationState;
-    setPagination?: Dispatch<SetStateAction<PaginationState>>;
+    pagination: PaginationState;
+    setPagination: Dispatch<SetStateAction<PaginationState>>;
 };
 
 export function AutoTable<SchemaType extends ZodObjectOrWrapped>({
