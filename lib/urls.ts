@@ -8,3 +8,7 @@ export function getSubTabFolderUrl(id: string) {
 export function getGridUrl(id: string) {
     return `/g/${id}`;
 }
+
+export function getPropertyUrl(id: string) {
+    return `/property/${id}`;
+}

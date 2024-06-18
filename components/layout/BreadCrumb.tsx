@@ -9,13 +9,15 @@ import {
     BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import { useCurrentSubTab } from '@/hooks/useCurrentSubTab';
-import { getGridUrl, getSubTabFolderUrl } from '@/lib/urls';
+import { getGridUrl, getPropertyUrl, getSubTabFolderUrl } from '@/lib/urls';
 import { useCurrentGrid } from '@/hooks/useCurrentGrid';
+import { useCurrentProperty } from '@/hooks/property/useCurrentProperty';
 
 export function TopBreadCrumb() {
     const space = useCurrentSpace();
     const subTab = useCurrentSubTab();
     const grid = useCurrentGrid();
+    const property = useCurrentProperty();
 
     const items: Array<{ text: string; link: string }> = [];
 
@@ -30,6 +32,12 @@ export function TopBreadCrumb() {
         items.push({
             link: getGridUrl(grid.id),
             text: grid.name,
+        });
+    }
+    if (property) {
+        items.push({
+            link: getPropertyUrl(property.id),
+            text: property.name,
         });
     }
 

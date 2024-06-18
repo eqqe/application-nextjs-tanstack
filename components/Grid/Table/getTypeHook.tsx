@@ -1,4 +1,4 @@
-import { getGridUrl, getSubTabFolderUrl } from '@/lib/urls';
+import { getGridUrl, getPropertyUrl, getSubTabFolderUrl } from '@/lib/urls';
 import {
     useAggregateProperty,
     useFindManyProperty,
@@ -182,7 +182,7 @@ export function getTypeHook({ type }: { type: Type }) {
                     single: useCreateProperty,
                     many: useCreateManyProperty,
                 },
-                getLink: (id: string) => `/property/${id}`,
+                getLink: getPropertyUrl,
             };
         case 'Charge':
             return {

@@ -1,33 +1,11 @@
-import { useComponentIdRouter } from '@/lib/context';
-import { useCreateLease, useFindUniqueProperty } from '@/zmodel/lib/hooks';
+import { useCreateLease } from '@/zmodel/lib/hooks';
 import LeaseDetail from 'components/Lease/LeaseList';
 import { LeaseCreateScalarSchema } from '@zenstackhq/runtime/zod/models';
 import { CreateForm } from '@/components/Form/CreateForm';
+import { useCurrentProperty } from '@/hooks/property/useCurrentProperty';
 
 export function PropertyDetails() {
-    const componentId = useComponentIdRouter();
-
-    const { data: property } = useFindUniqueProperty(
-        {
-            where: {
-                id: componentId,
-            },
-            include: {
-                leases: {
-                    orderBy: {
-                        createdAt: 'desc',
-                    },
-                    include: {
-                        owner: true,
-                    },
-                },
-            },
-        },
-        {
-            enabled: !!componentId,
-        }
-    );
-
+    const property = useCurrentProperty();
     const createLease = useCreateLease();
 
     return (
