@@ -1,21 +1,12 @@
 import { expect, test } from 'vitest';
 import { getEnhancedPrisma } from '@/tests/mock/enhanced-prisma';
-import {
-    fakeCharge,
-    fakeInCommonTenant,
-    fakeLease,
-    fakePayment,
-    fakePerson,
-    fakeProperty,
-    fakeTenancyInCommon,
-    generateData,
-} from '@/lib/demo/fake';
+import { generateData } from '@/lib/demo/fake';
 import { PrismaClient } from '@zenstackhq/runtime/models';
 
 test('Load a lot of data for 3 users', async () => {
     const { user1, user2, user3 } = await getEnhancedPrisma();
     // Make it fast when running locally, but check it does not timeout on CI with a lot of data
-    const length = process.env.CI ? 4 : 1;
+    const length = process.env.CI ? 5 : 2;
     async function writeFakeData({ prisma, currentSpace }: typeof user1) {
         const spaceId = currentSpace.id;
         for (const _ of Array.from({ length })) {
@@ -35,11 +26,11 @@ test('Load a lot of data for 3 users', async () => {
         const countCharge = await prisma.charge.aggregate({ _count: true });
         expect(countCharge._count).toBe(length * length * length * factor);
         const countTenanciesInCommon = await prisma.propertyTenancyInCommon.aggregate({ _count: true });
-        expect(countTenanciesInCommon._count).toBe(length * length * length * factor);
+        expect(countTenanciesInCommon._count).toBe(length * length * factor);
         const countInCommonTenants = await prisma.propertyTenancyInCommonTenant.aggregate({ _count: true });
-        expect(countInCommonTenants._count).toBe(length * length * length * length * factor);
+        expect(countInCommonTenants._count).toBe(length * length * length * factor);
         const countPerson = await prisma.person.aggregate({ _count: true });
-        expect(countPerson._count).toBe(length * length * length * length * factor);
+        expect(countPerson._count).toBe(length * length * length * factor);
     }
     await writeFakeData(user1);
     await writeFakeData(user2);
