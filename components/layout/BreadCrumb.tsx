@@ -1,4 +1,4 @@
-import { useCurrentSpace, useComponentIdRouter } from '@/lib/context';
+import { useCurrentSpace } from '@/lib/context';
 import Link from 'next/link';
 import {
     Breadcrumb,
@@ -8,11 +8,30 @@ import {
     BreadcrumbPage,
     BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
+import { useCurrentSubTab } from '@/hooks/useCurrentSubTab';
+import { getGridUrl, getSubTabFolderUrl } from '@/lib/urls';
+import { useCurrentGrid } from '@/hooks/useCurrentGrid';
 
 export function TopBreadCrumb() {
     const space = useCurrentSpace();
+    const subTab = useCurrentSubTab();
+    const grid = useCurrentGrid();
 
     const items: Array<{ text: string; link: string }> = [];
+
+    const subTabInfo = subTab || grid?.subTab;
+    if (subTabInfo) {
+        items.push({
+            link: getSubTabFolderUrl(subTabInfo.id),
+            text: subTabInfo.name,
+        });
+    }
+    if (grid) {
+        items.push({
+            link: getGridUrl(grid.id),
+            text: grid.name,
+        });
+    }
 
     return (
         <Breadcrumb className="hidden md:flex">

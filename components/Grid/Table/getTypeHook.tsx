@@ -1,33 +1,12 @@
-import { getGridUrl } from '@/lib/urls';
+import { getGridUrl, getSubTabFolderUrl } from '@/lib/urls';
 import {
-    useAggregateDashboard,
-    useAggregateList,
     useAggregateProperty,
-    useAggregateTodo,
-    useFindManyDashboard,
-    useFindManyList,
     useFindManyProperty,
-    useFindManyTodo,
     useGroupByProperty,
-    useGroupByDashboard,
-    useGroupByList,
-    useGroupByTodo,
-    useUpdateDashboard,
-    useUpdateManyDashboard,
     useUpdateProperty,
     useUpdateManyProperty,
-    useUpdateList,
-    useUpdateManyList,
-    useUpdateManyTodo,
-    useUpdateTodo,
     useCreateProperty,
     useCreateManyProperty,
-    useCreateDashboard,
-    useCreateList,
-    useCreateManyDashboard,
-    useCreateManyList,
-    useCreateManyTodo,
-    useCreateTodo,
     useAggregateLease,
     useGroupByLease,
     useFindManyLease,
@@ -59,9 +38,6 @@ import {
     useCountProperty,
     useCountCharge,
     useCountPayment,
-    useCountDashboard,
-    useCountList,
-    useCountTodo,
     useCountLease,
     useCountGrid,
     useAggregateLeaseTenant,
@@ -128,21 +104,20 @@ import {
     useGroupByUser,
     useUpdateManyUser,
     useUpdateUser,
+    useAggregateSubTabFolder,
+    useCountSubTabFolder,
+    useCreateManySubTabFolder,
+    useCreateSubTabFolder,
+    useFindManySubTabFolder,
+    useGroupBySubTabFolder,
+    useUpdateManySubTabFolder,
+    useUpdateSubTabFolder,
 } from '@/zmodel/lib/hooks';
 import { Type } from '@prisma/client';
 import {
     PropertyUpdateScalarSchema,
-    DashboardUpdateScalarSchema,
-    ListUpdateScalarSchema,
-    TodoUpdateScalarSchema,
     PropertyCreateScalarSchema,
-    DashboardCreateScalarSchema,
-    ListCreateScalarSchema,
-    TodoCreateScalarSchema,
     PropertyScalarSchema,
-    DashboardScalarSchema,
-    ListScalarSchema,
-    TodoScalarSchema,
     LeaseScalarSchema,
     LeaseUpdateScalarSchema,
     LeaseCreateScalarSchema,
@@ -179,6 +154,9 @@ import {
     UserCreateScalarSchema,
     UserScalarSchema,
     UserUpdateScalarSchema,
+    SubTabFolderCreateScalarSchema,
+    SubTabFolderScalarSchema,
+    SubTabFolderUpdateScalarSchema,
 } from '@zenstackhq/runtime/zod/models';
 
 export function getTypeHook({ type }: { type: Type }) {
@@ -270,72 +248,6 @@ export function getTypeHook({ type }: { type: Type }) {
                 useCreate: {
                     single: useCreateLeaseTenant,
                     many: useCreateManyLeaseTenant,
-                },
-            };
-        case 'Dashboard':
-            return {
-                useHook: {
-                    Aggregate: useAggregateDashboard,
-                    GroupBy: useGroupByDashboard,
-                    FindMany: useFindManyDashboard,
-                },
-                schema: {
-                    base: DashboardScalarSchema,
-                    update: DashboardUpdateScalarSchema,
-                    create: DashboardCreateScalarSchema,
-                },
-                useCount: useCountDashboard,
-                useUpdate: {
-                    single: useUpdateDashboard,
-                    many: useUpdateManyDashboard,
-                },
-                useCreate: {
-                    single: useCreateDashboard,
-                    many: useCreateManyDashboard,
-                },
-            };
-        case 'List':
-            return {
-                useHook: {
-                    Aggregate: useAggregateList,
-                    GroupBy: useGroupByList,
-                    FindMany: useFindManyList,
-                },
-                schema: {
-                    base: ListScalarSchema,
-                    update: ListUpdateScalarSchema,
-                    create: ListCreateScalarSchema,
-                },
-                useCount: useCountList,
-                useUpdate: {
-                    single: useUpdateList,
-                    many: useUpdateManyList,
-                },
-                useCreate: {
-                    single: useCreateList,
-                    many: useCreateManyList,
-                },
-            };
-        case 'Todo':
-            return {
-                useHook: {
-                    Aggregate: useAggregateTodo,
-                    GroupBy: useGroupByTodo,
-                    FindMany: useFindManyTodo,
-                },
-                schema: {
-                    base: TodoScalarSchema,
-                    update: TodoUpdateScalarSchema,
-                    create: TodoCreateScalarSchema,
-                },
-                useUpdate: {
-                    single: useUpdateTodo,
-                    many: useUpdateManyTodo,
-                },
-                useCount: useCountTodo,
-                useCreate: {
-                    single: useCreateTodo,
-                    many: useCreateManyTodo,
                 },
             };
         case 'Lease':
@@ -514,6 +426,29 @@ export function getTypeHook({ type }: { type: Type }) {
                     many: useCreateManyGrid,
                 },
                 getLink: getGridUrl,
+            };
+        case 'SubTabFolder':
+            return {
+                useHook: {
+                    Aggregate: useAggregateSubTabFolder,
+                    GroupBy: useGroupBySubTabFolder,
+                    FindMany: useFindManySubTabFolder,
+                },
+                schema: {
+                    base: SubTabFolderScalarSchema,
+                    update: SubTabFolderUpdateScalarSchema,
+                    create: SubTabFolderCreateScalarSchema,
+                },
+                useCount: useCountSubTabFolder,
+                useUpdate: {
+                    single: useUpdateSubTabFolder,
+                    many: useUpdateManySubTabFolder,
+                },
+                useCreate: {
+                    single: useCreateSubTabFolder,
+                    many: useCreateManySubTabFolder,
+                },
+                getLink: getSubTabFolderUrl,
             };
         case 'User':
             return {

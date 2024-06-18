@@ -196,12 +196,5 @@ export const Applications = () => {
             },
         },
     ];
-    return (
-        <AutoTable
-            additionalColumns={additionalColumns}
-            data={applications}
-            onlyAdditionalColumns={false}
-            formSchema={schema}
-        />
-    );
+    return <AutoTable additionalColumns={additionalColumns} data={applications} formSchema={schema} />;
 };

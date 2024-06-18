@@ -1,11 +1,9 @@
 import "application"
 import "space/space"
-import "space/dashboard/dashboard"
 import "space/property/property"
 import "space/property/lease"
 import "space/property/tenancy"
 import "space/person/person"
-import "space/list/list"
 
 datasource db {
     provider = 'postgresql'
@@ -82,22 +80,14 @@ model User extends IdCreatedUpdated {
     createSpaceId                       String?                         @ignore
     selectedSpaces                      String[]                        @ignore
     image                               String?                         @url
-    todos                               Todo[]                          @relation("owner")
 
     tenantsOwned                        LeaseTenant[]                   @relation("owner")
 
     leases                              Lease[]                         @relation("owner")
-    dashboards                          Dashboard[]                     @relation("owner")
     properties                          Property[]                      @relation("owner")
-    lists                               List[]                          @relation("owner")
     payments                            Payment[]                       @relation("owner")
 
     charges                             Charge[]                        @relation("owner")
-    panelRows                           PanelRow[]                      @relation("owner")
-    panels                              Panel[]                         @relation("owner")
-    panelComponents                     PanelComponent[]                @relation("owner")
-    panelComponentsCounter              PanelComponentCounter[]         @relation("owner")
-    panelComponentsReport               PanelComponentReport[]          @relation("owner")
     persons                             Person[]                        @relation("user")
     propertyTenancyInCommonOwned        PropertyTenancyInCommon[]       @relation("owner")
     personOwned                         Person[]                        @relation("owner")
@@ -134,15 +124,13 @@ abstract model OptionalUser {
 abstract model Component extends IdCreatedUpdatedAuth, Owner {
 }
 enum Type {
-    List
-    Todo
-    Dashboard
+    SubTabFolder
+    Grid
     Property
     Lease
     Payment
     LeaseTenant
     Charge
-    Grid
     Person
     User
     Profile

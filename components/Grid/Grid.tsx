@@ -10,27 +10,15 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Pagination, PaginationContent, PaginationItem } from '@/components/ui/pagination';
-import { useRouter } from 'next/router';
-import { useFindGridDetails } from '@/components/useFindGridDetails';
-import { GridCard, GridCardInclude } from './Card/GridCard';
-import { GridTabs, GridTabsInclude } from './Tabs/GridTabs';
+import { useCurrentGrid } from '@/hooks/useCurrentGrid';
+import { GridCard } from './Card/GridCard';
+import { GridTabs } from './Tabs/GridTabs';
 import { gridCols, colSpans, rowStarts, rowEnds, colStarts, colEnds } from './utils';
 import { FallbackError } from '../layout/FallbackError';
 import { ErrorBoundary } from 'react-error-boundary';
 
-export const GridInclude = {
-    elements: {
-        include: {
-            card: GridCardInclude,
-            tabs: GridTabsInclude,
-        },
-    },
-};
 export const Grid = () => {
-    const router = useRouter();
-    const gridId = router.query.gridId as string;
-
-    const grid = useFindGridDetails(gridId);
+    const grid = useCurrentGrid();
 
     if (!grid?.elements.length) {
         return <></>;
