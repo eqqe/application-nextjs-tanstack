@@ -15,6 +15,7 @@ import { useFindManySpace } from '@/zmodel/lib/hooks';
 import { useRouter } from 'next/navigation';
 import { useSelectedSpaces } from '@/lib/context';
 import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 export function SpaceSwitch() {
     const { data: spaces } = useFindManySpace();
@@ -35,18 +36,20 @@ export function SpaceSwitch() {
                 <DropdownMenuContent className="w-15 mr-3 mt-2">
                     <DropdownMenuLabel>Switch space</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuGroup>
-                        {spaces?.map((space) => (
-                            <DropdownMenuItem key={space.id} onClick={() => switchSpace({ space })}>
-                                <IceCreamIcon className="mr-2 size-4" />
-                                {space.id === selectedSpaces[0] ? (
-                                    <Badge variant={'outline'}>{space.name}</Badge>
-                                ) : (
-                                    space.name
-                                )}
-                            </DropdownMenuItem>
-                        ))}
-                    </DropdownMenuGroup>
+                    <ScrollArea className="max-h-[80vh]">
+                        <DropdownMenuGroup>
+                            {spaces?.map((space) => (
+                                <DropdownMenuItem key={space.id} onClick={() => switchSpace({ space })}>
+                                    <IceCreamIcon className="mr-2 size-4" />
+                                    {space.id === selectedSpaces[0] ? (
+                                        <Badge variant={'outline'}>{space.name}</Badge>
+                                    ) : (
+                                        space.name
+                                    )}
+                                </DropdownMenuItem>
+                            ))}
+                        </DropdownMenuGroup>
+                    </ScrollArea>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={() => router.push('/s/n')}>
                         <PlusCircle className="mr-2 size-4" />
