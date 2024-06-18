@@ -1,5 +1,6 @@
 import { GridElementType } from '@prisma/client';
 import { Type, Prisma, TypeTableRequest } from '@prisma/client';
+import { PropertyColumns } from '../columns';
 
 export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput = {
     versionMajor: 0,
@@ -115,10 +116,10 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                                                     groupBy: {
                                                                                                         create: {
                                                                                                             fields: [
-                                                                                                                'city',
+                                                                                                                PropertyColumns.city,
                                                                                                             ],
                                                                                                             sum: [
-                                                                                                                'surface',
+                                                                                                                PropertyColumns.surface,
                                                                                                             ],
                                                                                                         },
                                                                                                     },
@@ -149,9 +150,9 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                                                     typeTableRequest:
                                                                                                         'FindMany',
                                                                                                     columns: [
-                                                                                                        'streetAddress',
-                                                                                                        'city',
-                                                                                                        'postalCode',
+                                                                                                        PropertyColumns.streetAddress,
+                                                                                                        PropertyColumns.city,
+                                                                                                        PropertyColumns.postalCode,
                                                                                                     ],
                                                                                                 },
                                                                                             },
