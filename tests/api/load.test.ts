@@ -19,46 +19,8 @@ test('Load a lot of data for 3 users', async () => {
     async function writeFakeData({ prisma, currentSpace }: typeof user1) {
         const spaceId = currentSpace.id;
         for (const _ of Array.from({ length })) {
-            //const updateSpaceArgs = generateData();
-
-            await prisma.space.update({
-                where: {
-                    id: spaceId,
-                },
-                data: {
-                    properties: {
-                        create: Array.from({ length }).map((_) => ({
-                            ...fakeProperty(),
-                            charges: {
-                                create: Array.from({ length }).map((_) => fakeCharge()),
-                            },
-                            leases: {
-                                create: Array.from({ length }).map((_) => ({
-                                    ...fakeLease(),
-                                    payments: {
-                                        create: Array.from({ length }).map((_) => fakePayment()),
-                                    },
-                                })),
-                            },
-                            tenancyInCommon: {
-                                create: {
-                                    ...fakeTenancyInCommon(),
-                                    tenants: {
-                                        create: Array.from({ length }).map((_) => ({
-                                            ...fakeInCommonTenant(),
-                                            person: {
-                                                create: {
-                                                    ...fakePerson(),
-                                                },
-                                            },
-                                        })),
-                                    },
-                                },
-                            },
-                        })),
-                    },
-                },
-            });
+            const updateSpaceArgs = generateData({ length, spaceId });
+            await prisma.space.update(updateSpaceArgs);
         }
     }
 

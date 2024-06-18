@@ -94,27 +94,20 @@ export function generateData({ length, spaceId }: { length: number; spaceId: str
                             },
                         })),
                     },
-                    owners: {
-                        create: Array.from({ length }).map((_) => ({
-                            type: PropertyTenancyType.InCommon,
-                            company: {
-                                create: {
-                                    ...fakeTenancyInCommon(),
-                                    associates: {
-                                        create: Array.from({ length }).map((_) => ({
-                                            ...fakeInCommonTenant(),
-                                            associate: {
-                                                create: {
-                                                    person: {
-                                                        create: fakePerson(),
-                                                    },
-                                                },
-                                            },
-                                        })),
+                    tenancyInCommon: {
+                        create: {
+                            ...fakeTenancyInCommon(),
+                            tenants: {
+                                create: Array.from({ length }).map((_) => ({
+                                    ...fakeInCommonTenant(),
+                                    person: {
+                                        create: {
+                                            ...fakePerson(),
+                                        },
                                     },
-                                },
+                                })),
                             },
-                        })),
+                        },
                     },
                 })),
             },
