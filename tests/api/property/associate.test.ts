@@ -1,9 +1,9 @@
 import { assert, expect, it } from 'vitest';
-import { fakeProperty, fakeCompany, fakePerson, fakeCompanyAssociate } from '@/lib/demo/fake';
+import { fakeProperty, fakeTenancyInCommon, fakePerson, fakeInCommonTenant } from '@/lib/demo/fake';
 import { getEnhancedPrisma } from '@/tests/mock/enhanced-prisma';
-import { Property, PropertyOwnerType, User } from '@prisma/client';
+import { Property, User } from '@prisma/client';
 
-const company = fakeCompany();
+const company = fakeTenancyInCommon();
 const person = fakePerson();
 
 it('Should not allow a user to create associate for properties not in their space', async () => {
@@ -15,13 +15,13 @@ it('Should not allow a user to create associate for properties not in their spac
 
     expect(
         async () =>
-            await user1.prisma.propertyOwner.create(
-                propertyOwnerCreateArg({ property: newProperty, user: user1.userCreated })
+            await user1.prisma.propertyTenancyInCommon.create(
+                propertyTenancyInCommonCreateArgs({ property: newProperty, user: user1.userCreated })
             )
     ).rejects.toThrow("denied by policy: propertyOwner entities failed 'create' check");
 
-    const associates = await user2.prisma.associate.findMany();
-    assert.notOk(associates.length);
+    const tenants = await user2.prisma.propertyTenancyInCommonTenant.findMany();
+    assert.notOk(tenants.length);
 });
 
 it('Should allow a user to create associates for properties in their space', async () => {
@@ -31,52 +31,36 @@ it('Should allow a user to create associates for properties in their space', asy
 
     const newProperty = await user2.prisma.property.create({ data: property });
 
-    await user3.prisma.propertyOwner.create(propertyOwnerCreateArg({ property: newProperty, user: user1.userCreated }));
+    await user3.prisma.propertyTenancyInCommon.create(
+        propertyTenancyInCommonCreateArgs({ property: newProperty, user: user1.userCreated })
+    );
 
-    const associates = await user2.prisma.associate.findMany({
+    const tenants = await user2.prisma.propertyTenancyInCommonTenant.findMany({
         include: {
-            companies: {
+            propertyTenancyInCommon: {
                 include: {
-                    company: {
-                        include: {
-                            properties: {
-                                include: {
-                                    property: true,
-                                },
-                            },
-                        },
-                    },
+                    properties: true,
                 },
             },
             person: true,
         },
     });
-    assert.equal(associates.length, 1);
-    assert.equal(associates[0].companies[0].company.siret, company.siret);
-    assert.deepEqual(associates[0].person.birthDate, person.birthDate);
-    assert.equal(associates[0].companies[0].company.properties.length, 1);
-    assert.equal(associates[0].companies[0].company.properties[0].property.surface, property.surface);
-    assert.equal(associates[0].companies[0].company.properties[0].ownerId, user3.userCreated.id);
-    assert.equal(associates[0].companies[0].company.properties[0].property.ownerId, user2.userCreated.id);
+    assert.equal(tenants.length, 1);
+    assert.equal(tenants[0].propertyTenancyInCommon.siret, company.siret);
+    assert.deepEqual(tenants[0].person.birthDate, person.birthDate);
+    assert.equal(tenants[0].propertyTenancyInCommon.properties[0].surface, property.surface);
+    assert.equal(tenants[0].propertyTenancyInCommon.properties[0].ownerId, user3.userCreated.id);
+    assert.equal(tenants[0].propertyTenancyInCommon.ownerId, user2.userCreated.id);
 
     const properties = await user2.prisma.property.findMany({
         include: {
-            owners: {
+            tenancyInCommon: {
                 include: {
-                    company: {
+                    tenants: {
                         include: {
-                            associates: {
-                                include: {
-                                    associate: {
-                                        include: {
-                                            person: true,
-                                        },
-                                    },
-                                },
-                            },
+                            person: true,
                         },
                     },
-                    person: true,
                 },
             },
         },
@@ -84,40 +68,30 @@ it('Should allow a user to create associates for properties in their space', asy
 
     assert.equal(properties.length, 1);
     assert.equal(properties[0].spaceId, user2.space.id);
-    assert.equal(properties[0].owners.length, 1);
+    assert.equal(properties[0].tenancyType, 'InCommon');
     assert.equal(properties[0].surface, property.surface);
-    assert.equal(properties[0].owners[0].ownerId, user3.userCreated.id);
-    assert.deepEqual(properties[0].owners[0].type, 'Company');
-    assert.deepEqual(properties[0].owners[0].company?.associates[0].associate.person.birthDate, person.birthDate);
-    assert.equal(properties[0].owners[0].company?.intraCommunityVAT, company.intraCommunityVAT);
+    assert.equal(properties[0].tenancyInCommon?.ownerId, user3.userCreated.id);
+    assert.deepEqual(properties[0].tenancyInCommon?.tenants[0].person.birthDate, person.birthDate);
+    assert.deepEqual(properties[0].tenancyInCommon?.intraCommunityVAT, company.intraCommunityVAT);
 });
-function propertyOwnerCreateArg({ property: property, user }: { property: Property; user: User }) {
+function propertyTenancyInCommonCreateArgs({ property, user }: { property: Property; user: User }) {
     return {
         data: {
-            property: {
+            ...fakeTenancyInCommon(),
+            properties: {
                 connect: {
                     id: property.id,
                 },
             },
-            type: PropertyOwnerType.Company,
-            company: {
+            tenants: {
                 create: {
-                    ...company,
-                    associates: {
+                    ...fakeInCommonTenant(),
+                    person: {
                         create: {
-                            ...fakeCompanyAssociate(),
-                            associate: {
-                                create: {
-                                    person: {
-                                        create: {
-                                            ...person,
-                                            user: {
-                                                connect: {
-                                                    id: user.id,
-                                                },
-                                            },
-                                        },
-                                    },
+                            ...person,
+                            user: {
+                                connect: {
+                                    id: user.id,
                                 },
                             },
                         },

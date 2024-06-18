@@ -10,7 +10,7 @@ model Lease extends PropertyComponent {
     rentAmount Int
     payments   Payment[]
     charges    Charge[]
-    tenants    Tenant[]
+    tenants    LeaseTenant[]
     @@allow('read', property.spaceId in auth().selectedSpaces && tenants?[user == auth()])
 }
 
@@ -23,9 +23,7 @@ abstract model LeaseComponent extends Component {
     @@deny('all', lease.property.private && lease.property.owner != auth())
     @@allow('all', lease.property.spaceId in auth().selectedSpaces && lease.property.space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)])
 }
-model Tenant extends LeaseComponent, OptionalUser {
-    person   Person @relation(fields: [personId], references: [id], onDelete: Cascade)
-    personId String
+model LeaseTenant extends LeaseComponent, OptionalUser, BasePerson {
 }
 
 model Payment extends LeaseComponent {

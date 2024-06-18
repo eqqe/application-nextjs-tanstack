@@ -4,14 +4,14 @@ import "property"
 import "lease"
 
 
-abstract model PropertyOwnerLink extends Component {
-    properties PropertyOwner[]
+abstract model PropertyLink extends Component {
+    properties Property[]
 
-    @@allow('all', properties?[property.spaceId in auth().selectedSpaces && property.space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
+    @@allow('all', properties?[spaceId in auth().selectedSpaces && space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
 }
 
 
-model Company extends Address, PropertyOwnerLink {
+model PropertyTenancyInCommon extends Address, PropertyLink {
     name              String?
     siret             String?
     siren             String?
@@ -19,38 +19,48 @@ model Company extends Address, PropertyOwnerLink {
     rcs               String?
     lei               String?
     intraCommunityVAT String?
-    associates        CompanyAssociate[]
+    tenants           PropertyTenancyInCommonTenant[]
 }
 
-model Person extends PropertyOwnerLink, OptionalUser {
-    birthDate  DateTime
-    phone      String?
-    associates Associate[]
-    tenants    Tenant[]
-    @@allow('all', associates?[companies?[company.associates?[company.properties?[property.spaceId in auth().selectedSpaces && property.space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]]]]])
-    @@allow('all', tenants?[lease.property.spaceId in auth().selectedSpaces &&  lease.property.space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
+model PropertyJointTenancy extends PropertyLink {
+    tenants PropertyJointTenancyTenant[]
 }
 
 
-model CompanyAssociate extends BaseAssociateLink, Component {
-    company   Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
-    companyId String
-
-    entryDate DateTime
-    exitDate  DateTime?
+model PropertyTenancyByEntirety extends BasePerson, PropertyLink {
 }
 
 
-model Associate extends Component {
-    person    Person             @relation(fields: [personId], references: [id], onDelete: Cascade)
-    personId  String
-    companies CompanyAssociate[]
-    @@allow('all', companies?[company.associates?[company.properties?[property.spaceId in auth().selectedSpaces && property.space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]]]])
+model Person extends Component, OptionalUser {
+    birthDate         DateTime
+    phone             String?
+    leaseTenancies    LeaseTenant[]
+    inCommonTenancies PropertyTenancyInCommonTenant[]
+    jointTenancies    PropertyJointTenancyTenant[]
+    entireTenancies   PropertyTenancyByEntirety[]
+
+    @@allow('all', inCommonTenancies?[propertyTenancyInCommon.tenants?[propertyTenancyInCommon.properties?[spaceId in auth().selectedSpaces && space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]]]])
+    @@allow('all', leaseTenancies?[lease.property.spaceId in auth().selectedSpaces &&  lease.property.space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
 }
 
-abstract model BaseAssociateLink {
-    associate   Associate @relation(fields: [associateId], references: [id], onDelete: Cascade)
-    associateId String
+abstract model BasePerson {
+    person   Person @relation(fields: [personId], references: [id], onDelete: Cascade)
+    personId String
+}
+model PropertyTenancyInCommonTenant extends BasePerson, Component {
+    propertyTenancyInCommon   PropertyTenancyInCommon @relation(fields: [propertyTenancyInCommonId], references: [id], onDelete: Cascade)
+    propertyTenancyInCommonId String
 
-    @@allow('all', associate.companies?[company.associates?[company.properties?[property.spaceId in auth().selectedSpaces && property.space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]]]])
+    entryDate                 DateTime
+    exitDate                  DateTime?
+
+    @@allow('all', propertyTenancyInCommon.properties?[spaceId in auth().selectedSpaces && space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
+}
+
+model PropertyJointTenancyTenant extends BasePerson, Component {
+    propertyJointTenancy   PropertyJointTenancy @relation(fields: [propertyJointTenancyId], references: [id], onDelete: Cascade)
+    propertyJointTenancyId String
+
+
+    @@allow('all', propertyJointTenancy.properties?[spaceId in auth().selectedSpaces && space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
 }

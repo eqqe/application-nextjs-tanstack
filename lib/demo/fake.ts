@@ -1,14 +1,14 @@
 import { faker } from '@faker-js/faker';
-import { PropertyType, ChargeType, PropertyOwnerType } from '@prisma/client';
+import { PropertyType, ChargeType, PropertyTenancyType } from '@prisma/client';
 import { z } from 'zod';
 import {
-    CompanyCreateScalarSchema,
     PropertyCreateScalarSchema,
     ChargeCreateScalarSchema,
     LeaseCreateScalarSchema,
     PersonCreateScalarSchema,
     PaymentCreateScalarSchema,
-    CompanyAssociateCreateScalarSchema,
+    PropertyTenancyInCommonCreateScalarSchema,
+    PropertyTenancyInCommonTenantCreateScalarSchema,
 } from '@zenstackhq/runtime/zod/models';
 
 export const cityPlaywrightTest = 'City to find in Playwright test';
@@ -19,6 +19,7 @@ export const fakeProperty = (): z.infer<typeof PropertyCreateScalarSchema> => ({
     name: faker.word.noun(),
     propertyType: PropertyType.COMMERCIAL,
     surface: faker.number.int({ max: 50000, min: 100 }),
+    tenancyType: PropertyTenancyType.InCommon,
 });
 
 export const fakeLease = (): z.infer<typeof LeaseCreateScalarSchema> => ({
@@ -27,7 +28,7 @@ export const fakeLease = (): z.infer<typeof LeaseCreateScalarSchema> => ({
     rentAmount: faker.number.int({ min: 5, max: 50000 }),
 });
 
-export const fakeCompany = (): z.infer<typeof CompanyCreateScalarSchema> => ({
+export const fakeTenancyInCommon = (): z.infer<typeof PropertyTenancyInCommonCreateScalarSchema> => ({
     ...fakeAddress(),
     siret: faker.finance.accountNumber(),
     siren: faker.finance.accountNumber(),
@@ -49,7 +50,7 @@ const fakeAddress = () => ({
     state: faker.location.state(),
 });
 
-export const fakeCompanyAssociate = (): z.infer<typeof CompanyAssociateCreateScalarSchema> => {
+export const fakeInCommonTenant = (): z.infer<typeof PropertyTenancyInCommonTenantCreateScalarSchema> => {
     return {
         entryDate: faker.date.past(),
         exitDate: faker.date.recent(),
@@ -93,10 +94,10 @@ export function generateData({ length, spaceId }: { length: number; spaceId: str
                             type: PropertyOwnerType.Company,
                             company: {
                                 create: {
-                                    ...fakeCompany(),
+                                    ...fakeTenancyInCommon(),
                                     associates: {
                                         create: Array.from({ length }).map((_) => ({
-                                            ...fakeCompanyAssociate(),
+                                            ...fakeInCommonTenant(),
                                             associate: {
                                                 create: {
                                                     person: {

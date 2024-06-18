@@ -24,12 +24,10 @@ test('Load a lot of data for 3 users', async () => {
         expect(countPayment._count).toBe(length * length * length * length * factor);
         const countCharge = await prisma.charge.aggregate({ _count: true });
         expect(countCharge._count).toBe(length * length * length * factor);
-        const countCompanies = await prisma.company.aggregate({ _count: true });
-        expect(countCompanies._count).toBe(length * length * length * factor);
-        const countAssociate = await prisma.associate.aggregate({ _count: true });
-        expect(countAssociate._count).toBe(length * length * length * length * factor);
-        const countCompanyAssociate = await prisma.companyAssociate.aggregate({ _count: true });
-        expect(countCompanyAssociate._count).toBe(length * length * length * length * factor);
+        const countTenanciesInCommon = await prisma.propertyTenancyInCommon.aggregate({ _count: true });
+        expect(countTenanciesInCommon._count).toBe(length * length * length * factor);
+        const countInCommonTenants = await prisma.propertyTenancyInCommonTenant.aggregate({ _count: true });
+        expect(countInCommonTenants._count).toBe(length * length * length * length * factor);
         const countPerson = await prisma.person.aggregate({ _count: true });
         expect(countPerson._count).toBe(length * length * length * length * factor);
     }

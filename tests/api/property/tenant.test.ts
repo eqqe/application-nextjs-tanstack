@@ -12,7 +12,7 @@ it('Should associate a tenant to a lease', async () => {
     const lease = await user2.prisma.lease.create({ data: { ...fakeLease(), propertyId: property.id } });
 
     const person = fakePerson();
-    const tenant = await user2.prisma.tenant.create({
+    const tenant = await user2.prisma.leaseTenant.create({
         data: {
             lease: {
                 connect: {
