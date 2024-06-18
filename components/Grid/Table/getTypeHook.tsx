@@ -35,13 +35,6 @@ import {
     useUpdateManyLease,
     useCreateLease,
     useCreateManyLease,
-    useAggregateAssociate,
-    useGroupByAssociate,
-    useFindManyAssociate,
-    useUpdateAssociate,
-    useUpdateManyAssociate,
-    useCreateAssociate,
-    useCreateManyAssociate,
     useAggregateCharge,
     useGroupByCharge,
     useFindManyCharge,
@@ -56,13 +49,6 @@ import {
     useUpdateManyPayment,
     useCreatePayment,
     useCreateManyPayment,
-    useAggregateTenant,
-    useGroupByTenant,
-    useFindManyTenant,
-    useUpdateTenant,
-    useUpdateManyTenant,
-    useCreateTenant,
-    useCreateManyTenant,
     useGroupByGrid,
     useAggregateGrid,
     useFindManyGrid,
@@ -71,15 +57,77 @@ import {
     useCreateGrid,
     useCreateManyGrid,
     useCountProperty,
-    useCountAssociate,
     useCountCharge,
     useCountPayment,
-    useCountTenant,
     useCountDashboard,
     useCountList,
     useCountTodo,
     useCountLease,
     useCountGrid,
+    useAggregateLeaseTenant,
+    useCountLeaseTenant,
+    useCreateLeaseTenant,
+    useCreateManyLeaseTenant,
+    useFindManyLeaseTenant,
+    useGroupByLeaseTenant,
+    useUpdateLeaseTenant,
+    useUpdateManyLeaseTenant,
+    useAggregatePerson,
+    useCountPerson,
+    useCreateManyPerson,
+    useCreatePerson,
+    useFindManyPerson,
+    useGroupByPerson,
+    useUpdateManyPerson,
+    useUpdatePerson,
+    useAggregateProfile,
+    useCountProfile,
+    useCreateManyProfile,
+    useCreateProfile,
+    useFindManyProfile,
+    useGroupByProfile,
+    useUpdateManyProfile,
+    useUpdateProfile,
+    useAggregatePropertyJointTenancy,
+    useCountPropertyJointTenancy,
+    useCreateManyPropertyJointTenancy,
+    useCreatePropertyJointTenancy,
+    useFindManyPropertyJointTenancy,
+    useGroupByPropertyJointTenancy,
+    useUpdateManyPropertyJointTenancy,
+    useUpdatePropertyJointTenancy,
+    useAggregatePropertyTenancyByEntirety,
+    useCountPropertyTenancyByEntirety,
+    useCreateManyPropertyTenancyByEntirety,
+    useCreatePropertyTenancyByEntirety,
+    useFindManyPropertyTenancyByEntirety,
+    useGroupByPropertyTenancyByEntirety,
+    useUpdateManyPropertyTenancyByEntirety,
+    useUpdatePropertyTenancyByEntirety,
+    useAggregatePropertyTenancyInCommon,
+    useCountPropertyTenancyInCommon,
+    useCreateManyPropertyTenancyInCommon,
+    useCreatePropertyTenancyInCommon,
+    useFindManyPropertyTenancyInCommon,
+    useGroupByPropertyTenancyInCommon,
+    useUpdateManyPropertyTenancyInCommon,
+    useUpdatePropertyTenancyInCommon,
+    useAggregatePropertyTenancyInCommonTenant,
+    useCountPropertyTenancyInCommonTenant,
+    useCreateManyPropertyTenancyInCommonTenant,
+    useCreatePropertyTenancyInCommonTenant,
+    useFindManyPropertyTenancyInCommonTenant,
+    useGroupByPropertyTenancyInCommonTenant,
+    useUpdateManyPropertyTenancyInCommonTenant,
+    useUpdatePropertyTenancyInCommonTenant,
+    useAggregateUser,
+    useCountUser,
+    useCreateManyUser,
+    useCreateUser,
+    useFindManyUser,
+    useGroupByUser,
+    useUpdateManyUser,
+    useUpdateUser,
 } from '@/zmodel/lib/hooks';
 import { Type } from '@prisma/client';
 import {
@@ -98,21 +146,39 @@ import {
     LeaseScalarSchema,
     LeaseUpdateScalarSchema,
     LeaseCreateScalarSchema,
-    AssociateScalarSchema,
-    AssociateUpdateScalarSchema,
-    AssociateCreateScalarSchema,
     ChargeScalarSchema,
     ChargeUpdateScalarSchema,
     ChargeCreateScalarSchema,
     PaymentScalarSchema,
     PaymentUpdateScalarSchema,
     PaymentCreateScalarSchema,
-    TenantScalarSchema,
-    TenantUpdateScalarSchema,
-    TenantCreateScalarSchema,
     GridScalarSchema,
     GridUpdateScalarSchema,
     GridCreateScalarSchema,
+    LeaseTenantCreateScalarSchema,
+    LeaseTenantScalarSchema,
+    LeaseTenantUpdateScalarSchema,
+    PersonCreateScalarSchema,
+    PersonScalarSchema,
+    PersonUpdateScalarSchema,
+    ProfileCreateScalarSchema,
+    ProfileScalarSchema,
+    ProfileUpdateScalarSchema,
+    PropertyJointTenancyCreateScalarSchema,
+    PropertyJointTenancyScalarSchema,
+    PropertyJointTenancyUpdateScalarSchema,
+    PropertyTenancyByEntiretyCreateScalarSchema,
+    PropertyTenancyByEntiretyScalarSchema,
+    PropertyTenancyByEntiretyUpdateScalarSchema,
+    PropertyTenancyInCommonCreateScalarSchema,
+    PropertyTenancyInCommonScalarSchema,
+    PropertyTenancyInCommonUpdateScalarSchema,
+    PropertyTenancyInCommonTenantCreateScalarSchema,
+    PropertyTenancyInCommonTenantScalarSchema,
+    PropertyTenancyInCommonTenantUpdateScalarSchema,
+    UserCreateScalarSchema,
+    UserScalarSchema,
+    UserUpdateScalarSchema,
 } from '@zenstackhq/runtime/zod/models';
 
 export function getTypeHook({ type }: { type: Type }) {
@@ -139,28 +205,6 @@ export function getTypeHook({ type }: { type: Type }) {
                     many: useCreateManyProperty,
                 },
                 getLink: (id: string) => `/property/${id}`,
-            };
-        case 'Associate':
-            return {
-                useHook: {
-                    Aggregate: useAggregateAssociate,
-                    GroupBy: useGroupByAssociate,
-                    FindMany: useFindManyAssociate,
-                },
-                schema: {
-                    base: AssociateScalarSchema,
-                    update: AssociateUpdateScalarSchema,
-                    create: AssociateCreateScalarSchema,
-                },
-                useCount: useCountAssociate,
-                useUpdate: {
-                    single: useUpdateAssociate,
-                    many: useUpdateManyAssociate,
-                },
-                useCreate: {
-                    single: useCreateAssociate,
-                    many: useCreateManyAssociate,
-                },
             };
         case 'Charge':
             return {
@@ -206,26 +250,26 @@ export function getTypeHook({ type }: { type: Type }) {
                     many: useCreateManyPayment,
                 },
             };
-        case 'Tenant':
+        case 'LeaseTenant':
             return {
                 useHook: {
-                    Aggregate: useAggregateTenant,
-                    GroupBy: useGroupByTenant,
-                    FindMany: useFindManyTenant,
+                    Aggregate: useAggregateLeaseTenant,
+                    GroupBy: useGroupByLeaseTenant,
+                    FindMany: useFindManyLeaseTenant,
                 },
                 schema: {
-                    base: TenantScalarSchema,
-                    update: TenantUpdateScalarSchema,
-                    create: TenantCreateScalarSchema,
+                    base: LeaseTenantScalarSchema,
+                    update: LeaseTenantUpdateScalarSchema,
+                    create: LeaseTenantCreateScalarSchema,
                 },
-                useCount: useCountTenant,
+                useCount: useCountLeaseTenant,
                 useUpdate: {
-                    single: useUpdateTenant,
-                    many: useUpdateManyTenant,
+                    single: useUpdateLeaseTenant,
+                    many: useUpdateManyLeaseTenant,
                 },
                 useCreate: {
-                    single: useCreateTenant,
-                    many: useCreateManyTenant,
+                    single: useCreateLeaseTenant,
+                    many: useCreateManyLeaseTenant,
                 },
             };
         case 'Dashboard':
@@ -316,6 +360,138 @@ export function getTypeHook({ type }: { type: Type }) {
                     many: useCreateManyLease,
                 },
             };
+        case 'Person':
+            return {
+                useHook: {
+                    Aggregate: useAggregatePerson,
+                    GroupBy: useGroupByPerson,
+                    FindMany: useFindManyPerson,
+                },
+                schema: {
+                    base: PersonScalarSchema,
+                    update: PersonUpdateScalarSchema,
+                    create: PersonCreateScalarSchema,
+                },
+                useCount: useCountPerson,
+                useUpdate: {
+                    single: useUpdatePerson,
+                    many: useUpdateManyPerson,
+                },
+                useCreate: {
+                    single: useCreatePerson,
+                    many: useCreateManyPerson,
+                },
+            };
+        case 'Profile':
+            return {
+                useHook: {
+                    Aggregate: useAggregateProfile,
+                    GroupBy: useGroupByProfile,
+                    FindMany: useFindManyProfile,
+                },
+                schema: {
+                    base: ProfileScalarSchema,
+                    update: ProfileUpdateScalarSchema,
+                    create: ProfileCreateScalarSchema,
+                },
+                useCount: useCountProfile,
+                useUpdate: {
+                    single: useUpdateProfile,
+                    many: useUpdateManyProfile,
+                },
+                useCreate: {
+                    single: useCreateProfile,
+                    many: useCreateManyProfile,
+                },
+            };
+        case 'PropertyJointTenancy':
+            return {
+                useHook: {
+                    Aggregate: useAggregatePropertyJointTenancy,
+                    GroupBy: useGroupByPropertyJointTenancy,
+                    FindMany: useFindManyPropertyJointTenancy,
+                },
+                schema: {
+                    base: PropertyJointTenancyScalarSchema,
+                    update: PropertyJointTenancyUpdateScalarSchema,
+                    create: PropertyJointTenancyCreateScalarSchema,
+                },
+                useCount: useCountPropertyJointTenancy,
+                useUpdate: {
+                    single: useUpdatePropertyJointTenancy,
+                    many: useUpdateManyPropertyJointTenancy,
+                },
+                useCreate: {
+                    single: useCreatePropertyJointTenancy,
+                    many: useCreateManyPropertyJointTenancy,
+                },
+            };
+        case 'PropertyTenancyByEntirety':
+            return {
+                useHook: {
+                    Aggregate: useAggregatePropertyTenancyByEntirety,
+                    GroupBy: useGroupByPropertyTenancyByEntirety,
+                    FindMany: useFindManyPropertyTenancyByEntirety,
+                },
+                schema: {
+                    base: PropertyTenancyByEntiretyScalarSchema,
+                    update: PropertyTenancyByEntiretyUpdateScalarSchema,
+                    create: PropertyTenancyByEntiretyCreateScalarSchema,
+                },
+                useCount: useCountPropertyTenancyByEntirety,
+                useUpdate: {
+                    single: useUpdatePropertyTenancyByEntirety,
+                    many: useUpdateManyPropertyTenancyByEntirety,
+                },
+                useCreate: {
+                    single: useCreatePropertyTenancyByEntirety,
+                    many: useCreateManyPropertyTenancyByEntirety,
+                },
+            };
+        case 'PropertyTenancyInCommon':
+            return {
+                useHook: {
+                    Aggregate: useAggregatePropertyTenancyInCommon,
+                    GroupBy: useGroupByPropertyTenancyInCommon,
+                    FindMany: useFindManyPropertyTenancyInCommon,
+                },
+                schema: {
+                    base: PropertyTenancyInCommonScalarSchema,
+                    update: PropertyTenancyInCommonUpdateScalarSchema,
+                    create: PropertyTenancyInCommonCreateScalarSchema,
+                },
+                useCount: useCountPropertyTenancyInCommon,
+                useUpdate: {
+                    single: useUpdatePropertyTenancyInCommon,
+                    many: useUpdateManyPropertyTenancyInCommon,
+                },
+                useCreate: {
+                    single: useCreatePropertyTenancyInCommon,
+                    many: useCreateManyPropertyTenancyInCommon,
+                },
+            };
+        case 'PropertyTenancyInCommonTenant':
+            return {
+                useHook: {
+                    Aggregate: useAggregatePropertyTenancyInCommonTenant,
+                    GroupBy: useGroupByPropertyTenancyInCommonTenant,
+                    FindMany: useFindManyPropertyTenancyInCommonTenant,
+                },
+                schema: {
+                    base: PropertyTenancyInCommonTenantScalarSchema,
+                    update: PropertyTenancyInCommonTenantUpdateScalarSchema,
+                    create: PropertyTenancyInCommonTenantCreateScalarSchema,
+                },
+                useCount: useCountPropertyTenancyInCommonTenant,
+                useUpdate: {
+                    single: useUpdatePropertyTenancyInCommonTenant,
+                    many: useUpdateManyPropertyTenancyInCommonTenant,
+                },
+                useCreate: {
+                    single: useCreatePropertyTenancyInCommonTenant,
+                    many: useCreateManyPropertyTenancyInCommonTenant,
+                },
+            };
         case 'Grid':
             return {
                 useHook: {
@@ -338,6 +514,28 @@ export function getTypeHook({ type }: { type: Type }) {
                     many: useCreateManyGrid,
                 },
                 getLink: getGridUrl,
+            };
+        case 'User':
+            return {
+                useHook: {
+                    Aggregate: useAggregateUser,
+                    GroupBy: useGroupByUser,
+                    FindMany: useFindManyUser,
+                },
+                schema: {
+                    base: UserScalarSchema,
+                    update: UserUpdateScalarSchema,
+                    create: UserCreateScalarSchema,
+                },
+                useCount: useCountUser,
+                useUpdate: {
+                    single: useUpdateUser,
+                    many: useUpdateManyUser,
+                },
+                useCreate: {
+                    single: useCreateUser,
+                    many: useCreateManyUser,
+                },
             };
     }
 }

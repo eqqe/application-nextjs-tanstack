@@ -1,14 +1,16 @@
 import { faker } from '@faker-js/faker';
-import { PropertyType, ChargeType, PropertyOwnerType } from '@prisma/client';
+import { PropertyType, ChargeType, PropertyTenancyType } from '@prisma/client';
 import { z } from 'zod';
 import {
-    CompanyCreateScalarSchema,
     PropertyCreateScalarSchema,
     ChargeCreateScalarSchema,
     LeaseCreateScalarSchema,
     PersonCreateScalarSchema,
     PaymentCreateScalarSchema,
-    CompanyAssociateCreateScalarSchema,
+    PropertyTenancyInCommonCreateScalarSchema,
+    PropertyJointTenancyCreateScalarSchema,
+    PropertyTenancyInCommonTenantCreateScalarSchema,
+    PropertyJointTenancyTenantCreateScalarSchema,
 } from '@zenstackhq/runtime/zod/models';
 
 export const cityPlaywrightTest = 'City to find in Playwright test';
@@ -19,6 +21,7 @@ export const fakeProperty = (): z.infer<typeof PropertyCreateScalarSchema> => ({
     name: faker.word.noun(),
     propertyType: PropertyType.COMMERCIAL,
     surface: faker.number.int({ max: 50000, min: 100 }),
+    tenancyType: PropertyTenancyType.InCommon,
 });
 
 export const fakeLease = (): z.infer<typeof LeaseCreateScalarSchema> => ({
@@ -27,7 +30,7 @@ export const fakeLease = (): z.infer<typeof LeaseCreateScalarSchema> => ({
     rentAmount: faker.number.int({ min: 5, max: 50000 }),
 });
 
-export const fakeCompany = (): z.infer<typeof CompanyCreateScalarSchema> => ({
+export const fakeTenancyInCommon = (): z.infer<typeof PropertyTenancyInCommonCreateScalarSchema> => ({
     ...fakeAddress(),
     siret: faker.finance.accountNumber(),
     siren: faker.finance.accountNumber(),
@@ -48,12 +51,15 @@ const fakeAddress = () => ({
     country: faker.location.country(),
     state: faker.location.state(),
 });
-
-export const fakeCompanyAssociate = (): z.infer<typeof CompanyAssociateCreateScalarSchema> => {
+export const fakeInCommonTenant = (): z.infer<typeof PropertyTenancyInCommonTenantCreateScalarSchema> => {
     return {
         entryDate: faker.date.past(),
         exitDate: faker.date.recent(),
     };
+};
+
+export const fakeJointTenancyTenant = (): z.infer<typeof PropertyJointTenancyTenantCreateScalarSchema> => {
+    return {};
 };
 
 export const fakePayment = (): z.infer<typeof PaymentCreateScalarSchema> => ({
@@ -88,27 +94,20 @@ export function generateData({ length, spaceId }: { length: number; spaceId: str
                             },
                         })),
                     },
-                    owners: {
-                        create: Array.from({ length }).map((_) => ({
-                            type: PropertyOwnerType.Company,
-                            company: {
-                                create: {
-                                    ...fakeCompany(),
-                                    associates: {
-                                        create: Array.from({ length }).map((_) => ({
-                                            ...fakeCompanyAssociate(),
-                                            associate: {
-                                                create: {
-                                                    person: {
-                                                        create: fakePerson(),
-                                                    },
-                                                },
-                                            },
-                                        })),
+                    tenancyInCommon: {
+                        create: {
+                            ...fakeTenancyInCommon(),
+                            tenants: {
+                                create: Array.from({ length }).map((_) => ({
+                                    ...fakeInCommonTenant(),
+                                    person: {
+                                        create: {
+                                            ...fakePerson(),
+                                        },
                                     },
-                                },
+                                })),
                             },
-                        })),
+                        },
                     },
                 })),
             },

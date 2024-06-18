@@ -1,7 +1,7 @@
 
 import "../../schema.zmodel"
 import "../space.zmodel"
-import "associate"
+import "tenancy"
 import "lease"
 
 enum PropertyType {
@@ -18,17 +18,29 @@ abstract model Address {
     state         String?
 }
 
-model Property extends Address, SpaceComponent {
-    propertyType PropertyType
-    leases       Lease[]
-    surface      Int
-    charges      Charge[]
-    owners       PropertyOwner[]
+enum PropertyTenancyType {
+    InCommon
+    Joint
+    ByEntirety
 }
 
-enum PropertyOwnerType {
-    Company
-    Person
+model Property extends Address, SpaceComponent {
+    propertyType        PropertyType
+    leases              Lease[]
+    surface             Int
+    charges             Charge[]
+
+    tenancyType         PropertyTenancyType
+
+    tenancyInCommon     PropertyTenancyInCommon?   @relation(fields: [tenancyInCommonId], references: [id], onDelete: Cascade)
+    tenancyInCommonId   String?
+
+    jointTenancy        PropertyJointTenancy?      @relation(fields: [jointTenancyId], references: [id], onDelete: Cascade)
+    jointTenancyId      String?
+
+
+    tenancyByEntirety   PropertyTenancyByEntirety? @relation(fields: [tenancyByEntiretyId], references: [id], onDelete: Cascade)
+    tenancyByEntiretyId String?
 }
 
 abstract model PropertyComponent extends Component {
@@ -40,20 +52,6 @@ abstract model PropertyComponent extends Component {
     @@deny('all', property.private && property.owner != auth())
     @@allow('all', property.spaceId in auth().selectedSpaces && property.space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)])
 }
-model PropertyOwner extends PropertyComponent {
-    type      PropertyOwnerType
-
-
-    company   Company?          @relation(fields: [companyId], references: [id], onDelete: Cascade)
-    companyId String?
-
-
-    person    Person?           @relation(fields: [personId], references: [id], onDelete: Cascade)
-    personId  String?
-
-    @@allow('all', property.spaceId in auth().selectedSpaces && property.space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)])
-}
-
 
 
 enum ChargeType {

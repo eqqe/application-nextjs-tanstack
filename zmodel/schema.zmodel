@@ -3,7 +3,8 @@ import "space/space"
 import "space/dashboard/dashboard"
 import "space/property/property"
 import "space/property/lease"
-import "space/property/associate"
+import "space/property/tenancy"
+import "space/person/person"
 import "space/list/list"
 
 datasource db {
@@ -72,42 +73,43 @@ model Profile extends IdCreatedUpdatedAuth {
 
 
 model User extends IdCreatedUpdated {
-    email                  String                  @unique @email
-    emailVerified          DateTime?
-    password               String?                 @password @omit
-    name                   String?
-    profiles               Profile[]
-    spacesOwned            Space[]                 @relation("owner")
-    createSpaceId          String?                 @ignore
-    selectedSpaces         String[]                @ignore
-    image                  String?                 @url
-    todos                  Todo[]                  @relation("owner")
+    email                               String                          @unique @email
+    emailVerified                       DateTime?
+    password                            String?                         @password @omit
+    name                                String?
+    profiles                            Profile[]
+    spacesOwned                         Space[]                         @relation("owner")
+    createSpaceId                       String?                         @ignore
+    selectedSpaces                      String[]                        @ignore
+    image                               String?                         @url
+    todos                               Todo[]                          @relation("owner")
 
-    tenants                Tenant[]                @relation("user")
-    tenantsOwned           Tenant[]                @relation("owner")
+    tenantsOwned                        LeaseTenant[]                   @relation("owner")
 
-    leases                 Lease[]                 @relation("owner")
-    dashboards             Dashboard[]             @relation("owner")
-    properties             Property[]              @relation("owner")
-    lists                  List[]                  @relation("owner")
-    payments               Payment[]               @relation("owner")
+    leases                              Lease[]                         @relation("owner")
+    dashboards                          Dashboard[]                     @relation("owner")
+    properties                          Property[]                      @relation("owner")
+    lists                               List[]                          @relation("owner")
+    payments                            Payment[]                       @relation("owner")
 
-    charges                Charge[]                @relation("owner")
-    panelRows              PanelRow[]              @relation("owner")
-    panels                 Panel[]                 @relation("owner")
-    panelComponents        PanelComponent[]        @relation("owner")
-    panelComponentsCounter PanelComponentCounter[] @relation("owner")
-    panelComponentsReport  PanelComponentReport[]  @relation("owner")
-    associatesOwned        Associate[]             @relation("owner")
-    persons                Person[]                @relation("user")
-    companyOwned           Company[]               @relation("owner")
-    personOwned            Person[]                @relation("owner")
-    propertyOwnerOwned     PropertyOwner[]         @relation("owner")
-    companyAssociateOwned  CompanyAssociate[]      @relation("owner")
+    charges                             Charge[]                        @relation("owner")
+    panelRows                           PanelRow[]                      @relation("owner")
+    panels                              Panel[]                         @relation("owner")
+    panelComponents                     PanelComponent[]                @relation("owner")
+    panelComponentsCounter              PanelComponentCounter[]         @relation("owner")
+    panelComponentsReport               PanelComponentReport[]          @relation("owner")
+    persons                             Person[]                        @relation("user")
+    propertyTenancyInCommonOwned        PropertyTenancyInCommon[]       @relation("owner")
+    personOwned                         Person[]                        @relation("owner")
+    propertyTenancyInCommonTenantsOwned PropertyTenancyInCommonTenant[] @relation("owner")
+    propertyJointTenancyTenantsOwned    PropertyJointTenancyTenant[]    @relation("owner")
+    propertyJointTenancies              PropertyJointTenancy[]          @relation("owner")
+    propertyTenanciesByEntiretyOwned    PropertyTenancyByEntirety[]     @relation("owner")
+    corporations                        Corporation[]                   @relation("owner")
 
     
     // next-auth
-    accounts               Account[]
+    accounts                            Account[]
 
     // can be read by users sharing any space
     @@allow('read',  profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)])
@@ -137,11 +139,17 @@ enum Type {
     Dashboard
     Property
     Lease
-    Associate
     Payment
-    Tenant
+    LeaseTenant
     Charge
     Grid
+    Person
+    User
+    Profile
+    PropertyTenancyInCommon
+    PropertyTenancyInCommonTenant
+    PropertyJointTenancy
+    PropertyTenancyByEntirety
 }
 
 

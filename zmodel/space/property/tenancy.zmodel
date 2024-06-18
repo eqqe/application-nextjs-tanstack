@@ -1,0 +1,49 @@
+import "../../schema"
+import "../space"
+import "../person/person"
+import "property"
+import "lease"
+
+
+abstract model PropertyLink extends Component {
+    properties Property[]
+
+    @@allow('all', properties?[spaceId in auth().selectedSpaces && space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
+}
+
+
+model PropertyTenancyInCommon extends Address, PropertyLink {
+    name              String?
+    siret             String?
+    siren             String?
+    codeNafApe        String?
+    rcs               String?
+    lei               String?
+    intraCommunityVAT String?
+    tenants           PropertyTenancyInCommonTenant[]
+}
+
+model PropertyJointTenancy extends PropertyLink {
+    tenants PropertyJointTenancyTenant[]
+}
+
+model PropertyTenancyByEntirety extends BasePerson, PropertyLink {
+}
+
+model PropertyTenancyInCommonTenant extends BasePerson, Component {
+    propertyTenancyInCommon   PropertyTenancyInCommon @relation(fields: [propertyTenancyInCommonId], references: [id], onDelete: Cascade)
+    propertyTenancyInCommonId String
+
+    entryDate                 DateTime
+    exitDate                  DateTime?
+
+    @@allow('all', propertyTenancyInCommon.properties?[spaceId in auth().selectedSpaces && space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
+}
+
+model PropertyJointTenancyTenant extends BasePerson, Component {
+    propertyJointTenancy   PropertyJointTenancy @relation(fields: [propertyJointTenancyId], references: [id], onDelete: Cascade)
+    propertyJointTenancyId String
+
+
+    @@allow('all', propertyJointTenancy.properties?[spaceId in auth().selectedSpaces && space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
+}

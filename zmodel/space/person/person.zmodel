@@ -1,0 +1,30 @@
+import "../../schema"
+import "../space"
+import "../property/property"
+import "../property/lease"
+import "../property/tenancy"
+
+
+model Person extends Component, OptionalUser {
+    birthDate         DateTime
+    phone             String?
+    leaseTenancies    LeaseTenant[]
+    inCommonTenancies PropertyTenancyInCommonTenant[]
+    jointTenancies    PropertyJointTenancyTenant[]
+    entireTenancies   PropertyTenancyByEntirety[]
+    corporations      Corporation[]
+
+    @@allow('all', leaseTenancies?[lease.property.spaceId in auth().selectedSpaces &&  lease.property.space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
+    @@allow('all', inCommonTenancies?[propertyTenancyInCommon.properties?[spaceId in auth().selectedSpaces && space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]]])
+    @@allow('all', jointTenancies?[propertyJointTenancy.properties?[spaceId in auth().selectedSpaces && space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]]])
+    @@allow('all', entireTenancies?[properties?[spaceId in auth().selectedSpaces && space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]]])
+    @@allow('all', corporations?[leaseTenants?[lease.property.spaceId in auth().selectedSpaces && lease.property.space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]]])
+}
+
+
+
+abstract model BasePerson {
+    person   Person @relation(fields: [personId], references: [id], onDelete: Cascade)
+    personId String
+}
+

@@ -12,7 +12,7 @@
         "db:deploy": "prisma migrate deploy",
         "db:reset": "prisma migrate reset",
         "db:browse": "prisma studio",
-        "generate": "zenstack generate --schema zmodel/schema.zmodel",
+        "generate": "NODE_OPTIONS=\"--max-old-space-size=8192\" zenstack generate --schema zmodel/schema.zmodel",
         "test": "vitest",
         "test:e2e": "npx playwright test"
     },
@@ -114,5 +114,8 @@
     "prisma": {
         "seed": "tsx zmodel/prisma/seed.ts",
         "schema": "zmodel/prisma/schema.prisma"
+    },
+    "optionalDependencies": {
+        "win-node-env": "^0.6.1"
     }
 }
