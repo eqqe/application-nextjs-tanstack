@@ -32,7 +32,7 @@ export function CardTableComponent({ table: { type, typeTableRequest, columns, g
     count = useCount().data;
     const [pagination, setPagination] = useState<PaginationState>({
         pageIndex: 0,
-        pageSize: 5,
+        pageSize: 20,
     });
 
     function getParams() {
