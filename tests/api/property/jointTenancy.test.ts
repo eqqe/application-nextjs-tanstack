@@ -1,11 +1,5 @@
 import { assert, expect, it } from 'vitest';
-import {
-    fakeProperty,
-    fakeTenancyInCommon,
-    fakePerson,
-    fakeInCommonTenant,
-    fakeJointTenancyTenant,
-} from '@/lib/demo/fake';
+import { fakeProperty, fakeTenancyInCommon, fakePerson, fakeJointTenancyTenant } from '@/lib/demo/fake';
 import { getEnhancedPrisma } from '@/tests/mock/enhanced-prisma';
 import { Property, User } from '@prisma/client';
 
@@ -17,14 +11,14 @@ it('Should not allow a user to create tenancy in common for properties not in th
 
     const property = fakeProperty();
 
-    const newProperty = await user2.prisma.property.create({ data: property });
+    const newProperty = await user2.prisma.property.create({ data: { ...property, tenancyType: 'Joint' } });
 
     expect(
         async () =>
             await user1.prisma.propertyJointTenancy.create(
                 propertyJointTenancyCreateArgs({ property: newProperty, user: user1.userCreated })
             )
-    ).rejects.toThrow("denied by policy: propertyJointTenancy entities failed 'create' check");
+    ).rejects.toThrow("denied by policy: Property entities failed 'update' check");
 
     const tenants = await user2.prisma.propertyTenancyInCommonTenant.findMany();
     assert.notOk(tenants.length);
@@ -35,32 +29,30 @@ it('Should allow a user to create tenancy in common for properties in their spac
 
     const property = fakeProperty();
 
-    const newProperty = await user2.prisma.property.create({ data: property });
+    const newProperty = await user2.prisma.property.create({ data: { ...property, tenancyType: 'Joint' } });
 
     await user3.prisma.propertyJointTenancy.create(
         propertyJointTenancyCreateArgs({ property: newProperty, user: user1.userCreated })
     );
-
-    const tenants = await user2.prisma.propertyTenancyInCommonTenant.findMany({
+    const jointTenancies = await user2.prisma.propertyJointTenancy.findMany({
         include: {
-            propertyTenancyInCommon: {
+            properties: true,
+            tenants: {
                 include: {
-                    properties: true,
+                    person: true,
                 },
             },
-            person: true,
         },
     });
-    assert.equal(tenants.length, 1);
-    assert.equal(tenants[0].propertyTenancyInCommon.siret, tenancyInCommon.siret);
-    assert.deepEqual(tenants[0].person.birthDate, person.birthDate);
-    assert.equal(tenants[0].propertyTenancyInCommon.properties[0].surface, property.surface);
-    assert.equal(tenants[0].propertyTenancyInCommon.properties[0].ownerId, user3.userCreated.id);
-    assert.equal(tenants[0].propertyTenancyInCommon.ownerId, user2.userCreated.id);
+    assert.equal(jointTenancies.length, 1);
+    assert.deepEqual(jointTenancies[0].tenants[0].person.birthDate, person.birthDate);
+    assert.equal(jointTenancies[0].properties[0].surface, property.surface);
+    assert.equal(jointTenancies[0].properties[0].ownerId, user2.userCreated.id);
+    assert.equal(jointTenancies[0].ownerId, user3.userCreated.id);
 
     const properties = await user2.prisma.property.findMany({
         include: {
-            tenancyInCommon: {
+            jointTenancy: {
                 include: {
                     tenants: {
                         include: {
@@ -74,11 +66,10 @@ it('Should allow a user to create tenancy in common for properties in their spac
 
     assert.equal(properties.length, 1);
     assert.equal(properties[0].spaceId, user2.space.id);
-    assert.equal(properties[0].tenancyType, 'InCommon');
+    assert.equal(properties[0].tenancyType, 'Joint');
     assert.equal(properties[0].surface, property.surface);
-    assert.equal(properties[0].tenancyInCommon?.ownerId, user3.userCreated.id);
-    assert.deepEqual(properties[0].tenancyInCommon?.tenants[0].person.birthDate, person.birthDate);
-    assert.deepEqual(properties[0].tenancyInCommon?.intraCommunityVAT, tenancyInCommon.intraCommunityVAT);
+    assert.equal(properties[0].jointTenancy?.ownerId, user3.userCreated.id);
+    assert.deepEqual(properties[0].jointTenancy?.tenants[0].person.birthDate, person.birthDate);
 });
 
 function propertyJointTenancyCreateArgs({ property, user }: { property: Property; user: User }) {

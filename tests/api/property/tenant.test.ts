@@ -20,13 +20,16 @@ it('Should associate a tenant to a lease', async () => {
                 },
             },
             person: {
-                create: person,
-            },
-            user: {
-                connect: {
-                    id: user1.userCreated.id,
+                create: {
+                    ...person,
+                    user: {
+                        connect: {
+                            id: user1.userCreated.id,
+                        },
+                    },
                 },
             },
+            tenantType: 'Person',
         },
     });
 
@@ -51,7 +54,7 @@ it('Should associate a tenant to a lease', async () => {
 
     assert.deepEqual(leasesUser1, []);
 
-    assert.equal(properties[0].leases[0].tenants[0].userId, user1.userCreated.id);
-    assert.deepEqual(properties[0].leases[0].tenants[0].person.birthDate, person.birthDate);
+    assert.equal(properties[0].leases[0].tenants[0].person?.userId, user1.userCreated.id);
+    assert.deepEqual(properties[0].leases[0].tenants[0].person?.birthDate, person.birthDate);
     assert.deepEqual(properties[0].leases[0].tenants[0].lease.startDate, lease.startDate);
 });

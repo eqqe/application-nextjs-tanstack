@@ -1,6 +1,15 @@
 import { expect, test } from 'vitest';
 import { getEnhancedPrisma } from '@/tests/mock/enhanced-prisma';
-import { generateData } from '@/lib/demo/fake';
+import {
+    fakeCharge,
+    fakeInCommonTenant,
+    fakeLease,
+    fakePayment,
+    fakePerson,
+    fakeProperty,
+    fakeTenancyInCommon,
+    generateData,
+} from '@/lib/demo/fake';
 import { PrismaClient } from '@zenstackhq/runtime/models';
 
 test('Load a lot of data for 3 users', async () => {
@@ -8,9 +17,48 @@ test('Load a lot of data for 3 users', async () => {
     // Make it fast when running locally, but check it does not timeout on CI with a lot of data
     const length = process.env.CI ? 4 : 1;
     async function writeFakeData({ prisma, currentSpace }: typeof user1) {
+        const spaceId = currentSpace.id;
         for (const _ of Array.from({ length })) {
-            const updateSpaceArgs = generateData({ length, spaceId: currentSpace.id });
-            await prisma.space.update(updateSpaceArgs);
+            //const updateSpaceArgs = generateData();
+
+            await prisma.space.update({
+                where: {
+                    id: spaceId,
+                },
+                data: {
+                    properties: {
+                        create: Array.from({ length }).map((_) => ({
+                            ...fakeProperty(),
+                            charges: {
+                                create: Array.from({ length }).map((_) => fakeCharge()),
+                            },
+                            leases: {
+                                create: Array.from({ length }).map((_) => ({
+                                    ...fakeLease(),
+                                    payments: {
+                                        create: Array.from({ length }).map((_) => fakePayment()),
+                                    },
+                                })),
+                            },
+                            tenancyInCommon: {
+                                create: {
+                                    ...fakeTenancyInCommon(),
+                                    tenants: {
+                                        create: Array.from({ length }).map((_) => ({
+                                            ...fakeInCommonTenant(),
+                                            person: {
+                                                create: {
+                                                    ...fakePerson(),
+                                                },
+                                            },
+                                        })),
+                                    },
+                                },
+                            },
+                        })),
+                    },
+                },
+            });
         }
     }
 

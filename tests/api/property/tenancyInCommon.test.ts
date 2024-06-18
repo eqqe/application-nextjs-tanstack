@@ -18,7 +18,7 @@ it('Should not allow a user to create tenancy in common for properties not in th
             await user1.prisma.propertyTenancyInCommon.create(
                 propertyTenancyInCommonCreateArgs({ property: newProperty, user: user1.userCreated })
             )
-    ).rejects.toThrow("denied by policy: propertyOwner entities failed 'create' check");
+    ).rejects.toThrow("denied by policy: Property entities failed 'update' check, entity");
 
     const tenants = await user2.prisma.propertyTenancyInCommonTenant.findMany();
     assert.notOk(tenants.length);
@@ -49,8 +49,8 @@ it('Should allow a user to create tenancy in common for properties in their spac
     assert.equal(tenants[0].propertyTenancyInCommon.siret, tenancyInCommon.siret);
     assert.deepEqual(tenants[0].person.birthDate, person.birthDate);
     assert.equal(tenants[0].propertyTenancyInCommon.properties[0].surface, property.surface);
-    assert.equal(tenants[0].propertyTenancyInCommon.properties[0].ownerId, user3.userCreated.id);
-    assert.equal(tenants[0].propertyTenancyInCommon.ownerId, user2.userCreated.id);
+    assert.equal(tenants[0].propertyTenancyInCommon.properties[0].ownerId, user2.userCreated.id);
+    assert.equal(tenants[0].propertyTenancyInCommon.ownerId, user3.userCreated.id);
 
     const properties = await user2.prisma.property.findMany({
         include: {
@@ -78,7 +78,7 @@ it('Should allow a user to create tenancy in common for properties in their spac
 function propertyTenancyInCommonCreateArgs({ property, user }: { property: Property; user: User }) {
     return {
         data: {
-            ...fakeTenancyInCommon(),
+            ...tenancyInCommon,
             properties: {
                 connect: {
                     id: property.id,
