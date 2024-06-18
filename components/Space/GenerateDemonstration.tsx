@@ -14,5 +14,5 @@ export const GenerateDemonstration = () => {
         await updateSpace.mutateAsync(updateSpaceArgs);
     };
 
-    return <button onClick={() => generateDemonstration({ length: 7 })}>Generate Demonstration</button>;
+    return <button onClick={() => generateDemonstration({ length: 6 })}>Generate Demonstration</button>;
 };

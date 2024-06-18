@@ -19,25 +19,42 @@ abstract model Address {
 }
 
 model Property extends Address, SpaceComponent {
-    propertyType       PropertyType
-    leases             Lease[]
-    surface            Int
-    charges            Charge[]
-    propertyAssociates PropertyAssociate[]
+    propertyType PropertyType
+    leases       Lease[]
+    surface      Int
+    charges      Charge[]
+    owners       PropertyOwner[]
 }
 
+enum PropertyOwnerType {
+    Company
+    Person
+}
 
-abstract model BasePropertyLink {
+abstract model PropertyComponent extends Component {
+
     property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
     propertyId String
 
 
     @@deny('all', property.private && property.owner != auth())
+    @@allow('all', property.spaceId in auth().selectedSpaces && property.space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)])
 }
-abstract model PropertyComponent extends BasePropertyLink, Component {
+model PropertyOwner extends PropertyComponent {
+    type      PropertyOwnerType
+
+
+    company   Company?          @relation(fields: [companyId], references: [id], onDelete: Cascade)
+    companyId String?
+
+
+    person    Person?           @relation(fields: [personId], references: [id], onDelete: Cascade)
+    personId  String?
 
     @@allow('all', property.spaceId in auth().selectedSpaces && property.space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)])
 }
+
+
 
 enum ChargeType {
     MAINTENANCE

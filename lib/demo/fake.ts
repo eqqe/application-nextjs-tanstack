@@ -1,16 +1,15 @@
 import { faker } from '@faker-js/faker';
-import { PropertyType, ChargeType } from '@prisma/client';
+import { PropertyType, ChargeType, PropertyOwnerType } from '@prisma/client';
 import { z } from 'zod';
 import {
     CompanyCreateScalarSchema,
     PropertyCreateScalarSchema,
-    PropertyAssociateCreateScalarSchema,
     ChargeCreateScalarSchema,
     LeaseCreateScalarSchema,
     PersonCreateScalarSchema,
     PaymentCreateScalarSchema,
+    CompanyAssociateCreateScalarSchema,
 } from '@zenstackhq/runtime/zod/models';
-import { Space } from '@zenstackhq/runtime/models';
 
 export const cityPlaywrightTest = 'City to find in Playwright test';
 
@@ -50,7 +49,7 @@ const fakeAddress = () => ({
     state: faker.location.state(),
 });
 
-export const fakePropertyAssociate = (): z.infer<typeof PropertyAssociateCreateScalarSchema> => {
+export const fakeCompanyAssociate = (): z.infer<typeof CompanyAssociateCreateScalarSchema> => {
     return {
         entryDate: faker.date.past(),
         exitDate: faker.date.recent(),
@@ -69,7 +68,7 @@ export const fakeCharge = (): z.infer<typeof ChargeCreateScalarSchema> => ({
     description: faker.lorem.sentence(),
 });
 
-export const generateData = ({ length, spaceId }: { length: number; spaceId: string }) => {
+export function generateData({ length, spaceId }: { length: number; spaceId: string }) {
     return {
         where: {
             id: spaceId,
@@ -89,16 +88,23 @@ export const generateData = ({ length, spaceId }: { length: number; spaceId: str
                             },
                         })),
                     },
-                    propertyAssociates: {
+                    owners: {
                         create: Array.from({ length }).map((_) => ({
-                            ...fakePropertyAssociate(),
-                            associate: {
+                            type: PropertyOwnerType.Company,
+                            company: {
                                 create: {
-                                    company: {
-                                        create: fakeCompany(),
-                                    },
-                                    person: {
-                                        create: fakePerson(),
+                                    ...fakeCompany(),
+                                    associates: {
+                                        create: Array.from({ length }).map((_) => ({
+                                            ...fakeCompanyAssociate(),
+                                            associate: {
+                                                create: {
+                                                    person: {
+                                                        create: fakePerson(),
+                                                    },
+                                                },
+                                            },
+                                        })),
                                     },
                                 },
                             },
@@ -108,4 +114,4 @@ export const generateData = ({ length, spaceId }: { length: number; spaceId: str
             },
         },
     };
-};
+}

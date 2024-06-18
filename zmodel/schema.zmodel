@@ -99,10 +99,11 @@ model User extends IdCreatedUpdated {
     panelComponentsCounter PanelComponentCounter[] @relation("owner")
     panelComponentsReport  PanelComponentReport[]  @relation("owner")
     associatesOwned        Associate[]             @relation("owner")
-    associates             Associate[]             @relation("user")
-    propertyAsssociates    PropertyAssociate[]     @relation("owner")
+    persons                Person[]                @relation("user")
     companyOwned           Company[]               @relation("owner")
     personOwned            Person[]                @relation("owner")
+    propertyOwnerOwned     PropertyOwner[]         @relation("owner")
+    companyAssociateOwned  CompanyAssociate[]      @relation("owner")
 
     
     // next-auth
