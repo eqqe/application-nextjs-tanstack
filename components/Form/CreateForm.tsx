@@ -14,8 +14,9 @@ import {
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { FallbackError } from '../layout/FallbackError';
-import { CommonFormTable } from '../ui/auto-common/types';
+import { FallbackError } from '@/components/layout/FallbackError';
+import { CommonFormTable } from '@/components/ui/auto-common/types';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 export function CreateForm<SchemaType extends ZodObjectOrWrapped>({
     onSubmitData,
@@ -42,19 +43,21 @@ export function CreateForm<SchemaType extends ZodObjectOrWrapped>({
                 <Button variant="outline">{title}</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                    <DialogTitle>{title}</DialogTitle>
-                    <DialogDescription>{title}</DialogDescription>
-                </DialogHeader>
-                <ErrorBoundary fallback={<FallbackError />}>
-                    <AutoForm formSchema={formSchema} values={values} onSubmit={onSubmit}>
-                        <div className="modal-action">
-                            <DialogFooter>
-                                <Button type="submit">Save changes</Button>
-                            </DialogFooter>
-                        </div>
-                    </AutoForm>
-                </ErrorBoundary>
+                <ScrollArea className="max-h-[80vh] p-6">
+                    <DialogHeader>
+                        <DialogTitle>{title}</DialogTitle>
+                        <DialogDescription>{title}</DialogDescription>
+                    </DialogHeader>
+                    <ErrorBoundary fallback={<FallbackError />}>
+                        <AutoForm formSchema={formSchema} values={values} onSubmit={onSubmit}>
+                            <div className="modal-action">
+                                <DialogFooter>
+                                    <Button type="submit">Save changes</Button>
+                                </DialogFooter>
+                            </div>
+                        </AutoForm>
+                    </ErrorBoundary>
+                </ScrollArea>
             </DialogContent>
         </Dialog>
     );
