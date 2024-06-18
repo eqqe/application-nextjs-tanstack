@@ -8,7 +8,9 @@ import {
     PersonCreateScalarSchema,
     PaymentCreateScalarSchema,
     PropertyTenancyInCommonCreateScalarSchema,
+    PropertyJointTenancyCreateScalarSchema,
     PropertyTenancyInCommonTenantCreateScalarSchema,
+    PropertyJointTenancyTenantCreateScalarSchema,
 } from '@zenstackhq/runtime/zod/models';
 
 export const cityPlaywrightTest = 'City to find in Playwright test';
@@ -49,12 +51,15 @@ const fakeAddress = () => ({
     country: faker.location.country(),
     state: faker.location.state(),
 });
-
 export const fakeInCommonTenant = (): z.infer<typeof PropertyTenancyInCommonTenantCreateScalarSchema> => {
     return {
         entryDate: faker.date.past(),
         exitDate: faker.date.recent(),
     };
+};
+
+export const fakeJointTenancyTenant = (): z.infer<typeof PropertyJointTenancyTenantCreateScalarSchema> => {
+    return {};
 };
 
 export const fakePayment = (): z.infer<typeof PaymentCreateScalarSchema> => ({
@@ -91,7 +96,7 @@ export function generateData({ length, spaceId }: { length: number; spaceId: str
                     },
                     owners: {
                         create: Array.from({ length }).map((_) => ({
-                            type: PropertyOwnerType.Company,
+                            type: PropertyTenancyType.InCommon,
                             company: {
                                 create: {
                                     ...fakeTenancyInCommon(),

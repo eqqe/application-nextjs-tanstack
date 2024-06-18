@@ -1,7 +1,7 @@
 
 import "../../schema.zmodel"
 import "../space.zmodel"
-import "associate"
+import "tenancy"
 import "lease"
 
 enum PropertyType {

@@ -2,7 +2,8 @@
 import "../../schema.zmodel"
 import "../space.zmodel"
 import "property"
-import "associate"
+import "tenancy"
+import "../person/person"
 
 model Lease extends PropertyComponent {
     startDate  DateTime
@@ -11,9 +12,8 @@ model Lease extends PropertyComponent {
     payments   Payment[]
     charges    Charge[]
     tenants    LeaseTenant[]
-    @@allow('read', property.spaceId in auth().selectedSpaces && tenants?[user == auth()])
+    @@allow('read', property.spaceId in auth().selectedSpaces && tenants?[person.user == auth()])
 }
-
 
 abstract model LeaseComponent extends Component {
 
@@ -23,7 +23,24 @@ abstract model LeaseComponent extends Component {
     @@deny('all', lease.property.private && lease.property.owner != auth())
     @@allow('all', lease.property.spaceId in auth().selectedSpaces && lease.property.space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)])
 }
-model LeaseTenant extends LeaseComponent, OptionalUser, BasePerson {
+
+enum LeaseTenantType {
+    Corporation
+    Person
+}
+model LeaseTenant extends LeaseComponent {
+    tenantType    LeaseTenantType
+
+    person        Person?         @relation(fields: [personId], references: [id], onDelete: Cascade)
+    personId      String?
+
+    corporation   Corporation?    @relation(fields: [corporationId], references: [id], onDelete: Cascade)
+    corporationId String?
+}
+
+model Corporation extends Component, Address {
+    members      Person[]
+    leaseTenants LeaseTenant[]
 }
 
 model Payment extends LeaseComponent {

@@ -1,5 +1,6 @@
-import "../../schema.zmodel"
-import "../space.zmodel"
+import "../../schema"
+import "../space"
+import "../person/person"
 import "property"
 import "lease"
 
@@ -26,27 +27,9 @@ model PropertyJointTenancy extends PropertyLink {
     tenants PropertyJointTenancyTenant[]
 }
 
-
 model PropertyTenancyByEntirety extends BasePerson, PropertyLink {
 }
 
-
-model Person extends Component, OptionalUser {
-    birthDate         DateTime
-    phone             String?
-    leaseTenancies    LeaseTenant[]
-    inCommonTenancies PropertyTenancyInCommonTenant[]
-    jointTenancies    PropertyJointTenancyTenant[]
-    entireTenancies   PropertyTenancyByEntirety[]
-
-    @@allow('all', inCommonTenancies?[propertyTenancyInCommon.tenants?[propertyTenancyInCommon.properties?[spaceId in auth().selectedSpaces && space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]]]])
-    @@allow('all', leaseTenancies?[lease.property.spaceId in auth().selectedSpaces &&  lease.property.space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)]])
-}
-
-abstract model BasePerson {
-    person   Person @relation(fields: [personId], references: [id], onDelete: Cascade)
-    personId String
-}
 model PropertyTenancyInCommonTenant extends BasePerson, Component {
     propertyTenancyInCommon   PropertyTenancyInCommon @relation(fields: [propertyTenancyInCommonId], references: [id], onDelete: Cascade)
     propertyTenancyInCommonId String

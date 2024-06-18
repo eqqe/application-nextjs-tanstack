@@ -187,7 +187,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                 table: {
                                                                     create: {
                                                                         typeTableRequest: 'FindMany',
-                                                                        type: 'Associate',
+                                                                        type: 'PropertyTenancyInCommonTenant',
                                                                     },
                                                                 },
                                                             },

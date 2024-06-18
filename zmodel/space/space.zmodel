@@ -2,7 +2,7 @@ import "../schema"
 import "../application"
 import "dashboard/dashboard"
 import "property/property"
-import "property/associate"
+import "property/tenancy"
 import "list/list"
 
 model Space extends IdCreatedUpdatedAuth, Owner, Named {

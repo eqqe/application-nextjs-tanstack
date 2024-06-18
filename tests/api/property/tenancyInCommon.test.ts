@@ -3,10 +3,10 @@ import { fakeProperty, fakeTenancyInCommon, fakePerson, fakeInCommonTenant } fro
 import { getEnhancedPrisma } from '@/tests/mock/enhanced-prisma';
 import { Property, User } from '@prisma/client';
 
-const company = fakeTenancyInCommon();
+const tenancyInCommon = fakeTenancyInCommon();
 const person = fakePerson();
 
-it('Should not allow a user to create associate for properties not in their space', async () => {
+it('Should not allow a user to create tenancy in common for properties not in their space', async () => {
     const { user1, user2 } = await getEnhancedPrisma();
 
     const property = fakeProperty();
@@ -24,7 +24,7 @@ it('Should not allow a user to create associate for properties not in their spac
     assert.notOk(tenants.length);
 });
 
-it('Should allow a user to create associates for properties in their space', async () => {
+it('Should allow a user to create tenancy in common for properties in their space', async () => {
     const { user1, user2, user3 } = await getEnhancedPrisma();
 
     const property = fakeProperty();
@@ -46,7 +46,7 @@ it('Should allow a user to create associates for properties in their space', asy
         },
     });
     assert.equal(tenants.length, 1);
-    assert.equal(tenants[0].propertyTenancyInCommon.siret, company.siret);
+    assert.equal(tenants[0].propertyTenancyInCommon.siret, tenancyInCommon.siret);
     assert.deepEqual(tenants[0].person.birthDate, person.birthDate);
     assert.equal(tenants[0].propertyTenancyInCommon.properties[0].surface, property.surface);
     assert.equal(tenants[0].propertyTenancyInCommon.properties[0].ownerId, user3.userCreated.id);
@@ -72,8 +72,9 @@ it('Should allow a user to create associates for properties in their space', asy
     assert.equal(properties[0].surface, property.surface);
     assert.equal(properties[0].tenancyInCommon?.ownerId, user3.userCreated.id);
     assert.deepEqual(properties[0].tenancyInCommon?.tenants[0].person.birthDate, person.birthDate);
-    assert.deepEqual(properties[0].tenancyInCommon?.intraCommunityVAT, company.intraCommunityVAT);
+    assert.deepEqual(properties[0].tenancyInCommon?.intraCommunityVAT, tenancyInCommon.intraCommunityVAT);
 });
+
 function propertyTenancyInCommonCreateArgs({ property, user }: { property: Property; user: User }) {
     return {
         data: {
