@@ -124,9 +124,6 @@ export function CardTableComponent({ table: { type, typeTableRequest, columns, g
         });
     }
 
-    if (!rows) {
-        return <></>;
-    }
     return (
         <div className="container mx-auto py-5">
             <ErrorBoundary fallback={<FallbackError />}>
@@ -137,7 +134,7 @@ export function CardTableComponent({ table: { type, typeTableRequest, columns, g
                     onlyAdditionalColumns={
                         (!!columns.length && typeTableRequest === 'FindMany') || typeTableRequest !== 'FindMany'
                     }
-                    data={rows}
+                    data={rows ?? []}
                     pagination={typeTableRequest === 'FindMany' ? { pagination, setPagination, count } : void 0}
                 />
             </ErrorBoundary>
