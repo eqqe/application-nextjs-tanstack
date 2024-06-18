@@ -1,6 +1,6 @@
 import { assert, it } from 'vitest';
 import { getEnhancedPrisma } from '@/tests/mock/enhanced-prisma';
-import { useFindUniqueGridParam } from '@/components/useFindGridDetails';
+import { useFindUniqueGridParam } from '@/hooks/useCurrentGrid';
 
 it('Should enable an application in space', async () => {
     const {

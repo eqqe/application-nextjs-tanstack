@@ -1,6 +1,6 @@
 import { assert, it } from 'vitest';
 import { getEnhancedPrisma } from '@/tests/mock/enhanced-prisma';
-import { GridInclude } from '@/components/Grid/Grid';
+import { GridInclude } from '@/hooks/useCurrentGrid';
 
 it('Should get grids', async () => {
     function checkGrids() {
