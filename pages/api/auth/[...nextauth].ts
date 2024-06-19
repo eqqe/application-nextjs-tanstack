@@ -1,5 +1,4 @@
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
-import { getNewSpace } from '@/lib/getNewSpace';
 import NextAuth, { User } from 'next-auth';
 import { NextAuthOptions } from 'next-auth';
 import EmailProvider from 'next-auth/providers/email';
@@ -86,28 +85,6 @@ export const authOptions: NextAuthOptions = {
                 return true;
             }
             return signInPath;
-        },
-    },
-
-    events: {
-        async signIn({ user }: { user: User }) {
-            const spaceCount = await prisma.space.count({
-                where: {
-                    profiles: {
-                        some: {
-                            users: {
-                                some: {
-                                    id: user.id,
-                                },
-                            },
-                        },
-                    },
-                },
-            });
-            if (spaceCount > 0) {
-                return;
-            }
-            await prisma.space.create(getNewSpace({ user, name: `${user.name || user.email}'s space` }));
         },
     },
 };

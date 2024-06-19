@@ -4,17 +4,16 @@ export function getNewSpace({ user, name }: { user: User; name: string }) {
     return {
         data: {
             name,
-            owner: {
-                connect: {
-                    id: user.id,
-                },
-            },
             profiles: {
                 create: {
                     role: ProfileRole.ADMIN,
                     users: {
-                        connect: {
-                            id: user.id,
+                        create: {
+                            user: {
+                                connect: {
+                                    id: user.id,
+                                },
+                            },
                         },
                     },
                 },
