@@ -1,4 +1,4 @@
-import { CreateForm } from '@/components/Form/CreateForm';
+import { AutoFormDialog } from '@/components/Form/CreateForm';
 import { WithNavBar } from '@/components/layout/WithNavBar';
 import { useCurrentUser, useSelectedSpaces } from '@/lib/context';
 import { getNewSpace } from '@/lib/getNewSpace';
@@ -16,7 +16,7 @@ export const Home: NextPage = () => {
     }
     return (
         <WithNavBar>
-            <CreateForm
+            <AutoFormDialog
                 formSchema={SpaceCreateScalarSchema}
                 onSubmitData={async (data) => {
                     const space = await createSpace.mutateAsync(getNewSpace({ user, name: data.name }));

@@ -1,7 +1,7 @@
 import { beautifyObjectName } from '@/components/ui/auto-form/utils';
 import { Prisma } from '@prisma/client';
 import { getTypeHook } from './getTypeHook';
-import { CreateForm } from '@/components/Form/CreateForm';
+import { AutoFormDialog } from '@/components/Form/CreateForm';
 import { FallbackError } from '@/components/layout/FallbackError';
 import { ErrorBoundary } from 'react-error-boundary';
 import { ColumnDef, PaginationState, RowData } from '@tanstack/react-table';
@@ -106,7 +106,7 @@ export function CardTableComponent({ table: { type, typeTableRequest, columns, g
             accessorKey: 'edit',
             header: 'Edit',
             cell: ({ row }) => (
-                <CreateForm
+                <AutoFormDialog
                     formSchema={schema.update}
                     values={row.original}
                     onSubmitData={async (data) => {
