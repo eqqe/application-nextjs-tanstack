@@ -1,7 +1,7 @@
 import { assert, expect, it } from 'vitest';
-import { fakeProperty, fakeTenancyInCommon, fakePerson, fakeJointTenancyTenant } from '@/lib/demo/fake';
+import { fakeProperty, fakePerson } from '@/lib/demo/fake';
 import { getEnhancedPrisma } from '@/tests/mock/enhanced-prisma';
-import { Property, User } from '@prisma/client';
+import { Property, User, PropertyTenancyType } from '@prisma/client';
 
 const person = fakePerson();
 
@@ -10,14 +10,14 @@ it('Should not allow a user to create tenancy by entirety for properties not in 
 
     const property = fakeProperty();
 
-    const newProperty = await user2.prisma.property.create({ data: { ...property, tenancyType: 'ByEntirety' } });
+    const newProperty = await user2.prisma.property.create({ data: property });
 
     expect(
         async () =>
             await user1.prisma.propertyTenancyByEntirety.create(
                 propertyTenancyByEntiretyCreateArgs({ property: newProperty, user: user1.userCreated })
             )
-    ).rejects.toThrow("denied by policy: Property entities failed 'update' check");
+    ).rejects.toThrow("propertyTenancyByEntirety entities failed 'create' check, entity");
 
     const tenancies = await user2.prisma.propertyTenancyByEntirety.findMany();
     assert.notOk(tenancies.length);
@@ -28,29 +28,37 @@ it('Should allow a user to create tenancy by entirety for properties in their sp
 
     const property = fakeProperty();
 
-    const newProperty = await user2.prisma.property.create({ data: { ...property, tenancyType: 'ByEntirety' } });
+    const newProperty = await user2.prisma.property.create({ data: property });
 
     await user3.prisma.propertyTenancyByEntirety.create(
         propertyTenancyByEntiretyCreateArgs({ property: newProperty, user: user1.userCreated })
     );
 
-    const jointTenancies = await user2.prisma.propertyTenancyByEntirety.findMany({
+    const tenanciesByEntirety = await user2.prisma.propertyTenancyByEntirety.findMany({
         include: {
-            properties: true,
+            propertyTenancies: {
+                include: {
+                    property: true,
+                },
+            },
             person: true,
         },
     });
-    assert.equal(jointTenancies.length, 1);
-    assert.deepEqual(jointTenancies[0].person.birthDate, person.birthDate);
-    assert.equal(jointTenancies[0].properties[0].surface, property.surface);
-    assert.equal(jointTenancies[0].properties[0].ownerId, user2.userCreated.id);
-    assert.equal(jointTenancies[0].ownerId, user3.userCreated.id);
+    assert.equal(tenanciesByEntirety.length, 1);
+    assert.deepEqual(tenanciesByEntirety[0].person.birthDate, person.birthDate);
+    assert.equal(tenanciesByEntirety[0].propertyTenancies[0].property.surface, property.surface);
+    assert.equal(tenanciesByEntirety[0].propertyTenancies[0].property.ownerId, user2.userCreated.id);
+    assert.equal(tenanciesByEntirety[0].ownerId, user3.userCreated.id);
 
     const properties = await user2.prisma.property.findMany({
         include: {
-            tenancyByEntirety: {
+            tenancy: {
                 include: {
-                    person: true,
+                    tenancyByEntirety: {
+                        include: {
+                            person: true,
+                        },
+                    },
                 },
             },
         },
@@ -58,18 +66,23 @@ it('Should allow a user to create tenancy by entirety for properties in their sp
 
     assert.equal(properties.length, 1);
     assert.equal(properties[0].spaceId, user2.space.id);
-    assert.equal(properties[0].tenancyType, 'ByEntirety');
+    assert.equal(properties[0].tenancy?.tenancyType, 'ByEntirety');
     assert.equal(properties[0].surface, property.surface);
-    assert.equal(properties[0].tenancyByEntirety?.ownerId, user3.userCreated.id);
-    assert.deepEqual(properties[0].tenancyByEntirety?.person.birthDate, person.birthDate);
+    assert.equal(properties[0].tenancy?.tenancyByEntirety?.ownerId, user3.userCreated.id);
+    assert.deepEqual(properties[0].tenancy?.tenancyByEntirety?.person.birthDate, person.birthDate);
 });
 
 function propertyTenancyByEntiretyCreateArgs({ property, user }: { property: Property; user: User }) {
     return {
         data: {
-            properties: {
-                connect: {
-                    id: property.id,
+            propertyTenancies: {
+                create: {
+                    tenancyType: PropertyTenancyType.ByEntirety,
+                    property: {
+                        connect: {
+                            id: property.id,
+                        },
+                    },
                 },
             },
             person: {

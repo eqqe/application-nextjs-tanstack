@@ -17,22 +17,26 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                 grids: {
                                     create: [
                                         {
-                                            name: 'Your essential data !',
+                                            name: 'Your essential data',
                                             columns: 4,
                                             elements: {
                                                 create: [
                                                     {
-                                                        type: 'Card',
-                                                        colSpan: 4,
+                                                        type: GridElementType.Card,
+                                                        colSpan: 2,
                                                         card: {
                                                             create: {
-                                                                title: 'Associates',
-                                                                description:
-                                                                    'List associates in the real estate company',
-                                                                table: {
+                                                                title: 'Your property tenants',
+                                                                invertTitleDescription: false,
+                                                                description: `See the list of property tenants`,
+                                                                footer: {
                                                                     create: {
-                                                                        typeTableRequest: 'FindMany',
-                                                                        type: 'PropertyTenancyInCommonTenant',
+                                                                        form: {
+                                                                            create: {
+                                                                                text: 'Create property tenant',
+                                                                                form: 'PropertyTenancy',
+                                                                            },
+                                                                        },
                                                                     },
                                                                 },
                                                             },

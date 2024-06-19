@@ -14,7 +14,6 @@ test('Load a lot of data for 3 users', async () => {
             await prisma.space.update(updateSpaceArgs);
         }
     }
-
     async function checkFakeDataCount({ prisma, factor }: { prisma: PrismaClient; factor: number }) {
         // User2 and user3 share a space so they will find other user data
         const countProperty = await prisma.property.aggregate({ _count: true });

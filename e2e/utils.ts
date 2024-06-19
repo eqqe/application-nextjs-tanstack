@@ -48,7 +48,6 @@ function getUtils(page: Page) {
         await getByLabel<Property>('state').fill(property.state ?? propertyFake.state ?? '');
         await getByLabel<Property>('name').fill(property.name ?? propertyFake.name);
         await getByLabel<Property>('surface').fill((property.surface ?? propertyFake.surface).toString());
-        await selectFromCombo<Property>('tenancyType', property.tenancyType ?? propertyFake.tenancyType);
 
         await getByLabel('private').check();
         await clickSaveChanges();
