@@ -4,13 +4,14 @@ import { GridInclude } from '@/hooks/useCurrentGrid';
 
 it('Should get grids', async () => {
     function checkGrids() {
-        assert.equal(grids.length, 2);
-        assert.equal(grids[0].columns, 6);
-        const card = grids[0].elements[0];
+        assert.equal(grids.length, 3);
+        const secondGrid = grids[1];
+        assert.equal(secondGrid.columns, 6);
+        const card = secondGrid.elements[0];
         assert.equal(card.type, 'Card');
         assert.equal(card.card?.footer?.button?.text, 'Create Property');
-        assert.equal(grids[0].elements[1].card?.footer?.progress?.value, 25);
-        const tabs = grids[0].elements[3];
+        assert.equal(secondGrid.elements[1].card?.footer?.progress?.value, 25);
+        const tabs = secondGrid.elements[3];
         assert.equal(tabs.type, 'Tabs');
         const cardInGrid = tabs.tabs?.tabsContent[0].elements[0];
         assert.equal(cardInGrid?.type, 'Card');
