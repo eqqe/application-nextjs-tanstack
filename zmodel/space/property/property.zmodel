@@ -50,7 +50,7 @@ abstract model PropertyComponent extends Component {
 
 
     @@deny('all', property.private && property.owner != auth())
-    @@allow('all', property.spaceId in auth().selectedSpaces && property.space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)])
+    @@allow('all', property.spaceId in auth().selectedSpaces && property.space.profiles?[users?[user.id == auth().id] && (role == ADMIN || role == USER)])
 }
 
 

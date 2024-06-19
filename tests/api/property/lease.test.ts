@@ -1,6 +1,7 @@
 import { assert, expect, it } from 'vitest';
-import { fakeLease, fakePayment, fakeProperty } from '@/lib/demo/fake';
+import { fakeLease, fakePayment, fakePerson, fakeProperty } from '@/lib/demo/fake';
 import { getEnhancedPrisma } from '@/tests/mock/enhanced-prisma';
+import { enhancePrisma } from '@/server/enhanced-db';
 
 it('Should not allow a user to create leases for properties not in their space', async () => {
     const { user1, user2 } = await getEnhancedPrisma();
@@ -85,4 +86,64 @@ it('Should allow a user to create leases and payments for properties in their sp
 
     const payments3 = await user3.prisma.payment.findMany();
     assert.equal(payments3.length, 4);
+});
+
+it('Should allow a lease tenant person user to view the lease', async () => {
+    const { user1, user2, user3 } = await getEnhancedPrisma();
+
+    const property = fakeProperty();
+
+    const newProperty = await user2.prisma.property.create({ data: property });
+
+    const lease2 = await user2.prisma.lease.create({
+        data: {
+            ...fakeLease(),
+            propertyId: newProperty.id,
+            tenants: {
+                create: {
+                    person: {
+                        create: {
+                            ...fakePerson(),
+                            user: {
+                                connect: {
+                                    id: user1.userCreated.id,
+                                },
+                            },
+                        },
+                    },
+                    tenantType: 'Person',
+                },
+            },
+        },
+    });
+    assert.equal(lease2.propertyId, newProperty.id);
+
+    const user1PrismaUser2Space = enhancePrisma({
+        userId: user1.userCreated.id,
+        selectedSpaces: [user2.space.id],
+    });
+
+    let leases1 = await user1PrismaUser2Space.lease.findMany();
+    assert.notOk(leases1.length);
+
+    await user2.prisma.space.update({
+        where: {
+            id: user2.space.id,
+        },
+        data: {
+            profiles: {
+                create: {
+                    role: 'GUEST',
+                    users: {
+                        create: {
+                            userId: user1.userCreated.id,
+                        },
+                    },
+                },
+            },
+        },
+    });
+
+    leases1 = await user1PrismaUser2Space.lease.findMany();
+    assert.ok(leases1.length);
 });

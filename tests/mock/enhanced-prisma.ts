@@ -16,7 +16,15 @@ export async function createUserWithSpace({ currentSpace, email }: { currentSpac
     };
     await prisma.user.deleteMany({ where: { email: testUser.email } });
     const userCreated = await prisma.user.create({ data: testUser });
-    const space = await prisma.space.create(getNewSpace({ name: `Test spaces ${testUser.email}`, user: userCreated }));
+
+    const enhancedPrismaNoSpace = enhancePrisma({
+        userId: userCreated.id,
+        selectedSpaces: [],
+    });
+
+    const space = await enhancedPrismaNoSpace.space.create(
+        getNewSpace({ name: `Test spaces ${testUser.email}`, user: userCreated })
+    );
 
     currentSpace = currentSpace ?? space;
     const enhancedPrisma = enhancePrisma({
@@ -60,7 +68,7 @@ export async function getEnhancedPrisma() {
     const user2 = await createUserWithSpace({});
     /* User3 is a member of User2's space and he is currently viewing the space */
     const user3 = await createUserWithSpace({ currentSpace: user2.space });
-    await prisma.space.update({
+    await user2.prisma.space.update({
         where: {
             id: user2.space.id,
         },
@@ -69,7 +77,9 @@ export async function getEnhancedPrisma() {
                 create: {
                     role: ProfileRole.USER,
                     users: {
-                        connect: { id: user3.userCreated.id },
+                        create: {
+                            userId: user3.userCreated.id,
+                        },
                     },
                 },
             },

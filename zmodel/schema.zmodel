@@ -44,7 +44,7 @@ abstract model IdCreatedUpdatedSpace extends IdCreatedUpdatedAuth {
     space   Space  @relation(fields: [spaceId], references: [id], onDelete: Cascade)
     spaceId String @default(auth().createSpaceId)
 
-    @@allow('read', spaceId in auth().selectedSpaces && space.profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)])
+    @@allow('read', spaceId in auth().selectedSpaces && space.profiles?[users?[user.id == auth().id] && (role == ADMIN || role == USER)])
 }
 
 enum ProfileRole {
@@ -54,17 +54,28 @@ enum ProfileRole {
 }
 
 
-model Profile extends IdCreatedUpdatedAuth {
-
-
+model Profile extends Component {
     spaces Space[]
-    users  User[]
+    users  ProfileUser[]
 
     role   ProfileRole
 
 
-    @@allow('read', users?[id == auth().id] && (role == ADMIN || role == USER))
-    @@allow('create,update,delete', users?[id == auth().id] && role == ADMIN)
+    @@allow('read', users?[user.id == auth().id] && (role == ADMIN || role == USER))
+    @@allow('create,update,delete', spaces![profiles?[users?[user.id == auth().id] && role == ADMIN]])
+}
+
+model ProfileUser extends Component {
+
+    profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+    profileId String
+
+    user      User    @relation("user", fields: [userId], references: [id], onDelete: Cascade)
+    userId    String
+
+
+    @@allow('read', profile.users?[user.id == auth().id] && (profile.role == ADMIN || profile.role == USER))
+    @@allow('create,update,delete', profile.spaces![profiles?[users?[user.id == auth().id] && role == ADMIN]])
 }
 
 
@@ -75,7 +86,7 @@ model User extends IdCreatedUpdated {
     emailVerified                       DateTime?
     password                            String?                         @password @omit
     name                                String?
-    profiles                            Profile[]
+    profiles                            ProfileUser[]                   @relation("user")
     spacesOwned                         Space[]                         @relation("owner")
     createSpaceId                       String?                         @ignore
     selectedSpaces                      String[]                        @ignore
@@ -86,6 +97,8 @@ model User extends IdCreatedUpdated {
     leases                              Lease[]                         @relation("owner")
     properties                          Property[]                      @relation("owner")
     payments                            Payment[]                       @relation("owner")
+    profilesOwned                       Profile[]                       @relation("owner")
+    profileUsersOwned                   ProfileUser[]                   @relation("owner")
 
     charges                             Charge[]                        @relation("owner")
     persons                             Person[]                        @relation("user")
@@ -102,7 +115,7 @@ model User extends IdCreatedUpdated {
     accounts                            Account[]
 
     // can be read by users sharing any space
-    @@allow('read',  profiles?[users?[id == auth().id] && (role == ADMIN || role == USER)])
+    @@allow('read',  profiles?[profile.users?[user.id == auth().id] && (profile.role == ADMIN || profile.role == USER)])
 
     // full access by oneself
     @@allow('all', auth() == this)
