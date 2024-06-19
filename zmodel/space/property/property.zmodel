@@ -33,7 +33,7 @@ model Property extends Address, SpaceComponent {
     tenancyId    String?
 }
 
-model PropertyTenancy extends Component {
+model PropertyTenancy extends SpaceComponent {
     properties          Property[]
 
     tenancyType         PropertyTenancyType

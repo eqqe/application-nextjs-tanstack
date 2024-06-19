@@ -4,9 +4,10 @@ import "property/property"
 import "property/tenancy"
 
 model Space extends IdCreatedUpdatedAuth, Owner, Named {
-    profiles     Profile[]
-    applications SpaceApplicationVersion[]
-    properties   Property[]
+    profiles          Profile[]
+    applications      SpaceApplicationVersion[]
+    properties        Property[]
+    propertyTenancies PropertyTenancy[]
 
     // When creating a space, we need to build a manual id with these to create the space, profiles and members at the same time
     @@unique([name, ownerId])

@@ -2,6 +2,7 @@ import { assert, expect, it } from 'vitest';
 import { fakeProperty, fakeTenancyInCommon, fakePerson, fakeJointTenancyTenant } from '@/lib/demo/fake';
 import { getEnhancedPrisma } from '@/tests/mock/enhanced-prisma';
 import { Property, User, PropertyTenancyType } from '@prisma/client';
+import { faker } from '@faker-js/faker';
 
 const tenancyInCommon = fakeTenancyInCommon();
 const person = fakePerson();
@@ -85,6 +86,7 @@ function propertyJointTenancyCreateArgs({ property, user }: { property: Property
         data: {
             propertyTenancy: {
                 create: {
+                    name: faker.word.noun(),
                     tenancyType: PropertyTenancyType.Joint,
                     properties: {
                         connect: {
