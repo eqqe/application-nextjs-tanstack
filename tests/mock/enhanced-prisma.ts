@@ -14,17 +14,44 @@ export async function createUserWithSpace({ currentSpace, email }: { currentSpac
         email: email ?? `${nanoid()}@gmail.com`,
         password: 'demo',
     };
-    await prisma.user.deleteMany({ where: { email: testUser.email } });
-    const userCreated = await prisma.user.create({ data: testUser });
-
-    const enhancedPrismaNoSpace = enhancePrisma({
-        userId: userCreated.id,
-        selectedSpaces: [],
+    const include = {
+        profiles: {
+            include: {
+                profile: {
+                    include: {
+                        spaces: true,
+                    },
+                },
+            },
+        },
+    };
+    let userCreated = await prisma.user.findUnique({
+        where: {
+            email: testUser.email,
+        },
+        include,
     });
+    if (!userCreated) {
+        userCreated = await prisma.user.upsert({
+            create: testUser,
+            update: {},
+            where: {
+                email: testUser.email,
+            },
+            include,
+        });
+    }
 
-    const space = await enhancedPrismaNoSpace.space.create(
-        getNewSpace({ name: `Test spaces ${testUser.email}`, user: userCreated })
-    );
+    let space: Space = userCreated.profiles[0]?.profile.spaces[0];
+    if (!space) {
+        const enhancedPrismaNoSpace = enhancePrisma({
+            userId: userCreated.id,
+            selectedSpaces: [],
+        });
+        space = await enhancedPrismaNoSpace.space.create(
+            getNewSpace({ name: `Test spaces ${testUser.email}`, user: userCreated })
+        );
+    }
 
     currentSpace = currentSpace ?? space;
     const enhancedPrisma = enhancePrisma({
@@ -38,23 +65,27 @@ export async function createUserWithSpace({ currentSpace, email }: { currentSpac
         assert(application);
         assert(application.versions.length);
 
-        const spaceApplication = await enhancedPrisma.spaceApplicationVersion.create({
-            data: {
-                applicationVersionId: application.versions[0].id,
-            },
-            include: {
-                applicationVersion: {
-                    include: {
-                        application: true,
+        const lastVersion = application.versions[0];
+
+        if (!lastVersion.activations.find((activation) => activation.spaceId === currentSpace?.id)) {
+            const spaceApplication = await enhancedPrisma.spaceApplicationVersion.create({
+                data: {
+                    applicationVersionId: lastVersion.id,
+                },
+                include: {
+                    applicationVersion: {
+                        include: {
+                            application: true,
+                        },
                     },
                 },
-            },
-        });
+            });
 
-        assert.equal(spaceApplication.applicationVersion.applicationSlug, application.slug);
+            assert.equal(spaceApplication.applicationVersion.applicationSlug, application.slug);
+        }
     }
     return {
-        userCreated,
+        userCreated: userCreated,
         space,
         currentSpace,
         testUser,

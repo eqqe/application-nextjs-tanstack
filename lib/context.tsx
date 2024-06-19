@@ -54,9 +54,10 @@ export const SelectedSpacesProvider: React.FC<{ children: ReactNode }> = ({ chil
                 const initialSpaces: SelectedSpaces = [spaces[0].id];
                 setSelectedSpaces(initialSpaces);
                 setCookie(cookieName, JSON.stringify(initialSpaces));
+                queryClient.refetchQueries({ queryKey: ['zenstack'] });
             }
         }
-    }, [currentUser, spaces]);
+    }, [currentUser, queryClient, spaces]);
 
     const switchSpace = ({ space }: { space: Space }) => {
         if (currentUser) {
