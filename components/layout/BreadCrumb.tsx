@@ -19,40 +19,43 @@ export function TopBreadCrumb() {
     const grid = useCurrentGrid();
     const property = useCurrentProperty();
 
-    const items: Array<{ text: string; link: string }> = [];
+    const items: Array<{ text: string; link: string; id: string }> = [];
 
     const subTabInfo = subTab || grid?.subTab;
     if (subTabInfo) {
         items.push({
             link: getSubTabFolderUrl(subTabInfo.id),
             text: subTabInfo.name,
+            id: subTabInfo.id,
         });
     }
     if (grid) {
         items.push({
             link: getGridUrl(grid.id),
             text: grid.name,
+            id: grid.id,
         });
     }
     if (property) {
         items.push({
             link: getPropertyUrl(property.id),
             text: property.name,
+            id: property.id,
         });
     }
 
     return (
         <Breadcrumb className="hidden md:flex">
             <BreadcrumbList>
-                <BreadcrumbItem>
+                <BreadcrumbItem key={'/'}>
                     <BreadcrumbLink asChild>
                         <Link href="/">{space?.name}</Link>
                     </BreadcrumbLink>
                 </BreadcrumbItem>
                 {items.slice(0, -1).map((item) => (
                     <>
-                        <BreadcrumbSeparator />
-                        <BreadcrumbItem>
+                        <BreadcrumbSeparator key={`separator-${item.id}`} />
+                        <BreadcrumbItem key={`item-${item.id}`}>
                             <BreadcrumbLink asChild>
                                 <Link href={item.link}>{item.text}</Link>
                             </BreadcrumbLink>
@@ -62,8 +65,8 @@ export function TopBreadCrumb() {
 
                 {items.length > 0 && (
                     <>
-                        <BreadcrumbSeparator />
-                        <BreadcrumbItem>
+                        <BreadcrumbSeparator key={`separator-${items[items.length - 1].id}`} />
+                        <BreadcrumbItem key={`item-${items[items.length - 1].id}`}>
                             <BreadcrumbPage>{items[items.length - 1].text}</BreadcrumbPage>
                         </BreadcrumbItem>
                     </>
