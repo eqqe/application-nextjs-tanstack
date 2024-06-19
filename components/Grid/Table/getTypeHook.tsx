@@ -112,6 +112,14 @@ import {
     useGroupBySubTabFolder,
     useUpdateManySubTabFolder,
     useUpdateSubTabFolder,
+    useAggregatePropertyTenancy,
+    useCountPropertyTenancy,
+    useCreateManyPropertyTenancy,
+    useCreatePropertyTenancy,
+    useFindManyPropertyTenancy,
+    useGroupByPropertyTenancy,
+    useUpdateManyPropertyTenancy,
+    useUpdatePropertyTenancy,
 } from '@/zmodel/lib/hooks';
 import { Type } from '@prisma/client';
 import {
@@ -139,6 +147,9 @@ import {
     ProfileCreateScalarSchema,
     ProfileScalarSchema,
     ProfileUpdateScalarSchema,
+    PropertyTenancyCreateScalarSchema,
+    PropertyTenancyScalarSchema,
+    PropertyTenancyUpdateScalarSchema,
     PropertyJointTenancyCreateScalarSchema,
     PropertyJointTenancyScalarSchema,
     PropertyJointTenancyUpdateScalarSchema,
@@ -314,6 +325,28 @@ export function getTypeHook({ type }: { type: Type }) {
                 useCreate: {
                     single: useCreateProfile,
                     many: useCreateManyProfile,
+                },
+            };
+        case 'PropertyTenancy':
+            return {
+                useHook: {
+                    Aggregate: useAggregatePropertyTenancy,
+                    GroupBy: useGroupByPropertyTenancy,
+                    FindMany: useFindManyPropertyTenancy,
+                },
+                schema: {
+                    base: PropertyTenancyScalarSchema,
+                    update: PropertyTenancyUpdateScalarSchema,
+                    create: PropertyTenancyCreateScalarSchema,
+                },
+                useCount: useCountPropertyTenancy,
+                useUpdate: {
+                    single: useUpdatePropertyTenancy,
+                    many: useUpdateManyPropertyTenancy,
+                },
+                useCreate: {
+                    single: useCreatePropertyTenancy,
+                    many: useCreateManyPropertyTenancy,
                 },
             };
         case 'PropertyJointTenancy':

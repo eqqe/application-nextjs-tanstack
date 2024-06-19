@@ -44,9 +44,7 @@ it('Should list spaces, and check that only current space components are visible
 
     const propertyNewSpace = fakeProperty();
 
-    const newPropertyNewSpace = await user1PrismaNewSpace.property.create({
-        data: propertyNewSpace,
-    });
+    const newPropertyNewSpace = await user1PrismaNewSpace.property.create({ data: propertyNewSpace });
 
     propertiesNewSpace = await user1PrismaNewSpace.property.findMany(findManyPropertyArgs);
     assert.equal(propertiesNewSpace.length, 1);

@@ -148,6 +148,7 @@ enum Type {
     Person
     User
     Profile
+    PropertyTenancy
     PropertyTenancyInCommon
     PropertyTenancyInCommonTenant
     PropertyJointTenancy

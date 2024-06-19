@@ -26,15 +26,15 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                         colSpan: 2,
                                                         card: {
                                                             create: {
-                                                                title: 'Your property tenants',
+                                                                title: 'Your property tenancies',
                                                                 invertTitleDescription: false,
                                                                 description: `See the list of property tenants`,
                                                                 footer: {
                                                                     create: {
-                                                                        form: {
+                                                                        button: {
                                                                             create: {
                                                                                 text: 'Create property tenant',
-                                                                                form: 'PropertyTenancy',
+                                                                                table: 'PropertyTenancy',
                                                                             },
                                                                         },
                                                                     },

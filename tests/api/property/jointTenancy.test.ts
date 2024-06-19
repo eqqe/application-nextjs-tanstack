@@ -18,7 +18,7 @@ it('Should not allow a user to create tenancy in common for properties not in th
             await user1.prisma.propertyJointTenancy.create(
                 propertyJointTenancyCreateArgs({ property: newProperty, user: user1.userCreated })
             )
-    ).rejects.toThrow("denied by policy: propertyJointTenancy entities failed 'create' check, entity");
+    ).rejects.toThrow("denied by policy: Property entities failed 'update' check, entity");
 
     const tenants = await user2.prisma.propertyTenancyInCommonTenant.findMany();
     assert.notOk(tenants.length);
@@ -36,9 +36,9 @@ it('Should allow a user to create tenancy in common for properties in their spac
     );
     const jointTenancies = await user2.prisma.propertyJointTenancy.findMany({
         include: {
-            propertyTenancies: {
+            propertyTenancy: {
                 include: {
-                    property: true,
+                    properties: true,
                 },
             },
             tenants: {
@@ -50,8 +50,8 @@ it('Should allow a user to create tenancy in common for properties in their spac
     });
     assert.equal(jointTenancies.length, 1);
     assert.deepEqual(jointTenancies[0].tenants[0].person.birthDate, person.birthDate);
-    assert.equal(jointTenancies[0].propertyTenancies[0].property.surface, property.surface);
-    assert.equal(jointTenancies[0].propertyTenancies[0].property.ownerId, user2.userCreated.id);
+    assert.equal(jointTenancies[0].propertyTenancy?.properties[0].surface, property.surface);
+    assert.equal(jointTenancies[0].propertyTenancy?.properties[0].ownerId, user2.userCreated.id);
     assert.equal(jointTenancies[0].ownerId, user3.userCreated.id);
 
     const properties = await user2.prisma.property.findMany({
@@ -83,10 +83,10 @@ it('Should allow a user to create tenancy in common for properties in their spac
 function propertyJointTenancyCreateArgs({ property, user }: { property: Property; user: User }) {
     return {
         data: {
-            propertyTenancies: {
+            propertyTenancy: {
                 create: {
                     tenancyType: PropertyTenancyType.Joint,
-                    property: {
+                    properties: {
                         connect: {
                             id: property.id,
                         },

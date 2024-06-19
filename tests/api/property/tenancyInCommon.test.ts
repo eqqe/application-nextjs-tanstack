@@ -18,7 +18,7 @@ it('Should not allow a user to create tenancy in common for properties not in th
             await user1.prisma.propertyTenancyInCommon.create(
                 propertyTenancyInCommonCreateArgs({ property: newProperty, user: user1.userCreated })
             )
-    ).rejects.toThrow("propertyTenancyInCommon entities failed 'create' check, entity");
+    ).rejects.toThrow("denied by policy: Property entities failed 'update' check, entity");
 
     const tenants = await user2.prisma.propertyTenancyInCommonTenant.findMany();
     assert.notOk(tenants.length);
@@ -39,9 +39,9 @@ it('Should allow a user to create tenancy in common for properties in their spac
         include: {
             propertyTenancyInCommon: {
                 include: {
-                    propertyTenancies: {
+                    propertyTenancy: {
                         include: {
-                            property: true,
+                            properties: true,
                         },
                     },
                 },
@@ -52,8 +52,8 @@ it('Should allow a user to create tenancy in common for properties in their spac
     assert.equal(tenants.length, 1);
     assert.equal(tenants[0].propertyTenancyInCommon.siret, tenancyInCommon.siret);
     assert.deepEqual(tenants[0].person.birthDate, person.birthDate);
-    assert.equal(tenants[0].propertyTenancyInCommon.propertyTenancies[0].property.surface, property.surface);
-    assert.equal(tenants[0].propertyTenancyInCommon.propertyTenancies[0].property.ownerId, user2.userCreated.id);
+    assert.equal(tenants[0].propertyTenancyInCommon.propertyTenancy?.properties[0].surface, property.surface);
+    assert.equal(tenants[0].propertyTenancyInCommon.propertyTenancy?.properties[0].ownerId, user2.userCreated.id);
     assert.equal(tenants[0].propertyTenancyInCommon.ownerId, user3.userCreated.id);
 
     const properties = await user2.prisma.property.findMany({
@@ -87,10 +87,10 @@ function propertyTenancyInCommonCreateArgs({ property, user }: { property: Prope
     return {
         data: {
             ...tenancyInCommon,
-            propertyTenancies: {
+            propertyTenancy: {
                 create: {
                     tenancyType: PropertyTenancyType.InCommon,
-                    property: {
+                    properties: {
                         connect: {
                             id: property.id,
                         },
