@@ -1,4 +1,4 @@
-import { AutoFormDialog } from '@/components/Form/CreateForm';
+import { AutoFormDialog } from '@/components/Form/AutoFormDialog';
 import { WithNavBar } from '@/components/layout/WithNavBar';
 import { useCurrentUser, useSelectedSpaces } from '@/lib/context';
 import { getNewSpace } from '@/lib/getNewSpace';

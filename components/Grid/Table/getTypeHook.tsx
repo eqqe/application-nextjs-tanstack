@@ -1,3 +1,4 @@
+import { PropertyTenancyForm } from '@/components/Property/PropertyTenancyForm';
 import { getGridUrl, getPropertyUrl, getSubTabFolderUrl } from '@/lib/urls';
 import {
     useAggregateProperty,
@@ -337,7 +338,9 @@ export function getTypeHook({ type }: { type: Type }) {
                 schema: {
                     base: PropertyTenancyScalarSchema,
                     update: PropertyTenancyUpdateScalarSchema,
-                    create: PropertyTenancyCreateScalarSchema,
+                    create: PropertyTenancyCreateScalarSchema.extend({
+                        toto: PropertyTenancyInCommonCreateScalarSchema,
+                    }),
                 },
                 useCount: useCountPropertyTenancy,
                 useUpdate: {
@@ -348,6 +351,7 @@ export function getTypeHook({ type }: { type: Type }) {
                     single: useCreatePropertyTenancy,
                     many: useCreateManyPropertyTenancy,
                 },
+                form: PropertyTenancyForm,
             };
         case 'PropertyJointTenancy':
             return {

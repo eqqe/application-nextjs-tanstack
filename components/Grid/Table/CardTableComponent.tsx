@@ -1,7 +1,7 @@
 import { beautifyObjectName } from '@/components/ui/auto-form/utils';
 import { Prisma } from '@prisma/client';
 import { getTypeHook } from './getTypeHook';
-import { AutoFormDialog } from '@/components/Form/CreateForm';
+import { AutoFormDialog } from '@/components/Form/AutoFormDialog';
 import { FallbackError } from '@/components/layout/FallbackError';
 import { ErrorBoundary } from 'react-error-boundary';
 import { ColumnDef, PaginationState, RowData } from '@tanstack/react-table';

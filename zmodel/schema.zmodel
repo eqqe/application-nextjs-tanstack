@@ -155,11 +155,6 @@ enum Type {
     PropertyTenancyByEntirety
 }
 
-
-enum FormType {
-    PropertyTenancy
-}
-
 // next-auth
 model Account {
     id                       String  @id @default(uuid())

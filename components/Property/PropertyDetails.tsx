@@ -1,7 +1,7 @@
 import { useCreateLease } from '@/zmodel/lib/hooks';
 import LeaseDetail from 'components/Lease/LeaseList';
 import { LeaseCreateScalarSchema } from '@zenstackhq/runtime/zod/models';
-import { AutoFormDialog } from '@/components/Form/CreateForm';
+import { AutoFormDialog } from '@/components/Form/AutoFormDialog';
 import { useCurrentProperty } from '@/hooks/property/useCurrentProperty';
 
 export function PropertyDetails() {

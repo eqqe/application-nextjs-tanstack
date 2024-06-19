@@ -116,12 +116,6 @@ model GridCardFooterButton extends GridCardFooterBase {
     table Type
 }
 
-model GridCardFooterForm extends GridCardFooterBase {
-    text  String
-    count Type[]
-    form  FormType
-}
-
 model GridCardFooterProgress extends GridCardFooterBase {
     value Int
 }
