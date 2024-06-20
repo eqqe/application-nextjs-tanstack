@@ -1,7 +1,12 @@
 import { assert, expect, it } from 'vitest';
 import { fakeProperty } from '@/lib/demo/fake';
 import { getEnhancedPrisma } from '@/tests/mock/enhanced-prisma';
-import { propertyJointTenancyCreateArgs, propertyTenancyInCommonCreateArgs } from '@/tests/api/property/tenancyUtils';
+import {
+    person,
+    propertyJointTenancyCreateArgs,
+    propertyTenancyByEntiretyCreateArgs,
+    propertyTenancyInCommonCreateArgs,
+} from '@/tests/api/property/tenancyUtils';
 import { Prisma } from '@prisma/client';
 
 it('Should allow a user to create property tenancy and list and group by them', async () => {
@@ -36,6 +41,11 @@ it('Should allow a user to create property tenancy and list and group by them', 
                         jointTenancy: {
                             include: {
                                 tenants: true,
+                            },
+                        },
+                        tenancyByEntirety: {
+                            include: {
+                                person: true,
                             },
                         },
                     },
@@ -85,5 +95,47 @@ it('Should allow a user to create property tenancy and list and group by them', 
     assert.deepEqual(propertyTenanciesCountByType, [
         { tenancyType: 'InCommon', _count: 1 },
         { tenancyType: 'Joint', _count: 1 },
+    ]);
+
+    const newProperty4 = await user2.prisma.property.create({ data: fakeProperty() });
+
+    await user3.prisma.propertyJointTenancy.create(
+        propertyJointTenancyCreateArgs({ property: newProperty4, user: user1.userCreated })
+    );
+
+    properties = await getProperties();
+    assert.equal(properties[0].tenancy?.tenancyType, 'Joint');
+    assert.equal(properties[0].tenancy?.jointTenancy?.tenants.length, 1);
+    assert.equal(properties[1].tenancy?.tenancyType, 'Joint');
+    assert.equal(properties[2].tenancy?.tenancyInCommon?.intraCommunityVAT, tenancyInCommon.intraCommunityVAT);
+    assert.equal(properties[3].tenancy?.tenancyInCommon?.intraCommunityVAT, tenancyInCommon.intraCommunityVAT);
+
+    propertyTenanciesCountByType = await getPropertyTenanciesCountByType();
+
+    assert.deepEqual(propertyTenanciesCountByType, [
+        { tenancyType: 'InCommon', _count: 1 },
+        { tenancyType: 'Joint', _count: 2 },
+    ]);
+
+    const newProperty5 = await user2.prisma.property.create({ data: fakeProperty() });
+
+    await user3.prisma.propertyTenancyByEntirety.create(
+        propertyTenancyByEntiretyCreateArgs({ property: newProperty5, user: user1.userCreated })
+    );
+
+    properties = await getProperties();
+    assert.equal(properties[0].tenancy?.tenancyType, 'ByEntirety');
+    assert.equal(properties[0].tenancy?.tenancyByEntirety?.person.phone, person.phone);
+    assert.equal(properties[1].tenancy?.tenancyType, 'Joint');
+    assert.equal(properties[2].tenancy?.tenancyType, 'Joint');
+    assert.equal(properties[3].tenancy?.tenancyInCommon?.intraCommunityVAT, tenancyInCommon.intraCommunityVAT);
+    assert.equal(properties[4].tenancy?.tenancyInCommon?.intraCommunityVAT, tenancyInCommon.intraCommunityVAT);
+
+    propertyTenanciesCountByType = await getPropertyTenanciesCountByType();
+
+    assert.deepEqual(propertyTenanciesCountByType, [
+        { tenancyType: 'InCommon', _count: 1 },
+        { tenancyType: 'Joint', _count: 2 },
+        { tenancyType: 'ByEntirety', _count: 1 },
     ]);
 });
