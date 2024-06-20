@@ -1,7 +1,7 @@
 import { useCreatePropertyTenancy } from '@/zmodel/lib/hooks';
 import { toast } from 'react-toastify';
 import { AutoFormDialog } from '@/components/Form/AutoFormDialog';
-import { z } from 'zod';
+import { AnyZodObject, ZodObject, z } from 'zod';
 import {
     PropertyJointTenancyCreateScalarSchema,
     PropertyTenancyByEntiretyCreateScalarSchema,
@@ -10,24 +10,23 @@ import {
 } from '@zenstackhq/runtime/zod/models';
 import { useEffect, useMemo, useState } from 'react';
 import { fakePerson } from '@/lib/demo/fake';
-import { PropertyTenancyType } from '@zenstackhq/runtime/models';
+import { PropertyTenancyType } from '@prisma/client';
 
 export function PropertyTenancyForm() {
     const create = useCreatePropertyTenancy();
 
-    const baseFormSchema = useMemo(
-        () =>
-            z.object({
-                tenancy: PropertyTenancyCreateScalarSchema,
-            }),
-        []
-    );
-    const allFormsSchema = baseFormSchema.extend({
-        tenancyInCommon: PropertyTenancyInCommonCreateScalarSchema.optional(),
-        jointTenancy: PropertyJointTenancyCreateScalarSchema.optional(),
-        tenancyByEntirety: PropertyTenancyByEntiretyCreateScalarSchema.optional(),
-    });
-    const [tenancyType, setTenancyType] = useState<PropertyTenancyType | undefined>();
+    const baseSchema = PropertyTenancyCreateScalarSchema;
+    const typedSchemas = {
+        [PropertyTenancyType.ByEntirety]: PropertyTenancyByEntiretyCreateScalarSchema.optional(),
+        [PropertyTenancyType.InCommon]: PropertyTenancyInCommonCreateScalarSchema.optional(),
+        [PropertyTenancyType.Joint]: PropertyJointTenancyCreateScalarSchema.optional(),
+    };
+    type EnumType = PropertyTenancyType;
+
+    const baseFormSchema = useMemo(() => z.object({ base: baseSchema }), [baseSchema]);
+
+    const allFormsSchema = baseFormSchema.extend(typedSchemas);
+    const [tenancyType, setTenancyType] = useState<EnumType | undefined>();
     const [formSchema, setFormSchema] = useState(allFormsSchema);
     useEffect(() => {
         // @ts-expect-error
@@ -39,42 +38,42 @@ export function PropertyTenancyForm() {
             onSubmitData={async (data) => {
                 await create.mutateAsync({
                     data: {
-                        ...data.tenancy,
-                        ...(data.tenancy.tenancyType === 'InCommon' && {
+                        ...data.base,
+                        ...(data.base.tenancyType === 'InCommon' && {
                             tenancyInCommon: {
-                                create: data.tenancyInCommon,
+                                create: data.InCommon,
                             },
                         }),
-                        ...(data.tenancy.tenancyType === 'Joint' && {
+                        ...(data.base.tenancyType === 'Joint' && {
                             jointTenancy: {
-                                create: data.jointTenancy,
+                                create: data.Joint,
                             },
                         }),
-                        ...(data.tenancy.tenancyType === 'ByEntirety' && {
+                        ...(data.base.tenancyType === 'ByEntirety' && {
                             tenancyByEntirety: {
-                                create: { ...data.tenancyByEntirety, person: { create: fakePerson() } },
+                                create: { ...data.ByEntirety, person: { create: fakePerson() } },
                             },
                         }),
                     },
                 });
-                toast.success(`${data.tenancy.name} created successfully!`);
+                toast.success(`${data.base.name} created successfully!`);
             }}
             onValuesChange={(values) => {
-                if (tenancyType === values.tenancy?.tenancyType) {
+                if (tenancyType === values.base?.tenancyType) {
                     return;
                 }
-                setTenancyType(values.tenancy?.tenancyType);
-                switch (values.tenancy?.tenancyType) {
+                setTenancyType(values.base?.tenancyType);
+                switch (values.base?.tenancyType) {
                     case 'ByEntirety': {
-                        const updateFormSchema = allFormsSchema.omit({ tenancyInCommon: true, jointTenancy: true });
+                        const updateFormSchema = allFormsSchema.omit({ InCommon: true, Joint: true });
                         // @ts-expect-error
                         setFormSchema(updateFormSchema);
                         break;
                     }
                     case 'InCommon': {
                         const updateFormSchema = allFormsSchema.omit({
-                            tenancyByEntirety: true,
-                            jointTenancy: true,
+                            ByEntirety: true,
+                            Joint: true,
                         });
                         // @ts-expect-error
                         setFormSchema(updateFormSchema);
@@ -82,8 +81,8 @@ export function PropertyTenancyForm() {
                     }
                     case 'Joint': {
                         const updateFormSchema = allFormsSchema.omit({
-                            tenancyInCommon: true,
-                            tenancyByEntirety: true,
+                            InCommon: true,
+                            ByEntirety: true,
                         });
                         // @ts-expect-error
                         setFormSchema(updateFormSchema);
