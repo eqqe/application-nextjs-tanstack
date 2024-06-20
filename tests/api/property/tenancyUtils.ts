@@ -97,5 +97,8 @@ export function propertyTenancyInCommonCreateArgs({ property, user }: { property
                 },
             },
         },
+        include: {
+            propertyTenancy: true,
+        },
     };
 }

@@ -48,3 +48,15 @@ test('Should enable assets application, see groups of properties, list them, edi
     await utils.createLease({ streetAddress: streetAddress, startDate: '2040-01-01' });
     await utils.createLease({ streetAddress: streetAddress, startDate: '2050-01-01' });
 });
+
+test('Should enable assets application, see essential data, create a property tenancy', async ({ page, utils }) => {
+    await utils.openHomeCreateSpace();
+    await utils.enableAssets();
+    await page.getByText('Your essential data').click();
+    await utils.createPropertyTenancy({
+        propertyTenancy: {
+            tenancyType: 'InCommon',
+            name: 'SCI Simon',
+        },
+    });
+});

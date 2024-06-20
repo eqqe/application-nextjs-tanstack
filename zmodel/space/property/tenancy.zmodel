@@ -14,7 +14,6 @@ abstract model PropertyTenancyLink extends Component {
 
 
 model PropertyTenancyInCommon extends Address, PropertyTenancyLink {
-    name              String?
     siret             String?
     siren             String?
     codeNafApe        String?

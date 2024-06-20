@@ -8,10 +8,8 @@ import {
     PersonCreateScalarSchema,
     PaymentCreateScalarSchema,
     PropertyTenancyInCommonCreateScalarSchema,
-    PropertyJointTenancyCreateScalarSchema,
     PropertyTenancyInCommonTenantCreateScalarSchema,
     PropertyJointTenancyTenantCreateScalarSchema,
-    PropertyTenancyCreateScalarSchema,
 } from '@zenstackhq/runtime/zod/models';
 
 export const cityPlaywrightTest = 'City to find in Playwright test';

@@ -1,10 +1,12 @@
 import { FieldPath, FieldValues } from 'react-hook-form';
 import { beautifyObjectName } from '@/components/ui/auto-form/utils';
 import { faker } from '@faker-js/faker';
-import { Lease, Space } from '@zenstackhq/runtime/models';
+import { Lease, PropertyTenancy, PropertyTenancyInCommon, Space } from '@zenstackhq/runtime/models';
 import { expect, Page, test as base } from '@playwright/test';
 import { Property } from '@prisma/client';
-import { fakeProperty } from '@/lib/demo/fake';
+import { fakeProperty, fakeTenancyInCommon } from '@/lib/demo/fake';
+import { PropertyTenancyCreateScalarSchema } from '@zenstackhq/runtime/zod/models';
+import { z } from 'zod';
 
 export const test = base.extend<{ page: Page; utils: ReturnType<typeof getUtils> }>({
     utils: async ({ page }, use) => {
@@ -48,6 +50,31 @@ function getUtils(page: Page) {
 
         await checkToastCreated('Property');
         return streetAddress;
+    }
+
+    async function createPropertyTenancy({
+        propertyTenancy,
+    }: {
+        propertyTenancy: z.infer<typeof PropertyTenancyCreateScalarSchema>;
+    }) {
+        await clickButton('Create Property Tenancy');
+
+        await selectFromCombo<PropertyTenancy>('tenancyType', propertyTenancy.tenancyType);
+        await getByLabel<PropertyTenancy>('name').fill(propertyTenancy.name);
+
+        const tenancyInCommon = fakeTenancyInCommon();
+
+        await getByLabel<PropertyTenancyInCommon>('streetAddress').fill(tenancyInCommon.streetAddress);
+        await getByLabel<PropertyTenancyInCommon>('city').fill(tenancyInCommon.city);
+        await getByLabel<PropertyTenancyInCommon>('postalCode').fill(tenancyInCommon.postalCode);
+        await getByLabel<PropertyTenancyInCommon>('country').fill(tenancyInCommon.country);
+        await getByLabel<PropertyTenancyInCommon>('intraCommunityVAT').fill(tenancyInCommon.intraCommunityVAT ?? '');
+        await getByLabel<PropertyTenancyInCommon>('siren').fill(tenancyInCommon.siren ?? '');
+        await getByLabel<PropertyTenancyInCommon>('siret').fill(tenancyInCommon.siret ?? '');
+
+        await clickSaveChanges();
+
+        await checkToastCreated(propertyTenancy.name);
     }
 
     async function createLease({ streetAddress, startDate }: { streetAddress: string; startDate: string }) {
@@ -105,6 +132,7 @@ function getUtils(page: Page) {
         generateDemonstration,
         enableAssets,
         createProperty,
+        createPropertyTenancy,
         createLease,
         clickButton,
         clickSaveChanges,
