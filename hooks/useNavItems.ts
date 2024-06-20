@@ -1,12 +1,8 @@
-import { useFindManySubTabFolder } from '@/zmodel/lib/hooks';
 import { getGridUrl } from '@/lib/urls';
+import { useSubTabs } from '@/lib/context';
 
 export function useNavItems() {
-    const { data: subTabs } = useFindManySubTabFolder({
-        include: {
-            grids: true,
-        },
-    });
+    const subTabs = useSubTabs();
     return subTabs?.flatMap((subTab) =>
         subTab.grids.map((grid) => ({
             title: `${grid.name}`,

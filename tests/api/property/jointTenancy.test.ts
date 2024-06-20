@@ -1,11 +1,7 @@
 import { assert, expect, it } from 'vitest';
-import { fakeProperty, fakeTenancyInCommon, fakePerson, fakeJointTenancyTenant } from '@/lib/demo/fake';
+import { fakeProperty } from '@/lib/demo/fake';
 import { getEnhancedPrisma } from '@/tests/mock/enhanced-prisma';
-import { Property, User, PropertyTenancyType } from '@prisma/client';
-import { faker } from '@faker-js/faker';
-
-const tenancyInCommon = fakeTenancyInCommon();
-const person = fakePerson();
+import { person, propertyJointTenancyCreateArgs } from '@/tests/api/property/tenancyUtils';
 
 it('Should not allow a user to create tenancy in common for properties not in their space', async () => {
     const { user1, user2 } = await getEnhancedPrisma();
@@ -80,36 +76,3 @@ it('Should allow a user to create tenancy in common for properties in their spac
     assert.equal(properties[0].tenancy?.jointTenancy?.ownerId, user3.userCreated.id);
     assert.deepEqual(properties[0].tenancy?.jointTenancy?.tenants[0].person.birthDate, person.birthDate);
 });
-
-function propertyJointTenancyCreateArgs({ property, user }: { property: Property; user: User }) {
-    return {
-        data: {
-            propertyTenancy: {
-                create: {
-                    name: faker.word.noun(),
-                    tenancyType: PropertyTenancyType.Joint,
-                    properties: {
-                        connect: {
-                            id: property.id,
-                        },
-                    },
-                },
-            },
-            tenants: {
-                create: {
-                    ...fakeJointTenancyTenant(),
-                    person: {
-                        create: {
-                            ...person,
-                            user: {
-                                connect: {
-                                    id: user.id,
-                                },
-                            },
-                        },
-                    },
-                },
-            },
-        },
-    };
-}

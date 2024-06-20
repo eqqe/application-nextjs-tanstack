@@ -1,10 +1,7 @@
 import { assert, expect, it } from 'vitest';
-import { fakeProperty, fakePerson } from '@/lib/demo/fake';
+import { fakeProperty } from '@/lib/demo/fake';
 import { getEnhancedPrisma } from '@/tests/mock/enhanced-prisma';
-import { Property, User, PropertyTenancyType } from '@prisma/client';
-import { faker } from '@faker-js/faker';
-
-const person = fakePerson();
+import { person, propertyTenancyByEntiretyCreateArgs } from '@/tests/api/property/tenancyUtils';
 
 it('Should not allow a user to create tenancy by entirety for properties not in their space', async () => {
     const { user1, user2 } = await getEnhancedPrisma();
@@ -72,31 +69,3 @@ it('Should allow a user to create tenancy by entirety for properties in their sp
     assert.equal(properties[0].tenancy?.tenancyByEntirety?.ownerId, user3.userCreated.id);
     assert.deepEqual(properties[0].tenancy?.tenancyByEntirety?.person.birthDate, person.birthDate);
 });
-
-function propertyTenancyByEntiretyCreateArgs({ property, user }: { property: Property; user: User }) {
-    return {
-        data: {
-            propertyTenancy: {
-                create: {
-                    name: faker.word.noun(),
-                    tenancyType: PropertyTenancyType.ByEntirety,
-                    properties: {
-                        connect: {
-                            id: property.id,
-                        },
-                    },
-                },
-            },
-            person: {
-                create: {
-                    ...person,
-                    user: {
-                        connect: {
-                            id: user.id,
-                        },
-                    },
-                },
-            },
-        },
-    };
-}

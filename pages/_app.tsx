@@ -11,14 +11,14 @@ import { ThemeProvider } from 'next-themes';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { SelectedSpacesProvider } from '@/lib/context';
 
-// import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 const queryClient = new QueryClient();
 
 function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
     return (
         <QueryClientProvider client={queryClient}>
-            {/* <ReactQueryDevtools /> */}
+            <ReactQueryDevtools />
             <SessionProvider session={session}>
                 <TooltipProvider>
                     <ZenStackHooksProvider value={{ endpoint: '/api/model', logging: true }}>
