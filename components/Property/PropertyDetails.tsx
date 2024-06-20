@@ -1,7 +1,7 @@
 import { useCreateLease } from '@/zmodel/lib/hooks';
 import LeaseDetail from 'components/Lease/LeaseList';
 import { LeaseCreateScalarSchema } from '@zenstackhq/runtime/zod/models';
-import { CreateForm } from '@/components/Form/CreateForm';
+import { AutoFormDialog } from '@/components/Form/AutoFormDialog';
 import { useCurrentProperty } from '@/hooks/property/useCurrentProperty';
 
 export function PropertyDetails() {
@@ -13,7 +13,7 @@ export function PropertyDetails() {
             <h1 className="mb-4 text-2xl font-semibold">{property?.streetAddress}</h1>
             <div className="flex space-x-2">
                 <div className="mb-8 flex w-full flex-col space-y-4 md:flex-row md:space-x-4 md:space-y-0">
-                    <CreateForm
+                    <AutoFormDialog
                         formSchema={LeaseCreateScalarSchema}
                         onSubmitData={async (data) => {
                             if (!property) {

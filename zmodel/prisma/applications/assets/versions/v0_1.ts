@@ -17,7 +17,7 @@ export const assetsv0_1: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                 grids: {
                                     create: [
                                         {
-                                            name: 'Properties grid',
+                                            name: 'List of properties',
                                             columns: 1,
                                             elements: {
                                                 create: [

@@ -1,8 +1,8 @@
-import { useFindManySpace, useFindUniqueSpace } from '@/zmodel/lib/hooks';
+import { useFindManySpace, useFindManySubTabFolder, useFindUniqueSpace } from '@/zmodel/lib/hooks';
 import { useSession } from 'next-auth/react';
 import { getCookie, setCookie } from 'cookies-next';
 import { useRouter } from 'next/router';
-import { createContext, useState, useContext, ReactNode, useEffect } from 'react';
+import { createContext, useState, useContext, ReactNode, useEffect, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Space } from '@zenstackhq/runtime/models';
 
@@ -36,6 +36,21 @@ export const useCurrentSpace = () => {
     return undefined;
 };
 
+export const useSubTabs = () => {
+    const selectedSpaces = useSelectedSpaces();
+    const { data: subTabs } = useFindManySubTabFolder(
+        {
+            include: {
+                grids: true,
+            },
+        },
+        {
+            enabled: !!selectedSpaces.selectedSpaces.length,
+        }
+    );
+    return subTabs;
+};
+
 export const SelectedSpacesProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [selectedSpaces, setSelectedSpaces] = useState<SelectedSpaces>([]);
 
@@ -45,7 +60,7 @@ export const SelectedSpacesProvider: React.FC<{ children: ReactNode }> = ({ chil
     const { data: spaces } = useFindManySpace();
 
     useEffect(() => {
-        if (currentUser) {
+        if (!selectedSpaces.length && currentUser) {
             const cookieName = selectedSpacesCookieName(currentUser.id);
             const cookie = getCookie(cookieName);
             if (cookie) {
@@ -56,7 +71,13 @@ export const SelectedSpacesProvider: React.FC<{ children: ReactNode }> = ({ chil
                 setCookie(cookieName, JSON.stringify(initialSpaces));
             }
         }
-    }, [currentUser, spaces]);
+    }, [currentUser, queryClient, selectedSpaces, spaces]);
+
+    useEffect(() => {
+        if (selectedSpaces && selectedSpaces.length) {
+            queryClient.refetchQueries({ queryKey: ['zenstack'], stale: true });
+        }
+    }, [queryClient, selectedSpaces]);
 
     const switchSpace = ({ space }: { space: Space }) => {
         if (currentUser) {
@@ -64,7 +85,6 @@ export const SelectedSpacesProvider: React.FC<{ children: ReactNode }> = ({ chil
             setSelectedSpaces(updatedSelectedSpaces);
             const cookieName = selectedSpacesCookieName(currentUser.id);
             setCookie(cookieName, JSON.stringify(updatedSelectedSpaces));
-            queryClient.refetchQueries({ queryKey: ['zenstack'] });
         }
     };
 

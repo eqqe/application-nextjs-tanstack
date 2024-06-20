@@ -104,6 +104,7 @@ model User extends IdCreatedUpdated {
     persons                             Person[]                        @relation("user")
     propertyTenancyInCommonOwned        PropertyTenancyInCommon[]       @relation("owner")
     personOwned                         Person[]                        @relation("owner")
+    propertyTenancyOwned                PropertyTenancy[]               @relation("owner")
     propertyTenancyInCommonTenantsOwned PropertyTenancyInCommonTenant[] @relation("owner")
     propertyJointTenancyTenantsOwned    PropertyJointTenancyTenant[]    @relation("owner")
     propertyJointTenancies              PropertyJointTenancy[]          @relation("owner")
@@ -147,13 +148,12 @@ enum Type {
     Person
     User
     Profile
+    PropertyTenancy
     PropertyTenancyInCommon
     PropertyTenancyInCommonTenant
     PropertyJointTenancy
     PropertyTenancyByEntirety
 }
-
-
 
 // next-auth
 model Account {

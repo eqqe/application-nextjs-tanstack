@@ -5,14 +5,15 @@ import "property"
 import "lease"
 
 
-abstract model PropertyLink extends Component {
-    properties Property[]
+abstract model PropertyTenancyLink extends Component {
+    propertyTenancy PropertyTenancy?
 
-    @@allow('all', properties?[spaceId in auth().selectedSpaces && space.profiles?[users?[user.id == auth().id] && (role == ADMIN || role == USER)]])
+    @@allow('all', propertyTenancy.spaceId in auth().selectedSpaces && propertyTenancy.space.profiles?[users?[user.id == auth().id] && (role == ADMIN || role == USER)])
+    @@allow('all', propertyTenancy.properties?[spaceId in auth().selectedSpaces && space.profiles?[users?[user.id == auth().id] && (role == ADMIN || role == USER)]])
 }
 
 
-model PropertyTenancyInCommon extends Address, PropertyLink {
+model PropertyTenancyInCommon extends Address, PropertyTenancyLink {
     name              String?
     siret             String?
     siren             String?
@@ -23,11 +24,11 @@ model PropertyTenancyInCommon extends Address, PropertyLink {
     tenants           PropertyTenancyInCommonTenant[]
 }
 
-model PropertyJointTenancy extends PropertyLink {
+model PropertyJointTenancy extends PropertyTenancyLink {
     tenants PropertyJointTenancyTenant[]
 }
 
-model PropertyTenancyByEntirety extends BasePerson, PropertyLink {
+model PropertyTenancyByEntirety extends BasePerson, PropertyTenancyLink {
 }
 
 model PropertyTenancyInCommonTenant extends BasePerson, Component {
@@ -37,7 +38,7 @@ model PropertyTenancyInCommonTenant extends BasePerson, Component {
     entryDate                 DateTime
     exitDate                  DateTime?
 
-    @@allow('all', propertyTenancyInCommon.properties?[spaceId in auth().selectedSpaces && space.profiles?[users?[user.id == auth().id] && (role == ADMIN || role == USER)]])
+    @@allow('all', propertyTenancyInCommon.propertyTenancy.properties?[spaceId in auth().selectedSpaces && space.profiles?[users?[user.id == auth().id] && (role == ADMIN || role == USER)]])
 }
 
 model PropertyJointTenancyTenant extends BasePerson, Component {
@@ -45,5 +46,5 @@ model PropertyJointTenancyTenant extends BasePerson, Component {
     propertyJointTenancyId String
 
 
-    @@allow('all', propertyJointTenancy.properties?[spaceId in auth().selectedSpaces && space.profiles?[users?[user.id == auth().id] && (role == ADMIN || role == USER)]])
+    @@allow('all', propertyJointTenancy.propertyTenancy.properties?[spaceId in auth().selectedSpaces && space.profiles?[users?[user.id == auth().id] && (role == ADMIN || role == USER)]])
 }

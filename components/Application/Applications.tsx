@@ -102,7 +102,7 @@ export const Applications = () => {
                         : null,
                 };
                 async function refetchGrids() {
-                    await queryClient.refetchQueries({ queryKey: ['zenstack', 'SubTabFolder'] });
+                    await queryClient.refetchQueries({ queryKey: ['zenstack', 'SubTabFolder'], stale: true });
                 }
                 async function onClickActivate() {
                     if (activated) {

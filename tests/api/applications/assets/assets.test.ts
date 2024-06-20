@@ -28,11 +28,11 @@ it('Should enable an application in space', async () => {
     assert.equal(firstFolder.path, '/properties');
 
     const grids = await prisma.grid.findMany();
-    assert.equal(grids.length, 2);
-    const firstGrid = grids[0];
-    assert.equal(firstGrid.columns, 6);
+    assert.equal(grids.length, 3);
+    const secondGrid = grids[1];
+    assert.equal(secondGrid.columns, 6);
 
-    const gridDetail = await prisma.grid.findUnique(useFindUniqueGridParam(firstGrid.id));
+    const gridDetail = await prisma.grid.findUnique(useFindUniqueGridParam(secondGrid.id));
     assert(gridDetail);
     assert.equal(gridDetail.columns, 6);
     assert.equal(gridDetail.elements.length, 4);

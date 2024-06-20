@@ -1,10 +1,7 @@
 import { assert, expect, it } from 'vitest';
-import { fakeProperty, fakeTenancyInCommon, fakePerson, fakeInCommonTenant } from '@/lib/demo/fake';
+import { fakeProperty } from '@/lib/demo/fake';
 import { getEnhancedPrisma } from '@/tests/mock/enhanced-prisma';
-import { Property, User } from '@prisma/client';
-
-const tenancyInCommon = fakeTenancyInCommon();
-const person = fakePerson();
+import { person, propertyTenancyInCommonCreateArgs, tenancyInCommon } from '@/tests/api/property/tenancyUtils';
 
 it('Should not allow a user to create tenancy in common for properties not in their space', async () => {
     const { user1, user2 } = await getEnhancedPrisma();
@@ -39,7 +36,11 @@ it('Should allow a user to create tenancy in common for properties in their spac
         include: {
             propertyTenancyInCommon: {
                 include: {
-                    properties: true,
+                    propertyTenancy: {
+                        include: {
+                            properties: true,
+                        },
+                    },
                 },
             },
             person: true,
@@ -48,17 +49,21 @@ it('Should allow a user to create tenancy in common for properties in their spac
     assert.equal(tenants.length, 1);
     assert.equal(tenants[0].propertyTenancyInCommon.siret, tenancyInCommon.siret);
     assert.deepEqual(tenants[0].person.birthDate, person.birthDate);
-    assert.equal(tenants[0].propertyTenancyInCommon.properties[0].surface, property.surface);
-    assert.equal(tenants[0].propertyTenancyInCommon.properties[0].ownerId, user2.userCreated.id);
+    assert.equal(tenants[0].propertyTenancyInCommon.propertyTenancy?.properties[0].surface, property.surface);
+    assert.equal(tenants[0].propertyTenancyInCommon.propertyTenancy?.properties[0].ownerId, user2.userCreated.id);
     assert.equal(tenants[0].propertyTenancyInCommon.ownerId, user3.userCreated.id);
 
     const properties = await user2.prisma.property.findMany({
         include: {
-            tenancyInCommon: {
+            tenancy: {
                 include: {
-                    tenants: {
+                    tenancyInCommon: {
                         include: {
-                            person: true,
+                            tenants: {
+                                include: {
+                                    person: true,
+                                },
+                            },
                         },
                     },
                 },
@@ -68,37 +73,9 @@ it('Should allow a user to create tenancy in common for properties in their spac
 
     assert.equal(properties.length, 1);
     assert.equal(properties[0].spaceId, user2.space.id);
-    assert.equal(properties[0].tenancyType, 'InCommon');
+    assert.equal(properties[0].tenancy?.tenancyType, 'InCommon');
     assert.equal(properties[0].surface, property.surface);
-    assert.equal(properties[0].tenancyInCommon?.ownerId, user3.userCreated.id);
-    assert.deepEqual(properties[0].tenancyInCommon?.tenants[0].person.birthDate, person.birthDate);
-    assert.deepEqual(properties[0].tenancyInCommon?.intraCommunityVAT, tenancyInCommon.intraCommunityVAT);
+    assert.equal(properties[0].tenancy?.tenancyInCommon?.ownerId, user3.userCreated.id);
+    assert.deepEqual(properties[0].tenancy?.tenancyInCommon?.tenants[0].person.birthDate, person.birthDate);
+    assert.deepEqual(properties[0].tenancy?.tenancyInCommon?.intraCommunityVAT, tenancyInCommon.intraCommunityVAT);
 });
-
-function propertyTenancyInCommonCreateArgs({ property, user }: { property: Property; user: User }) {
-    return {
-        data: {
-            ...tenancyInCommon,
-            properties: {
-                connect: {
-                    id: property.id,
-                },
-            },
-            tenants: {
-                create: {
-                    ...fakeInCommonTenant(),
-                    person: {
-                        create: {
-                            ...person,
-                            user: {
-                                connect: {
-                                    id: user.id,
-                                },
-                            },
-                        },
-                    },
-                },
-            },
-        },
-    };
-}

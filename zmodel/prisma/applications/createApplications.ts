@@ -13,11 +13,36 @@ const applications = [
 
 export async function createApplications(prisma: PrismaClient) {
     for (const application of applications) {
-        await prisma.application.upsert({
-            create: application,
-            update: application,
+        // Upsert the application itself
+        const applicationUpserted = await prisma.application.upsert({
+            create: {
+                slug: application.slug,
+                versions: {
+                    create: [],
+                },
+            },
+            update: {},
             where: { slug: application.slug },
         });
+
+        // Upsert the application versions
+        for (const version of application.versions.connectOrCreate) {
+            await prisma.applicationVersion.upsert({
+                create: {
+                    ...version.create,
+                    application: {
+                        connect: { id: applicationUpserted.id },
+                    },
+                },
+                update: {
+                    folders: {
+                        deleteMany: {},
+                        ...version.create.folders,
+                    },
+                },
+                where: version.where,
+            });
+        }
     }
 }
 

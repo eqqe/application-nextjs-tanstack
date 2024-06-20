@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client';
-import { CreateForm } from '@/components/Form/CreateForm';
+import { AutoFormDialog } from '@/components/Form/AutoFormDialog';
 import { getTypeHook } from '../Table/getTypeHook';
 import { toast } from 'react-toastify';
 
@@ -12,10 +12,14 @@ export function GridCardFooterButton({
 }) {
     const typeHook = getTypeHook({ type: button.table });
 
+    if (typeHook.form) {
+        return <typeHook.form />;
+    }
+
     const create = typeHook.useCreate.single();
 
     return (
-        <CreateForm
+        <AutoFormDialog
             formSchema={typeHook.schema.create}
             onSubmitData={async (data) => {
                 // @ts-ignore

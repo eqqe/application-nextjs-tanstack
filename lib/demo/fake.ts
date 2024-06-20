@@ -11,6 +11,7 @@ import {
     PropertyJointTenancyCreateScalarSchema,
     PropertyTenancyInCommonTenantCreateScalarSchema,
     PropertyJointTenancyTenantCreateScalarSchema,
+    PropertyTenancyCreateScalarSchema,
 } from '@zenstackhq/runtime/zod/models';
 
 export const cityPlaywrightTest = 'City to find in Playwright test';
@@ -21,7 +22,6 @@ export const fakeProperty = (): z.infer<typeof PropertyCreateScalarSchema> => ({
     name: faker.word.noun(),
     propertyType: PropertyType.COMMERCIAL,
     surface: faker.number.int({ max: 50000, min: 100 }),
-    tenancyType: PropertyTenancyType.InCommon,
 });
 
 export const fakeLease = (): z.infer<typeof LeaseCreateScalarSchema> => ({
@@ -94,18 +94,24 @@ export function generateData({ length, spaceId }: { length: number; spaceId: str
                             },
                         })),
                     },
-                    tenancyInCommon: {
+                    tenancy: {
                         create: {
-                            ...fakeTenancyInCommon(),
-                            tenants: {
-                                create: Array.from({ length }).map((_) => ({
-                                    ...fakeInCommonTenant(),
-                                    person: {
-                                        create: {
-                                            ...fakePerson(),
-                                        },
+                            name: faker.word.noun(),
+                            tenancyType: PropertyTenancyType.ByEntirety,
+                            tenancyInCommon: {
+                                create: {
+                                    ...fakeTenancyInCommon(),
+                                    tenants: {
+                                        create: Array.from({ length }).map((_) => ({
+                                            ...fakeInCommonTenant(),
+                                            person: {
+                                                create: {
+                                                    ...fakePerson(),
+                                                },
+                                            },
+                                        })),
                                     },
-                                })),
+                                },
                             },
                         },
                     },

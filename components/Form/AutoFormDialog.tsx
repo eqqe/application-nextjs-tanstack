@@ -18,7 +18,7 @@ import { FallbackError } from '@/components/layout/FallbackError';
 import { CommonFormTable } from '@/components/ui/auto-common/types';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
-export function CreateForm<SchemaType extends ZodObjectOrWrapped>({
+export function AutoFormDialog<SchemaType extends ZodObjectOrWrapped>({
     onSubmitData,
     formSchema,
     values,

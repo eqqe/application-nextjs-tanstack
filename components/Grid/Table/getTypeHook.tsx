@@ -1,3 +1,4 @@
+import { PropertyTenancyForm } from '@/components/Property/PropertyTenancyForm';
 import { getGridUrl, getPropertyUrl, getSubTabFolderUrl } from '@/lib/urls';
 import {
     useAggregateProperty,
@@ -112,6 +113,14 @@ import {
     useGroupBySubTabFolder,
     useUpdateManySubTabFolder,
     useUpdateSubTabFolder,
+    useAggregatePropertyTenancy,
+    useCountPropertyTenancy,
+    useCreateManyPropertyTenancy,
+    useCreatePropertyTenancy,
+    useFindManyPropertyTenancy,
+    useGroupByPropertyTenancy,
+    useUpdateManyPropertyTenancy,
+    useUpdatePropertyTenancy,
 } from '@/zmodel/lib/hooks';
 import { Type } from '@prisma/client';
 import {
@@ -139,6 +148,9 @@ import {
     ProfileCreateScalarSchema,
     ProfileScalarSchema,
     ProfileUpdateScalarSchema,
+    PropertyTenancyCreateScalarSchema,
+    PropertyTenancyScalarSchema,
+    PropertyTenancyUpdateScalarSchema,
     PropertyJointTenancyCreateScalarSchema,
     PropertyJointTenancyScalarSchema,
     PropertyJointTenancyUpdateScalarSchema,
@@ -315,6 +327,31 @@ export function getTypeHook({ type }: { type: Type }) {
                     single: useCreateProfile,
                     many: useCreateManyProfile,
                 },
+            };
+        case 'PropertyTenancy':
+            return {
+                useHook: {
+                    Aggregate: useAggregatePropertyTenancy,
+                    GroupBy: useGroupByPropertyTenancy,
+                    FindMany: useFindManyPropertyTenancy,
+                },
+                schema: {
+                    base: PropertyTenancyScalarSchema,
+                    update: PropertyTenancyUpdateScalarSchema,
+                    create: PropertyTenancyCreateScalarSchema.extend({
+                        toto: PropertyTenancyInCommonCreateScalarSchema,
+                    }),
+                },
+                useCount: useCountPropertyTenancy,
+                useUpdate: {
+                    single: useUpdatePropertyTenancy,
+                    many: useUpdateManyPropertyTenancy,
+                },
+                useCreate: {
+                    single: useCreatePropertyTenancy,
+                    many: useCreateManyPropertyTenancy,
+                },
+                form: PropertyTenancyForm,
             };
         case 'PropertyJointTenancy':
             return {

@@ -25,22 +25,29 @@ enum PropertyTenancyType {
 }
 
 model Property extends Address, SpaceComponent {
-    propertyType        PropertyType
-    leases              Lease[]
-    surface             Int
-    charges             Charge[]
+    propertyType PropertyType
+    leases       Lease[]
+    surface      Int
+    charges      Charge[]
+    tenancy      PropertyTenancy? @relation(fields: [tenancyId], references: [id], onDelete: Cascade)
+    tenancyId    String?
+}
+
+model PropertyTenancy extends SpaceComponent {
+    properties          Property[]
 
     tenancyType         PropertyTenancyType
 
     tenancyInCommon     PropertyTenancyInCommon?   @relation(fields: [tenancyInCommonId], references: [id], onDelete: Cascade)
-    tenancyInCommonId   String?
+    tenancyInCommonId   String?                    @unique
 
     jointTenancy        PropertyJointTenancy?      @relation(fields: [jointTenancyId], references: [id], onDelete: Cascade)
-    jointTenancyId      String?
+    jointTenancyId      String?                    @unique
 
 
     tenancyByEntirety   PropertyTenancyByEntirety? @relation(fields: [tenancyByEntiretyId], references: [id], onDelete: Cascade)
-    tenancyByEntiretyId String?
+    tenancyByEntiretyId String?                    @unique
+    @@allow('all', properties?[spaceId in auth().selectedSpaces && space.profiles?[users?[user.id == auth().id] && (role == ADMIN || role == USER)]])
 }
 
 abstract model PropertyComponent extends Component {

@@ -7,8 +7,7 @@ import { fakeProperty } from '@/lib/demo/fake';
 test('Should enable assets application, see groups of properties, list them, edit one', async ({ page, utils }) => {
     await utils.openHomeCreateSpace();
     await utils.enableAssets();
-    await utils.openSubTab();
-    await utils.openGrid();
+    await page.getByText('Properties').click();
 
     const city = faker.location.city();
     const property1 = fakeProperty();

@@ -13,11 +13,40 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                     create: {
                         subTabs: {
                             create: {
-                                name: 'Properties subTab',
+                                name: 'Properties',
                                 grids: {
                                     create: [
                                         {
-                                            name: 'Properties Grid',
+                                            name: 'Your essential data',
+                                            columns: 4,
+                                            elements: {
+                                                create: [
+                                                    {
+                                                        type: GridElementType.Card,
+                                                        colSpan: 2,
+                                                        card: {
+                                                            create: {
+                                                                title: 'Your property tenancies',
+                                                                invertTitleDescription: false,
+                                                                description: `See the list of property tenants`,
+                                                                footer: {
+                                                                    create: {
+                                                                        button: {
+                                                                            create: {
+                                                                                text: 'Create property tenant',
+                                                                                table: 'PropertyTenancy',
+                                                                            },
+                                                                        },
+                                                                    },
+                                                                },
+                                                            },
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                        {
+                                            name: 'Properties',
                                             columns: 6,
                                             elements: {
                                                 create: [
@@ -173,7 +202,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                             },
                                         },
                                         {
-                                            name: 'Associates grid',
+                                            name: 'Associates',
                                             columns: 4,
                                             elements: {
                                                 create: [

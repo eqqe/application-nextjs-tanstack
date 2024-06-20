@@ -17,12 +17,6 @@ function getUtils(page: Page) {
     async function openSettings() {
         await page.getByRole('link', { name: 'Settings' }).click();
     }
-    async function openSubTab() {
-        await page.getByText('SubTab Properties subTab').click();
-    }
-    async function openGrid() {
-        await page.getByText('Properties Grid').click();
-    }
 
     async function generateDemonstration() {
         await openSettings();
@@ -48,7 +42,6 @@ function getUtils(page: Page) {
         await getByLabel<Property>('state').fill(property.state ?? propertyFake.state ?? '');
         await getByLabel<Property>('name').fill(property.name ?? propertyFake.name);
         await getByLabel<Property>('surface').fill((property.surface ?? propertyFake.surface).toString());
-        await selectFromCombo<Property>('tenancyType', property.tenancyType ?? propertyFake.tenancyType);
 
         await getByLabel('private').check();
         await clickSaveChanges();
@@ -109,8 +102,6 @@ function getUtils(page: Page) {
 
     return {
         openSettings,
-        openSubTab,
-        openGrid,
         generateDemonstration,
         enableAssets,
         createProperty,

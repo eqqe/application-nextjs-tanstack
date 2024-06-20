@@ -103,22 +103,19 @@ model GridCardFooter extends IdCreatedUpdatedAuth {
     @@allow('read', card.element.grid.subTab.tab.folder.applicationVersion.activations?[spaceId in auth().selectedSpaces && space.profiles?[users?[user.id == auth().id] && (role == ADMIN || role == USER)]])
 }
 
-model GridCardFooterButton extends IdCreatedUpdatedAuth {
+abstract model GridCardFooterBase extends IdCreatedUpdatedAuth {
 
     footer   GridCardFooter @relation(fields: [parentId], references: [id], onDelete: Cascade)
     parentId String         @unique
-
-    text     String
-    table    Type
-
     @@allow('read', footer.card.element.grid.subTab.tab.folder.applicationVersion.activations?[spaceId in auth().selectedSpaces && space.profiles?[users?[user.id == auth().id] && (role == ADMIN || role == USER)]])
 }
-model GridCardFooterProgress extends IdCreatedUpdatedAuth {
 
-    footer   GridCardFooter @relation(fields: [parentId], references: [id], onDelete: Cascade)
-    parentId String         @unique
+model GridCardFooterButton extends GridCardFooterBase {
+    text  String
+    table Type
+}
 
-    value    Int
-    @@allow('read', footer.card.element.grid.subTab.tab.folder.applicationVersion.activations?[spaceId in auth().selectedSpaces && space.profiles?[users?[user.id == auth().id] && (role == ADMIN || role == USER)]])
+model GridCardFooterProgress extends GridCardFooterBase {
+    value Int
 }
 

@@ -1,9 +1,8 @@
 import { SubTabFolderScalarSchema } from '@zenstackhq/runtime/zod/models';
 import { AutoTable } from '@/components/AutoTable/AutoTable';
-import { useFindManySubTabFolder } from '@/zmodel/lib/hooks';
+import { useSubTabs } from '@/lib/context';
 
 export function SpaceHomeComponent() {
-    const { data: subTabs } = useFindManySubTabFolder();
-
+    const subTabs = useSubTabs();
     return <AutoTable type={'SubTabFolder'} data={subTabs ?? []} formSchema={SubTabFolderScalarSchema} />;
 }
