@@ -23,29 +23,30 @@ it('Should allow a user to create property tenancy and list and group by them', 
     const propertyTenancies = await user2.prisma.propertyTenancy.count();
     assert.equal(propertyTenancies, 1);
 
-    const propertyTenancyInclude = {
-        include: {
-            tenancy: {
-                include: {
-                    tenancyInCommon: {
-                        include: {
-                            tenants: true,
+    function getProperties() {
+        return user2.prisma.property.findMany({
+            include: {
+                tenancy: {
+                    include: {
+                        tenancyInCommon: {
+                            include: {
+                                tenants: true,
+                            },
                         },
-                    },
-                    jointTenancy: {
-                        include: {
-                            tenants: true,
+                        jointTenancy: {
+                            include: {
+                                tenants: true,
+                            },
                         },
                     },
                 },
             },
-        },
-        orderBy: {
-            createdAt: Prisma.SortOrder.desc,
-        },
-    };
-
-    let properties = await user2.prisma.property.findMany(propertyTenancyInclude);
+            orderBy: {
+                createdAt: Prisma.SortOrder.desc,
+            },
+        });
+    }
+    let properties = await getProperties();
 
     assert.equal(properties.length, 2);
     assert.equal(properties[0].tenancy?.tenancyType, 'InCommon');
@@ -57,22 +58,32 @@ it('Should allow a user to create property tenancy and list and group by them', 
     assert.equal(properties[1].tenancy?.tenancyInCommon?.intraCommunityVAT, tenancyInCommon.intraCommunityVAT);
     assert.equal(properties[1].tenancy?.tenancyInCommon?.tenants.length, 1);
 
-    const propertyTenanciesCountByType = await user2.prisma.propertyTenancy.groupBy({
-        by: ['tenancyType'],
-        _count: true,
-    });
+    function getPropertyTenanciesCountByType() {
+        return user2.prisma.propertyTenancy.groupBy({
+            by: ['tenancyType'],
+            _count: true,
+        });
+    }
+
+    let propertyTenanciesCountByType = await getPropertyTenanciesCountByType();
     assert.deepEqual(propertyTenanciesCountByType, [{ tenancyType: 'InCommon', _count: 1 }]);
 
-    const newProperty2 = await user2.prisma.property.create({ data: fakeProperty() });
+    const newProperty3 = await user2.prisma.property.create({ data: fakeProperty() });
 
     await user3.prisma.propertyJointTenancy.create(
-        propertyJointTenancyCreateArgs({ property: newProperty2, user: user1.userCreated })
+        propertyJointTenancyCreateArgs({ property: newProperty3, user: user1.userCreated })
     );
 
-    properties = await user2.prisma.property.findMany(propertyTenancyInclude);
-
+    properties = await getProperties();
     assert.equal(properties[0].tenancy?.tenancyType, 'Joint');
     assert.equal(properties[0].tenancy?.jointTenancy?.tenants.length, 1);
     assert.equal(properties[1].tenancy?.tenancyInCommon?.intraCommunityVAT, tenancyInCommon.intraCommunityVAT);
     assert.equal(properties[2].tenancy?.tenancyInCommon?.intraCommunityVAT, tenancyInCommon.intraCommunityVAT);
+
+    propertyTenanciesCountByType = await getPropertyTenanciesCountByType();
+
+    assert.deepEqual(propertyTenanciesCountByType, [
+        { tenancyType: 'InCommon', _count: 1 },
+        { tenancyType: 'Joint', _count: 1 },
+    ]);
 });
