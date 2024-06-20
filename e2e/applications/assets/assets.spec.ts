@@ -59,4 +59,23 @@ test('Should enable assets application, see essential data, create a property te
             name: 'SCI Simon',
         },
     });
+    await utils.createPropertyTenancy({
+        propertyTenancy: {
+            tenancyType: 'ByEntirety',
+            name: 'Simon',
+        },
+    });
+    await utils.createPropertyTenancy({
+        propertyTenancy: {
+            tenancyType: 'Joint',
+            name: 'Simons',
+        },
+    });
+    await utils.createPropertyTenancy({
+        propertyTenancy: {
+            tenancyType: 'InCommon',
+            name: 'other SCI Simon',
+        },
+    });
+    await expect(page.getByText('4 Property Tenancy')).toBeVisible();
 });

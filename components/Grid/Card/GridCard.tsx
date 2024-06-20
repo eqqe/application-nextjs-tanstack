@@ -5,6 +5,7 @@ import { Prisma } from '@prisma/client';
 import { GridCardFooterInclude, GridCardFooter } from '@/components/Grid/Card/GridCardFooter';
 import { FallbackError } from '@/components/layout/FallbackError';
 import { ErrorBoundary } from 'react-error-boundary';
+import { Counter } from '@/components/Grid/Card/Counter';
 
 export const GridCardInclude = {
     include: {
@@ -18,6 +19,7 @@ export function GridCard({ card }: { card: Prisma.GridCardGetPayload<typeof Grid
     const description = (
         <CardDescription className="max-w-lg text-balance leading-relaxed">{card.description}</CardDescription>
     );
+
     return (
         <Card key={card.id}>
             <ErrorBoundary fallback={<FallbackError />}>
@@ -33,6 +35,7 @@ export function GridCard({ card }: { card: Prisma.GridCardGetPayload<typeof Grid
                             {description}
                         </>
                     )}
+                    {card.count && <Counter type={card.count} />}
                 </CardHeader>
             </ErrorBoundary>
             <CardContent>

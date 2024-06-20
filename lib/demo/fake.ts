@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { PropertyType, ChargeType, PropertyTenancyType } from '@prisma/client';
+import { PropertyType, ChargeType, PropertyTenancyType, LeaseTenantType } from '@prisma/client';
 import { z } from 'zod';
 import {
     PropertyCreateScalarSchema,
@@ -89,6 +89,16 @@ export function generateData({ length, spaceId }: { length: number; spaceId: str
                             ...fakeLease(),
                             payments: {
                                 create: Array.from({ length }).map((_) => fakePayment()),
+                            },
+                            tenants: {
+                                create: {
+                                    person: {
+                                        create: {
+                                            ...fakePerson(),
+                                        },
+                                    },
+                                    tenantType: LeaseTenantType.Person,
+                                },
                             },
                         })),
                     },

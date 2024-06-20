@@ -1,6 +1,7 @@
 import { expect } from '@playwright/test';
 import { test } from '@/e2e/utils';
 import { cityPlaywrightTest } from '@/lib/demo/fake';
+import { lenghtDemo } from '@/components/Space/GenerateDemonstration';
 
 test('Should enable assets application, rollback, and update', async ({ page, utils }) => {
     const { openHomeCreateSpace, enableAssets, generateDemonstration, openSettings } = utils;
@@ -17,6 +18,13 @@ test('Should enable assets application, rollback, and update', async ({ page, ut
     await expect(page.getByText('No results.')).toBeVisible();
 
     await generateDemonstration();
+    await page.getByText('Your essential data').click();
+    await expect(page.getByText(`property tenants${lenghtDemo} Property Tenancy`)).toBeVisible();
+    await expect(page.getByText(`leases${lenghtDemo * lenghtDemo} Lease`)).toBeVisible();
+    await expect(page.getByText(`properties${lenghtDemo} Property`)).toBeVisible();
+    await expect(page.getByText(`lease tenants${lenghtDemo * lenghtDemo} Lease Tenant`)).toBeVisible();
+
+    await utils.openSettings();
     await page.getByText('Properties').click();
     await page.getByRole('tab', { name: 'Month' }).click();
     await expect(page.getByText(cityPlaywrightTest)).toBeVisible();

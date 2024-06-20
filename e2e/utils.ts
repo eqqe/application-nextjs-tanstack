@@ -18,6 +18,7 @@ export const test = base.extend<{ page: Page; utils: ReturnType<typeof getUtils>
 function getUtils(page: Page) {
     async function openSettings() {
         await page.getByRole('link', { name: 'Settings' }).click();
+        await expect(page.getByText(`Manage members`)).toBeVisible();
     }
 
     async function generateDemonstration() {
