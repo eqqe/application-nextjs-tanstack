@@ -29,6 +29,16 @@ export function AutoFormSubmit({
     );
 }
 
+export type AutoFormProps<SchemaType extends ZodObjectOrWrapped> = {
+    onValuesChange?: (values: Partial<z.infer<SchemaType>>) => void;
+    onParsedValuesChange?: (values: Partial<z.infer<SchemaType>>) => void;
+    onSubmit?: (values: z.infer<SchemaType>) => void;
+    fieldConfig?: FieldConfig<z.infer<SchemaType>>;
+    children?: React.ReactNode;
+    className?: string;
+    dependencies?: Dependency<z.infer<SchemaType>>[];
+};
+
 function AutoForm<SchemaType extends ZodObjectOrWrapped>({
     formSchema,
     values: valuesProp,
@@ -39,15 +49,7 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
     children,
     className,
     dependencies,
-}: {
-    onValuesChange?: (values: Partial<z.infer<SchemaType>>) => void;
-    onParsedValuesChange?: (values: Partial<z.infer<SchemaType>>) => void;
-    onSubmit?: (values: z.infer<SchemaType>) => void;
-    fieldConfig?: FieldConfig<z.infer<SchemaType>>;
-    children?: React.ReactNode;
-    className?: string;
-    dependencies?: Dependency<z.infer<SchemaType>>[];
-} & CommonFormTable<SchemaType>) {
+}: AutoFormProps<SchemaType> & CommonFormTable<SchemaType>) {
     const objectFormSchema = getObjectFormSchema(formSchema);
     const defaultValues: DefaultValues<z.infer<typeof objectFormSchema>> | null = getDefaultValues(
         objectFormSchema,
@@ -73,11 +75,16 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
 
     React.useEffect(() => {
         onValuesChangeProp?.(values);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [onParsedValuesChange, onValuesChangeProp, valuesString]);
+
+    React.useEffect(() => {
         const parsedValues = formSchema.safeParse(values);
         if (parsedValues.success) {
             onParsedValuesChange?.(parsedValues.data);
         }
-    }, [formSchema, onParsedValuesChange, onValuesChangeProp, values, valuesString]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [formSchema, onParsedValuesChange, onValuesChangeProp, valuesString]);
 
     return (
         <div className="w-full">

@@ -1,5 +1,5 @@
 import { toast } from 'react-toastify';
-import AutoForm from '@/components/ui/auto-form';
+import AutoForm, { AutoFormProps } from '@/components/ui/auto-form';
 import { z } from 'zod';
 import { ZodObjectOrWrapped } from '@/components/ui/auto-form/utils';
 import {
@@ -21,12 +21,15 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 export function AutoFormDialog<SchemaType extends ZodObjectOrWrapped>({
     onSubmitData,
     formSchema,
+    fieldConfig,
+    onValuesChange,
     values,
     title,
 }: {
     onSubmitData: (data: z.infer<SchemaType>) => Promise<void>;
     title: string;
-} & CommonFormTable<SchemaType>) {
+} & AutoFormProps<SchemaType> &
+    CommonFormTable<SchemaType>) {
     const [open, setOpen] = useState(false);
     const onSubmit = async (data: z.infer<SchemaType>) => {
         toast.dismiss();
@@ -49,7 +52,13 @@ export function AutoFormDialog<SchemaType extends ZodObjectOrWrapped>({
                         <DialogDescription>{title}</DialogDescription>
                     </DialogHeader>
                     <ErrorBoundary fallback={<FallbackError />}>
-                        <AutoForm formSchema={formSchema} values={values} onSubmit={onSubmit}>
+                        <AutoForm
+                            formSchema={formSchema}
+                            fieldConfig={fieldConfig}
+                            values={values}
+                            onSubmit={onSubmit}
+                            onValuesChange={onValuesChange}
+                        >
                             <div className="modal-action">
                                 <DialogFooter>
                                     <Button type="submit">Save changes</Button>

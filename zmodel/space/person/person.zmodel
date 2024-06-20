@@ -14,10 +14,10 @@ model Person extends Component, OptionalUser {
     entireTenancies   PropertyTenancyByEntirety[]
     corporations      Corporation[]
 
-    @@allow('all', leaseTenancies?[lease.property.spaceId in auth().selectedSpaces &&  lease.property.space.profiles?[users?[user.id == auth().id] && (role == ADMIN || role == USER)]])
-    @@allow('all', inCommonTenancies?[propertyTenancyInCommon.propertyTenancy.properties?[spaceId in auth().selectedSpaces && space.profiles?[users?[user.id == auth().id] && (role == ADMIN || role == USER)]]])
-    @@allow('all', jointTenancies?[propertyJointTenancy.propertyTenancy.properties?[spaceId in auth().selectedSpaces && space.profiles?[users?[user.id == auth().id] && (role == ADMIN || role == USER)]]])
-    @@allow('all', entireTenancies?[propertyTenancy.properties?[spaceId in auth().selectedSpaces && space.profiles?[users?[user.id == auth().id] && (role == ADMIN || role == USER)]]])
+    @@allow('all', leaseTenancies?[lease.property.spaceId in auth().selectedSpaces && lease.property.space.profiles?[users?[user.id == auth().id] && (role == ADMIN || role == USER)]])
+    @@allow('all', inCommonTenancies?[propertyTenancyInCommon.propertyTenancy.spaceId in auth().selectedSpaces && propertyTenancyInCommon.propertyTenancy.space.profiles?[users?[user.id == auth().id] && (role == ADMIN || role == USER)]])
+    @@allow('all', jointTenancies?[propertyJointTenancy.propertyTenancy.spaceId in auth().selectedSpaces && propertyJointTenancy.propertyTenancy.space.profiles?[users?[user.id == auth().id] && (role == ADMIN || role == USER)]])
+    @@allow('all', entireTenancies?[propertyTenancy.spaceId in auth().selectedSpaces && propertyTenancy.space.profiles?[users?[user.id == auth().id] && (role == ADMIN || role == USER)]])
     @@allow('all', corporations?[leaseTenants?[lease.property.spaceId in auth().selectedSpaces && lease.property.space.profiles?[users?[user.id == auth().id] && (role == ADMIN || role == USER)]]])
 }
 
