@@ -23,4 +23,10 @@ it('Should allow a user to create property tenancy and list and group by them', 
 
     const propertyTenancies = await user2.prisma.propertyTenancy.count();
     assert.equal(propertyTenancies, 1);
+
+    const propertyTenanciesCountByType = await user2.prisma.propertyTenancy.groupBy({
+        by: ['tenancyType'],
+        _count: true,
+    });
+    assert.deepEqual(propertyTenanciesCountByType, [{ tenancyType: 'InCommon', _count: 1 }]);
 });
