@@ -19,11 +19,12 @@ test('Should enable assets application, rollback, and update', async ({ page, ut
 
     await generateDemonstration();
     await page.getByText('Your essential data').click();
-    await expect(page.getByText(`${lenghtDemo} Property Tenancy`, { exact: true })).toBeVisible();
-    await expect(page.getByText(`${lenghtDemo * lenghtDemo} Lease`, { exact: true })).toBeVisible();
-    await expect(page.getByText(`${lenghtDemo} Property`, { exact: true })).toBeVisible();
-    await expect(page.getByText(`${lenghtDemo * lenghtDemo} Lease Tenant`, { exact: true })).toBeVisible();
+    await expect(page.getByText(`property tenants${lenghtDemo} Property Tenancy`)).toBeVisible();
+    await expect(page.getByText(`leases${lenghtDemo * lenghtDemo} Lease`)).toBeVisible();
+    await expect(page.getByText(`properties${lenghtDemo} Property`)).toBeVisible();
+    await expect(page.getByText(`lease tenants${lenghtDemo * lenghtDemo} Lease Tenant`)).toBeVisible();
 
+    await utils.openSettings();
     await page.getByText('Properties').click();
     await page.getByRole('tab', { name: 'Month' }).click();
     await expect(page.getByText(cityPlaywrightTest)).toBeVisible();
