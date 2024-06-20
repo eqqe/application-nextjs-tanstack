@@ -99,7 +99,6 @@ model GridCardFooter extends IdCreatedUpdatedAuth {
     parentId String                  @unique
     button   GridCardFooterButton?
     progress GridCardFooterProgress?
-    form     GridCardFooterForm?
 
     @@allow('read', card.element.grid.subTab.tab.folder.applicationVersion.activations?[spaceId in auth().selectedSpaces && space.profiles?[users?[user.id == auth().id] && (role == ADMIN || role == USER)]])
 }

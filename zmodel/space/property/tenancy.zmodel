@@ -8,6 +8,7 @@ import "lease"
 abstract model PropertyTenancyLink extends Component {
     propertyTenancy PropertyTenancy?
 
+    @@allow('all', propertyTenancy.spaceId in auth().selectedSpaces && propertyTenancy.space.profiles?[users?[user.id == auth().id] && (role == ADMIN || role == USER)])
     @@allow('all', propertyTenancy.properties?[spaceId in auth().selectedSpaces && space.profiles?[users?[user.id == auth().id] && (role == ADMIN || role == USER)]])
 }
 
