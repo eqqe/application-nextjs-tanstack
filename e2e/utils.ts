@@ -1,10 +1,10 @@
 import { FieldPath, FieldValues } from 'react-hook-form';
 import { beautifyObjectName } from '@/components/ui/auto-form/utils';
 import { faker } from '@faker-js/faker';
-import { Lease, PropertyTenancy, Space } from '@zenstackhq/runtime/models';
+import { Lease, PropertyTenancy, PropertyTenancyInCommon, Space } from '@zenstackhq/runtime/models';
 import { expect, Page, test as base } from '@playwright/test';
 import { Property } from '@prisma/client';
-import { fakeProperty } from '@/lib/demo/fake';
+import { fakeProperty, fakeTenancyInCommon } from '@/lib/demo/fake';
 import { PropertyTenancyCreateScalarSchema } from '@zenstackhq/runtime/zod/models';
 import { z } from 'zod';
 
@@ -61,6 +61,17 @@ function getUtils(page: Page) {
 
         await selectFromCombo<PropertyTenancy>('tenancyType', propertyTenancy.tenancyType);
         await getByLabel<PropertyTenancy>('name').fill(propertyTenancy.name);
+
+        const tenancyInCommon = fakeTenancyInCommon();
+
+        await getByLabel<PropertyTenancyInCommon>('streetAddress').fill(tenancyInCommon.streetAddress);
+        await getByLabel<PropertyTenancyInCommon>('city').fill(tenancyInCommon.city);
+        await getByLabel<PropertyTenancyInCommon>('postalCode').fill(tenancyInCommon.postalCode);
+        await getByLabel<PropertyTenancyInCommon>('country').fill(tenancyInCommon.country);
+        await getByLabel<PropertyTenancyInCommon>('intraCommunityVAT').fill(tenancyInCommon.intraCommunityVAT ?? '');
+        await getByLabel<PropertyTenancyInCommon>('siren').fill(tenancyInCommon.siren ?? '');
+        await getByLabel<PropertyTenancyInCommon>('siret').fill(tenancyInCommon.siret ?? '');
+
         await clickSaveChanges();
 
         await checkToastCreated(propertyTenancy.name);

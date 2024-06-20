@@ -56,7 +56,7 @@ test('Should enable assets application, see essential data, create a property te
     await utils.createPropertyTenancy({
         propertyTenancy: {
             tenancyType: 'InCommon',
-            name: '',
+            name: 'SCI Simon',
         },
     });
 });

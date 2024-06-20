@@ -60,11 +60,9 @@ it('Should allow a user to create property tenancy and list and group by them', 
 
     assert.equal(properties.length, 2);
     assert.equal(properties[0].tenancy?.tenancyType, 'InCommon');
-    assert.equal(properties[0].tenancy?.tenancyInCommon?.name, tenancyInCommon.name);
     assert.equal(properties[0].tenancy?.tenancyInCommon?.intraCommunityVAT, tenancyInCommon.intraCommunityVAT);
     assert.equal(properties[0].tenancy?.tenancyInCommon?.tenants.length, 1);
     assert.equal(properties[1].tenancy?.tenancyType, 'InCommon');
-    assert.equal(properties[1].tenancy?.tenancyInCommon?.name, tenancyInCommon.name);
     assert.equal(properties[1].tenancy?.tenancyInCommon?.intraCommunityVAT, tenancyInCommon.intraCommunityVAT);
     assert.equal(properties[1].tenancy?.tenancyInCommon?.tenants.length, 1);
 
