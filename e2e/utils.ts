@@ -17,12 +17,6 @@ function getUtils(page: Page) {
     async function openSettings() {
         await page.getByRole('link', { name: 'Settings' }).click();
     }
-    async function openSubTab() {
-        await page.getByText('SubTab Properties subTab').click();
-    }
-    async function openGrid() {
-        await page.getByText('Properties Grid').click();
-    }
 
     async function generateDemonstration() {
         await openSettings();
@@ -108,8 +102,6 @@ function getUtils(page: Page) {
 
     return {
         openSettings,
-        openSubTab,
-        openGrid,
         generateDemonstration,
         enableAssets,
         createProperty,
