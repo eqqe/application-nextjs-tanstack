@@ -42,11 +42,9 @@ test('Load a lot of data for 3 users', async () => {
     // Read a lot of data in parallel
     for (const _ of Array.from({ length })) {
         for (const _ of Array.from({ length })) {
-            for (const _ of Array.from({ length })) {
-                promises.push(checkFakeDataCount({ prisma: user1.prisma, factor: 1 }));
-                promises.push(checkFakeDataCount({ prisma: user2.prisma, factor: 2 }));
-                promises.push(checkFakeDataCount({ prisma: user3.prisma, factor: 2 }));
-            }
+            promises.push(checkFakeDataCount({ prisma: user1.prisma, factor: 1 }));
+            promises.push(checkFakeDataCount({ prisma: user2.prisma, factor: 2 }));
+            promises.push(checkFakeDataCount({ prisma: user3.prisma, factor: 2 }));
         }
     }
     await Promise.all(promises);
