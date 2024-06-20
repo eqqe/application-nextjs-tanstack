@@ -29,6 +29,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                 title: 'Your property tenancies',
                                                                 invertTitleDescription: false,
                                                                 description: `See the list of property tenants`,
+                                                                count: 'PropertyTenancy',
                                                                 footer: {
                                                                     create: {
                                                                         button: {

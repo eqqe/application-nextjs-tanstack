@@ -61,9 +61,9 @@ model GridCard extends IdCreatedUpdatedAuth {
     invertTitleDescription Boolean         @default(false)
     headerPb               Int             @default(2) @gte(1) @lte(6)
 
-
-
     content                String?
+
+    count                  Type?
 
     table                  GridCardTable?
 
