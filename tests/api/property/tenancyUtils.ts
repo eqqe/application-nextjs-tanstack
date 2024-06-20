@@ -11,7 +11,7 @@ export function propertyJointTenancyCreateArgs({ property, user }: { property: P
             propertyTenancy: {
                 create: {
                     name: faker.word.noun(),
-                    tenancyType: PropertyTenancyType.Joint,
+                    type: PropertyTenancyType.Joint,
                     properties: {
                         connect: {
                             id: property.id,
@@ -44,7 +44,7 @@ export function propertyTenancyByEntiretyCreateArgs({ property, user }: { proper
             propertyTenancy: {
                 create: {
                     name: faker.word.noun(),
-                    tenancyType: PropertyTenancyType.ByEntirety,
+                    type: PropertyTenancyType.ByEntirety,
                     properties: {
                         connect: {
                             id: property.id,
@@ -73,7 +73,7 @@ export function propertyTenancyInCommonCreateArgs({ property, user }: { property
             propertyTenancy: {
                 create: {
                     name: faker.word.noun(),
-                    tenancyType: PropertyTenancyType.InCommon,
+                    type: PropertyTenancyType.InCommon,
                     properties: {
                         connect: {
                             id: property.id,

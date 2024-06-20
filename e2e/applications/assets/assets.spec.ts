@@ -55,25 +55,25 @@ test('Should enable assets application, see essential data, create a property te
     await page.getByText('Your essential data').click();
     await utils.createPropertyTenancy({
         propertyTenancy: {
-            tenancyType: 'InCommon',
+            type: 'InCommon',
             name: 'SCI Simon',
         },
     });
     await utils.createPropertyTenancy({
         propertyTenancy: {
-            tenancyType: 'ByEntirety',
+            type: 'ByEntirety',
             name: 'Simon',
         },
     });
     await utils.createPropertyTenancy({
         propertyTenancy: {
-            tenancyType: 'Joint',
+            type: 'Joint',
             name: 'Simons',
         },
     });
     await utils.createPropertyTenancy({
         propertyTenancy: {
-            tenancyType: 'InCommon',
+            type: 'InCommon',
             name: 'other SCI Simon',
         },
     });

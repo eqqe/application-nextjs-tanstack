@@ -60,10 +60,10 @@ function getUtils(page: Page) {
     }) {
         await clickButton('Create Property Tenancy');
 
-        await selectFromCombo<PropertyTenancy>('tenancyType', propertyTenancy.tenancyType);
+        await selectFromCombo<PropertyTenancy>('type', propertyTenancy.type);
         await getByLabel<PropertyTenancy>('name').fill(propertyTenancy.name);
 
-        if (propertyTenancy.tenancyType === 'InCommon') {
+        if (propertyTenancy.type === 'InCommon') {
             const tenancyInCommon = fakeTenancyInCommon();
 
             await getByLabel<PropertyTenancyInCommon>('streetAddress').fill(tenancyInCommon.streetAddress);
