@@ -28,7 +28,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                             create: {
                                                                 title: 'Your property tenancies',
                                                                 invertTitleDescription: false,
-                                                                description: `See the list of property tenants`,
+                                                                description: `property tenants`,
                                                                 count: 'PropertyTenancy',
                                                                 footer: {
                                                                     create: {
@@ -36,6 +36,72 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                             create: {
                                                                                 text: 'Create property tenant',
                                                                                 table: 'PropertyTenancy',
+                                                                            },
+                                                                        },
+                                                                    },
+                                                                },
+                                                            },
+                                                        },
+                                                    },
+                                                    {
+                                                        type: GridElementType.Card,
+                                                        colSpan: 2,
+                                                        card: {
+                                                            create: {
+                                                                title: 'Your leases',
+                                                                invertTitleDescription: false,
+                                                                description: `leases`,
+                                                                count: 'Lease',
+                                                                footer: {
+                                                                    create: {
+                                                                        button: {
+                                                                            create: {
+                                                                                text: 'Create lease',
+                                                                                table: 'Lease',
+                                                                            },
+                                                                        },
+                                                                    },
+                                                                },
+                                                            },
+                                                        },
+                                                    },
+                                                    {
+                                                        type: GridElementType.Card,
+                                                        colSpan: 2,
+                                                        card: {
+                                                            create: {
+                                                                title: 'Your properties',
+                                                                invertTitleDescription: false,
+                                                                description: `properties`,
+                                                                count: 'Property',
+                                                                footer: {
+                                                                    create: {
+                                                                        button: {
+                                                                            create: {
+                                                                                text: 'Create property',
+                                                                                table: 'Property',
+                                                                            },
+                                                                        },
+                                                                    },
+                                                                },
+                                                            },
+                                                        },
+                                                    },
+                                                    {
+                                                        type: GridElementType.Card,
+                                                        colSpan: 2,
+                                                        card: {
+                                                            create: {
+                                                                title: 'Your lease tenants',
+                                                                invertTitleDescription: false,
+                                                                description: `lease tenants`,
+                                                                count: 'LeaseTenant',
+                                                                footer: {
+                                                                    create: {
+                                                                        button: {
+                                                                            create: {
+                                                                                text: 'Create lease tenant',
+                                                                                table: 'LeaseTenant',
                                                                             },
                                                                         },
                                                                     },
