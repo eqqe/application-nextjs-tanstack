@@ -2,12 +2,12 @@ import { useCreatePropertyTenancy } from '@/zmodel/lib/hooks';
 import { toast } from 'react-toastify';
 import { z } from 'zod';
 import {
+    PersonCreateScalarSchema,
     PropertyJointTenancyCreateScalarSchema,
     PropertyTenancyByEntiretyCreateScalarSchema,
     PropertyTenancyCreateScalarSchema,
     PropertyTenancyInCommonCreateScalarSchema,
 } from '@zenstackhq/runtime/zod/models';
-import { fakePerson } from '@/lib/demo/fake';
 import { PropertyTenancyType } from '@prisma/client';
 import { AutoFormDialogEnumType } from '../Form/AutoFormDialogEnumType';
 
@@ -18,7 +18,9 @@ export function PropertyTenancyForm() {
         <AutoFormDialogEnumType
             baseSchema={PropertyTenancyCreateScalarSchema}
             typedSchemas={z.object({
-                [PropertyTenancyType.ByEntirety]: PropertyTenancyByEntiretyCreateScalarSchema.optional(),
+                [PropertyTenancyType.ByEntirety]: PropertyTenancyByEntiretyCreateScalarSchema.extend({
+                    person: PersonCreateScalarSchema,
+                }).optional(),
                 [PropertyTenancyType.InCommon]: PropertyTenancyInCommonCreateScalarSchema.optional(),
                 [PropertyTenancyType.Joint]: PropertyJointTenancyCreateScalarSchema.optional(),
             })}
@@ -38,7 +40,7 @@ export function PropertyTenancyForm() {
                         }),
                         ...(data.base.type === 'ByEntirety' && {
                             tenancyByEntirety: {
-                                create: { ...data.ByEntirety, person: { create: fakePerson() } },
+                                create: { ...data.ByEntirety, person: { create: data.ByEntirety?.person } },
                             },
                         }),
                     },
