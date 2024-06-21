@@ -11,7 +11,7 @@ export const MobileSideNav = () => {
         <Sheet>
             <SheetTrigger asChild>
                 <Button size="icon" variant="outline" className="sm:hidden">
-                    <PanelLeft className="size-5" />
+                    <PanelLeft />
                     <span className="sr-only">Toggle Menu</span>
                 </Button>
             </SheetTrigger>
@@ -23,7 +23,7 @@ export const MobileSideNav = () => {
                             href={item.href}
                             className="text-muted-foreground hover:text-foreground flex items-center gap-4 px-2.5"
                         >
-                            <Package className="size-5" />
+                            {item.icon ? item.icon : <Package />}
                             {item.title}
                         </Link>
                     ))}
@@ -31,7 +31,7 @@ export const MobileSideNav = () => {
                         href="/settings"
                         className="text-muted-foreground hover:text-foreground flex items-center gap-4 px-2.5"
                     >
-                        <LineChart className="size-5" />
+                        <LineChart />
                         Settings
                     </Link>
                 </nav>

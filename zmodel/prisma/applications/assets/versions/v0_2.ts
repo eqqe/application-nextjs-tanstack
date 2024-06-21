@@ -19,6 +19,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                         {
                                             name: 'Your essential data',
                                             columns: 4,
+                                            icon: 'Home',
                                             elements: {
                                                 create: [
                                                     {
@@ -30,6 +31,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                 invertTitleDescription: false,
                                                                 description: `property tenants`,
                                                                 count: 'PropertyTenancy',
+                                                                icon: 'SquareUser',
                                                                 footer: {
                                                                     create: {
                                                                         button: {
@@ -52,6 +54,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                 invertTitleDescription: false,
                                                                 description: `leases`,
                                                                 count: 'Lease',
+                                                                icon: 'FolderKey',
                                                                 footer: {
                                                                     create: {
                                                                         button: {
@@ -74,6 +77,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                 invertTitleDescription: false,
                                                                 description: `properties`,
                                                                 count: 'Property',
+                                                                icon: 'Home',
                                                                 footer: {
                                                                     create: {
                                                                         button: {
@@ -96,6 +100,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                 invertTitleDescription: false,
                                                                 description: `lease tenants`,
                                                                 count: 'LeaseTenant',
+                                                                icon: 'Users',
                                                                 footer: {
                                                                     create: {
                                                                         button: {
@@ -115,6 +120,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                         {
                                             name: 'Properties',
                                             columns: 6,
+                                            icon: 'FolderKey',
                                             elements: {
                                                 create: [
                                                     {
@@ -271,6 +277,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                         {
                                             name: 'Associates',
                                             columns: 4,
+                                            icon: 'Users',
                                             elements: {
                                                 create: [
                                                     {

@@ -1,7 +1,7 @@
 import { FieldPath, FieldValues } from 'react-hook-form';
 import { beautifyObjectName } from '@/components/ui/auto-form/utils';
 import { faker } from '@faker-js/faker';
-import { Lease, Person, PropertyTenancy, PropertyTenancyInCommon, Space } from '@zenstackhq/runtime/models';
+import { Lease, Person, PropertyTenancy, PropertyTenancyInCommon, Space } from '@prisma/client';
 import { expect, Page, test as base } from '@playwright/test';
 import { Property } from '@prisma/client';
 import { fakeProperty, fakeTenancyInCommon } from '@/lib/demo/fake';

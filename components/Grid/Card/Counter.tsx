@@ -1,4 +1,4 @@
-import { Type } from '@zenstackhq/runtime/models';
+import { Type } from '@prisma/client';
 import { getTypeHook } from '@/components/Grid/Table/getTypeHook';
 import { beautifyObjectName } from '@/components/ui/auto-form/utils';
 

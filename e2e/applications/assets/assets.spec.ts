@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
 import { test } from '@/e2e/utils';
 import { faker } from '@faker-js/faker';
-import { Property } from '@zenstackhq/runtime/models';
+import { Property } from '@prisma/client';
 import { fakeProperty } from '@/lib/demo/fake';
 
 test('Should enable assets application, see groups of properties, list them, edit one', async ({ page, utils }) => {
