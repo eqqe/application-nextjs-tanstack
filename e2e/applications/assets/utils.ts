@@ -29,9 +29,11 @@ export function getAssetsUtils(base: ReturnType<typeof getBaseUtils>, page: Page
         await expect(page.getByText(`$${rentAmount}`)).toBeVisible();
     }
 
-    async function createLeaseFindProperty({ startDate }: { startDate: string }) {
+    async function createLeaseFindProperty({ name, startDate }: { name: string; startDate: string }) {
         await createFillScalarLeaseFields({ startDate });
 
+        await page.getByText('Select Property...').click();
+        await page.getByText(name).click();
         await base.clickSaveChanges();
     }
     return {

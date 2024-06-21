@@ -78,7 +78,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                     create: {
                                                                         button: {
                                                                             create: {
-                                                                                text: 'Create property',
+                                                                                text: 'Create Property',
                                                                                 table: 'Property',
                                                                             },
                                                                         },
@@ -100,7 +100,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                     create: {
                                                                         button: {
                                                                             create: {
-                                                                                text: 'Create lease tenant',
+                                                                                text: 'Create Lease Tenant',
                                                                                 table: 'LeaseTenant',
                                                                             },
                                                                         },

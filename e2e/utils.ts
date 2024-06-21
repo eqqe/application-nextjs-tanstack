@@ -117,7 +117,7 @@ export function getBaseUtils(page: Page) {
     }
 
     async function clickButton(name: string) {
-        await page.getByRole('button', { name }).click();
+        await page.getByRole('button', { name, exact: true }).click();
     }
     async function clickSaveChanges() {
         await page.getByText('Save changes', { exact: true }).click();
