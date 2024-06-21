@@ -26,7 +26,7 @@ export function WithNavBar({ children }: Props) {
                                         href={item.href}
                                         className="text-muted-foreground hover:text-foreground flex size-9 items-center justify-center rounded-lg transition-colors md:size-8"
                                     >
-                                        <Package className="size-5" />
+                                        {item.icon ? item.icon : <Package />}
                                         <span className="sr-only">{item.title}</span>
                                     </Link>
                                 </TooltipTrigger>
@@ -41,7 +41,7 @@ export function WithNavBar({ children }: Props) {
                                     href="/settings"
                                     className="text-muted-foreground hover:text-foreground flex size-9 items-center justify-center rounded-lg transition-colors md:size-8"
                                 >
-                                    <Settings className="size-5" />
+                                    <Settings />
                                     <span className="sr-only">Settings</span>
                                 </Link>
                             </TooltipTrigger>

@@ -8,8 +8,12 @@ abstract model BaseGrid extends IdCreatedUpdatedAuth, Named {
     elements GridElement[]
 }
 
+abstract model OptionalIcon {
+    icon IconName?
+}
 
-model Grid extends BaseGrid {
+
+model Grid extends BaseGrid, OptionalIcon {
     subTab   SubTabFolder @relation(fields: [parentId], references: [id], onDelete: Cascade)
     parentId String
 
@@ -50,7 +54,7 @@ model GridElement extends IdCreatedUpdatedAuth {
 
 
 
-model GridCard extends IdCreatedUpdatedAuth {
+model GridCard extends IdCreatedUpdatedAuth, OptionalIcon {
 
     element                GridElement     @relation(fields: [parentId], references: [id], onDelete: Cascade)
     parentId               String          @unique
@@ -119,3 +123,11 @@ model GridCardFooterProgress extends GridCardFooterBase {
     value Int
 }
 
+enum IconName {
+    FolderKey
+    SquareUser
+    User
+    Users
+    Home
+    Gauge
+}

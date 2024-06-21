@@ -1,7 +1,7 @@
 import { getBaseUtils } from '@/e2e/utils';
 import { faker } from '@faker-js/faker';
 import { Page, expect } from '@playwright/test';
-import { Lease } from '@zenstackhq/runtime/models';
+import { Lease } from '@prisma/client';
 
 export function getAssetsUtils(base: ReturnType<typeof getBaseUtils>, page: Page) {
     async function enable() {

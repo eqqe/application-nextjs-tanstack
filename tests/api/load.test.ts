@@ -1,7 +1,6 @@
 import { expect, test } from 'vitest';
 import { getEnhancedPrisma } from '@/tests/mock/enhanced-prisma';
 import { generateData } from '@/lib/demo/fake';
-import { PrismaClient } from '@zenstackhq/runtime/models';
 
 test('Load a lot of data for 3 users', async () => {
     const { user1, user2, user3 } = await getEnhancedPrisma();
@@ -14,7 +13,9 @@ test('Load a lot of data for 3 users', async () => {
             await prisma.space.update(updateSpaceArgs);
         }
     }
-    async function checkFakeDataCount({ prisma, factor }: { prisma: PrismaClient; factor: number }) {
+
+    // Keep type { prisma: any } cause it tends to slow down typescript to compare these enhanced prisma clients
+    async function checkFakeDataCount({ prisma, factor }: { prisma: any; factor: number }) {
         // User2 and user3 share a space so they will find other user data
         const countProperty = await prisma.property.aggregate({ _count: true });
         expect(countProperty._count).toBe(length * length * factor);

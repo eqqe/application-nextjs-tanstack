@@ -4,7 +4,7 @@ import { getCookie, setCookie } from 'cookies-next';
 import { useRouter } from 'next/router';
 import { createContext, useState, useContext, ReactNode, useEffect, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { Space } from '@zenstackhq/runtime/models';
+import { Space } from '@prisma/client';
 
 export type SelectedSpaces = string[];
 
