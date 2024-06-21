@@ -53,7 +53,7 @@ export default function AutoFormObject<SchemaType extends z.ZodObject<any, any>>
     return (
         <Accordion type="multiple" className="space-y-5 border-none">
             {Object.keys(shape).map((name) => {
-                if (['id', 'createdAt', 'updatedAt'].includes(name)) {
+                if (['id', 'createdAt', 'updatedAt', 'ownerId'].includes(name)) {
                     return null;
                 }
                 let item = shape[name] as z.ZodAny;

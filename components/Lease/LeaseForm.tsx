@@ -1,18 +1,15 @@
-import { useCreateLease, useFindManyProperty } from '@/zmodel/lib/hooks';
+import { useCreateLease } from '@/zmodel/lib/hooks';
 import { toast } from 'react-toastify';
 import { AutoFormDialog } from '@/components/Form/AutoFormDialog';
-import { LeaseCreateScalarSchema } from '@zenstackhq/runtime/zod/models';
-import { z } from 'zod';
+import { LeaseCreateSchema } from '@zenstackhq/runtime/zod/models';
 
 export function LeaseForm() {
     const create = useCreateLease();
-    const { data: properties } = useFindManyProperty();
 
     return (
         <AutoFormDialog
-            formSchema={LeaseCreateScalarSchema.extend({ propertyId: z.enum(properties?.map((p) => p.id)) })}
+            formSchema={LeaseCreateSchema}
             onSubmitData={async (data) => {
-                // @ts-ignore
                 await create.mutateAsync({ data });
                 toast.success(`Lease created successfully!`);
             }}
