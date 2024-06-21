@@ -160,7 +160,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                         },
                                                                         chart: {
                                                                             create: {
-                                                                                type: 'BarChart',
+                                                                                type: 'PieChart',
                                                                             },
                                                                         },
                                                                         type: 'Property',

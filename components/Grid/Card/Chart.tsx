@@ -1,5 +1,5 @@
 import { Chart as ChartType, GroupBy } from '@zenstackhq/runtime/models';
-import { Bar, BarChart, Cell, Line, LineChart, Pie, PieChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
+import { Bar, BarChart, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { groupByTypes } from '@/components/Grid/Table/CardTableComponent';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
@@ -31,26 +31,27 @@ export function Chart({ data: dataProps, chart, groupBy }: { data: any[]; chart:
                         <XAxis dataKey={dataKey} stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
                         <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
                         <Bar dataKey="value" radius={[4, 4, 0, 0]} />
+                        <Tooltip />
                     </BarChart>
                 );
             }
             case 'PieChart': {
+                console.log(dataKey);
                 return (
                     <PieChart width={800} height={400}>
                         <Pie
                             data={data}
-                            cx={120}
-                            cy={200}
-                            innerRadius={60}
-                            outerRadius={80}
+                            innerRadius={'90'}
                             fill="#8884d8"
                             paddingAngle={5}
-                            dataKey={dataKey}
+                            dataKey={'value'}
+                            nameKey={dataKey}
                         >
                             {data.map((_, index) => (
                                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                             ))}
                         </Pie>
+                        <Tooltip />
                     </PieChart>
                 );
             }
