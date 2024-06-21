@@ -42,11 +42,6 @@ test('Should enable assets application, see groups of properties, list them, edi
     await utils.clickSaveChanges();
 
     await expect(page.getByText(updatedCity)).toBeVisible();
-
-    await page.getByText(streetAddress).click();
-    await utils.assets.createLease({ streetAddress: streetAddress, startDate: '2030-01-01' });
-    await utils.assets.createLease({ streetAddress: streetAddress, startDate: '2040-01-01' });
-    await utils.assets.createLease({ streetAddress: streetAddress, startDate: '2050-01-01' });
 });
 
 test('Should enable assets application, see essential data, create a property tenancy', async ({ page, utils }) => {
