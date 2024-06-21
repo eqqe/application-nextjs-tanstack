@@ -7,11 +7,7 @@ import { Prisma, Type } from '@prisma/client';
 export function LeaseForm() {
     const create = useCreateLease();
 
-    const where: Prisma.PropertyWhereInput = {
-        leases: {
-            none: {},
-        },
-    };
+    const where: Prisma.PropertyWhereInput = { leases: { none: {} } };
 
     return (
         <AutoFormDialog
@@ -29,7 +25,7 @@ export function LeaseForm() {
                     },
                 },
             }}
-            title={'Create a lease'}
+            title={'Create Lease'}
         />
     );
 }

@@ -6,7 +6,7 @@ import { fakeProperty } from '@/lib/demo/fake';
 
 test('Should enable assets application, see groups of properties, list them, edit one', async ({ page, utils }) => {
     await utils.openHomeCreateSpace();
-    await utils.enableAssets();
+    await utils.assets.enable();
     await page.getByText('Properties').click();
 
     const city = faker.location.city();
@@ -44,15 +44,15 @@ test('Should enable assets application, see groups of properties, list them, edi
     await expect(page.getByText(updatedCity)).toBeVisible();
 
     await page.getByText(streetAddress).click();
-    await utils.createLease({ streetAddress: streetAddress, startDate: '2030-01-01' });
-    await utils.createLease({ streetAddress: streetAddress, startDate: '2040-01-01' });
-    await utils.createLease({ streetAddress: streetAddress, startDate: '2050-01-01' });
+    await utils.assets.createLease({ streetAddress: streetAddress, startDate: '2030-01-01' });
+    await utils.assets.createLease({ streetAddress: streetAddress, startDate: '2040-01-01' });
+    await utils.assets.createLease({ streetAddress: streetAddress, startDate: '2050-01-01' });
 });
 
 test('Should enable assets application, see essential data, create a property tenancy', async ({ page, utils }) => {
     await utils.openHomeCreateSpace();
-    await utils.enableAssets();
-    await page.getByText('Your essential data').click();
+    await utils.assets.enable();
+    await utils.assets.openEssentialData();
     await utils.createPropertyTenancy({
         propertyTenancy: {
             type: 'InCommon',
