@@ -19,10 +19,10 @@ test('Should enable assets application, rollback, and update', async ({ page, ut
 
     await generateDemonstration();
     await utils.assets.openEssentialData();
-    await expect(page.getByText(`property tenants${lenghtDemo} Property Tenancy`)).toBeVisible();
-    await expect(page.getByText(`leases${lenghtDemo * lenghtDemo} Lease`)).toBeVisible();
-    await expect(page.getByText(`properties${lenghtDemo} Property`)).toBeVisible();
-    await expect(page.getByText(`lease tenants${lenghtDemo * lenghtDemo} Lease Tenant`)).toBeVisible();
+    await expect(page.getByText(`property tenants${lenghtDemo}`)).toBeVisible();
+    await expect(page.getByText(`leases${lenghtDemo * lenghtDemo}`)).toBeVisible();
+    await expect(page.getByText(`properties${lenghtDemo}`)).toBeVisible();
+    await expect(page.getByText(`lease tenants${lenghtDemo * lenghtDemo}`)).toBeVisible();
 
     await utils.openSettings();
     await page.getByText('Properties').click();

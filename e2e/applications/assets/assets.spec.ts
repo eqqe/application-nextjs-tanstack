@@ -77,5 +77,5 @@ test('Should enable assets application, see essential data, create a property te
             name: 'other SCI Simon',
         },
     });
-    await expect(page.getByText('4 Property Tenancy')).toBeVisible();
+    await expect(page.getByText('property tenants4')).toBeVisible();
 });

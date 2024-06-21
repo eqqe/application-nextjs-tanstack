@@ -12,8 +12,8 @@ test('Should add lease on property', async ({ page, utils }) => {
     const name = faker.word.noun();
     await utils.assets.createProperty({ property: { name } });
 
-    await expect(page.getByText(`leases0 Lease`)).toBeVisible();
+    await expect(page.getByText(`leases0`)).toBeVisible();
 
     await assets.createLeaseFindProperty({ name, startDate: '2050-05-12' });
-    await expect(page.getByText(`leases1 Lease`)).toBeVisible();
+    await expect(page.getByText(`leases1`)).toBeVisible();
 });
