@@ -7,7 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Provider as ZenStackHooksProvider } from '../zmodel/lib/hooks';
 import '../styles/globals.css';
 import { ReactElement } from 'react';
-import { ThemeProvider } from 'next-themes';
+import { ThemeProvider, useTheme } from 'next-themes';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { SelectedSpacesProvider } from '@/lib/context';
 
@@ -27,7 +27,6 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
                                 <AppContent>
                                     <div className="h-100 grow">
                                         <Component {...pageProps} />
-                                        <ToastContainer position="top-center" autoClose={2000} hideProgressBar={true} />
                                     </div>
                                 </AppContent>
                             </SelectedSpacesProvider>
@@ -40,9 +39,11 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
 }
 
 function AppContent(props: { children: ReactElement | ReactElement[] }) {
+    const theme = useTheme();
     return (
         <AuthGuard>
             <div className="flex h-screen flex-col">{props.children}</div>
+            <ToastContainer theme={theme.theme} position="top-center" autoClose={2000} hideProgressBar={true} />
         </AuthGuard>
     );
 }
