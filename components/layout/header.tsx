@@ -39,9 +39,11 @@ import { useCurrentUser } from '@/lib/context';
 import { ModeToggle } from './ModeToggle';
 import { SpaceSwitch } from './SpaceSwitch';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 export default function Header() {
     const user = useCurrentUser();
+    const router = useRouter();
     return (
         <header className="bg-background sticky top-0 z-30 flex h-14 items-center gap-4 border-b px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
             <MobileSideNav />
@@ -52,6 +54,11 @@ export default function Header() {
                     type="search"
                     placeholder="Search..."
                     className="bg-background w-full rounded-lg pl-8 md:w-[200px] lg:w-[320px]"
+                    onKeyUp={(e) => {
+                        if (e.key === 'Enter') {
+                            router.push(`/search?q=${(e.target as HTMLInputElement).value}`);
+                        }
+                    }}
                 />
             </div>
             <DropdownMenu>
