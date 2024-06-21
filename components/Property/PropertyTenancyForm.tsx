@@ -1,34 +1,51 @@
 import { useCreatePropertyTenancy } from '@/zmodel/lib/hooks';
 import { toast } from 'react-toastify';
-import { AutoFormDialog } from '@/components/Form/AutoFormDialog';
 import { z } from 'zod';
 import {
+    PersonCreateScalarSchema,
     PropertyJointTenancyCreateScalarSchema,
     PropertyTenancyByEntiretyCreateScalarSchema,
     PropertyTenancyCreateScalarSchema,
     PropertyTenancyInCommonCreateScalarSchema,
 } from '@zenstackhq/runtime/zod/models';
+import { PropertyTenancyType } from '@prisma/client';
+import { AutoFormDialogEnumType } from '../Form/AutoFormDialogEnumType';
 
 export function PropertyTenancyForm() {
     const create = useCreatePropertyTenancy();
+
     return (
-        <AutoFormDialog
-            formSchema={z.object({
-                tenancy: PropertyTenancyCreateScalarSchema,
-                tenancyInCommon: PropertyTenancyInCommonCreateScalarSchema,
+        <AutoFormDialogEnumType
+            baseSchema={PropertyTenancyCreateScalarSchema}
+            typedSchemas={z.object({
+                [PropertyTenancyType.ByEntirety]: PropertyTenancyByEntiretyCreateScalarSchema.extend({
+                    person: PersonCreateScalarSchema,
+                }).optional(),
+                [PropertyTenancyType.InCommon]: PropertyTenancyInCommonCreateScalarSchema.optional(),
+                [PropertyTenancyType.Joint]: PropertyJointTenancyCreateScalarSchema.optional(),
             })}
             onSubmitData={async (data) => {
                 await create.mutateAsync({
                     data: {
-                        ...data.tenancy,
-                        ...(data.tenancy.tenancyType === 'InCommon' && {
+                        ...data.base,
+                        ...(data.base.type === 'InCommon' && {
                             tenancyInCommon: {
-                                create: data.tenancyInCommon,
+                                create: data.InCommon,
+                            },
+                        }),
+                        ...(data.base.type === 'Joint' && {
+                            jointTenancy: {
+                                create: data.Joint,
+                            },
+                        }),
+                        ...(data.base.type === 'ByEntirety' && {
+                            tenancyByEntirety: {
+                                create: { ...data.ByEntirety, person: { create: data.ByEntirety?.person } },
                             },
                         }),
                     },
                 });
-                toast.success(`${data.tenancy.name} created successfully!`);
+                toast.success(`${data.base.name} created successfully!`);
             }}
             title={'Create Property Tenancy'}
         />

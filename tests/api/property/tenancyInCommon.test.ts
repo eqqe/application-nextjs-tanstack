@@ -73,7 +73,7 @@ it('Should allow a user to create tenancy in common for properties in their spac
 
     assert.equal(properties.length, 1);
     assert.equal(properties[0].spaceId, user2.space.id);
-    assert.equal(properties[0].tenancy?.tenancyType, 'InCommon');
+    assert.equal(properties[0].tenancy?.type, 'InCommon');
     assert.equal(properties[0].surface, property.surface);
     assert.equal(properties[0].tenancy?.tenancyInCommon?.ownerId, user3.userCreated.id);
     assert.deepEqual(properties[0].tenancy?.tenancyInCommon?.tenants[0].person.birthDate, person.birthDate);
