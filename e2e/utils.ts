@@ -21,107 +21,145 @@ export const test = base.extend<{
 });
 
 export function getBaseUtils(page: Page) {
-    return {
-        async openSettings() {
-            await page.getByRole('link', { name: 'Settings' }).click();
-            await expect(page.getByText(`Manage members`)).toBeVisible();
-        },
+    async function openSettings() {
+        await page.getByRole('link', { name: 'Settings' }).click();
+        await expect(page.getByText(`Manage members`)).toBeVisible();
+    }
 
-        async generateDemonstration() {
-            await this.openSettings();
-            await page.getByText('Generate Demonstration').click();
-        },
+    async function generateDemonstration() {
+        await openSettings();
+        await page.getByText('Generate Demonstration').click();
+    }
 
-        async createProperty({ property }: { property: Partial<Property> }) {
-            await this.clickButton('Create Property');
+    async function createProperty({ property }: { property: Partial<Property> }) {
+        await clickButton('Create Property');
 
-            const propertyFake = fakeProperty();
-            const streetAddress = property.streetAddress ?? propertyFake.streetAddress;
-            await this.selectFromCombo<Property>('propertyType', property.propertyType ?? propertyFake.propertyType);
+        const propertyFake = fakeProperty();
+        const streetAddress = property.streetAddress ?? propertyFake.streetAddress;
+        await selectFromCombo<Property>('propertyType', property.propertyType ?? propertyFake.propertyType);
 
-            await this.getByLabel<Property>('streetAddress').fill(streetAddress);
-            await this.getByLabel<Property>('city').fill(property.city ?? propertyFake.city);
-            await this.getByLabel<Property>('postalCode').fill(property.postalCode ?? propertyFake.postalCode);
-            await this.getByLabel<Property>('country').fill(property.country ?? propertyFake.country);
-            await this.getByLabel<Property>('state').fill(property.state ?? propertyFake.state ?? '');
-            await this.getByLabel<Property>('name').fill(property.name ?? propertyFake.name);
-            await this.getByLabel<Property>('surface').fill((property.surface ?? propertyFake.surface).toString());
+        await getByLabel<Property>('streetAddress').fill(streetAddress);
+        await getByLabel<Property>('city').fill(property.city ?? propertyFake.city);
+        await getByLabel<Property>('postalCode').fill(property.postalCode ?? propertyFake.postalCode);
+        await getByLabel<Property>('country').fill(property.country ?? propertyFake.country);
+        await getByLabel<Property>('state').fill(property.state ?? propertyFake.state ?? '');
+        await getByLabel<Property>('name').fill(property.name ?? propertyFake.name);
+        await getByLabel<Property>('surface').fill((property.surface ?? propertyFake.surface).toString());
 
-            await this.getByLabel('private').check();
-            await this.clickSaveChanges();
+        await getByLabel('private').check();
+        await clickSaveChanges();
 
-            await this.checkToastCreated('Property');
-            return streetAddress;
-        },
+        await checkToastCreated('Property');
+        return streetAddress;
+    }
 
-        async createPropertyTenancy({
-            propertyTenancy,
-        }: {
-            propertyTenancy: z.infer<typeof PropertyTenancyCreateScalarSchema>;
-        }) {
-            await this.clickButton('Create Property Tenancy');
+    async function createPropertyTenancy({
+        propertyTenancy,
+    }: {
+        propertyTenancy: z.infer<typeof PropertyTenancyCreateScalarSchema>;
+    }) {
+        await clickButton('Create Property Tenancy');
 
-            await this.selectFromCombo<PropertyTenancy>('type', propertyTenancy.type);
-            await this.getByLabel<PropertyTenancy>('name').fill(propertyTenancy.name);
+        await selectFromCombo<PropertyTenancy>('type', propertyTenancy.type);
+        await getByLabel<PropertyTenancy>('name').fill(propertyTenancy.name);
 
-            switch (propertyTenancy.type) {
-                case 'InCommon': {
-                    const tenancyInCommon = fakeTenancyInCommon();
+        switch (propertyTenancy.type) {
+            case 'InCommon': {
+                const tenancyInCommon = fakeTenancyInCommon();
 
-                    await this.getByLabel<PropertyTenancyInCommon>('streetAddress').fill(tenancyInCommon.streetAddress);
-                    await this.getByLabel<PropertyTenancyInCommon>('city').fill(tenancyInCommon.city);
-                    await this.getByLabel<PropertyTenancyInCommon>('postalCode').fill(tenancyInCommon.postalCode);
-                    await this.getByLabel<PropertyTenancyInCommon>('country').fill(tenancyInCommon.country);
-                    await this.getByLabel<PropertyTenancyInCommon>('intraCommunityVAT').fill(
-                        tenancyInCommon.intraCommunityVAT ?? ''
-                    );
-                    await this.getByLabel<PropertyTenancyInCommon>('siren').fill(tenancyInCommon.siren ?? '');
-                    await this.getByLabel<PropertyTenancyInCommon>('siret').fill(tenancyInCommon.siret ?? '');
-                    break;
-                }
-                case 'ByEntirety': {
-                    await this.getByLabel<Person>('birthDate').fill('1990-12-12');
-                    await this.getByLabel<Person>('phone').fill('0607080901');
-                    break;
-                }
-                case 'Joint': {
-                    break;
-                }
+                await getByLabel<PropertyTenancyInCommon>('streetAddress').fill(tenancyInCommon.streetAddress);
+                await getByLabel<PropertyTenancyInCommon>('city').fill(tenancyInCommon.city);
+                await getByLabel<PropertyTenancyInCommon>('postalCode').fill(tenancyInCommon.postalCode);
+                await getByLabel<PropertyTenancyInCommon>('country').fill(tenancyInCommon.country);
+                await getByLabel<PropertyTenancyInCommon>('intraCommunityVAT').fill(
+                    tenancyInCommon.intraCommunityVAT ?? ''
+                );
+                await getByLabel<PropertyTenancyInCommon>('siren').fill(tenancyInCommon.siren ?? '');
+                await getByLabel<PropertyTenancyInCommon>('siret').fill(tenancyInCommon.siret ?? '');
+                break;
             }
-            await this.clickSaveChanges();
+            case 'ByEntirety': {
+                await getByLabel<Person>('birthDate').fill('1990-12-12');
+                await getByLabel<Person>('phone').fill('0607080901');
+                break;
+            }
+            case 'Joint': {
+                break;
+            }
+        }
+        await clickSaveChanges();
 
-            await this.checkToastCreated(propertyTenancy.name);
-        },
+        await checkToastCreated(propertyTenancy.name);
+    }
 
-        async clickButton(name: string) {
-            await page.getByRole('button', { name }).click();
-        },
-        async clickSaveChanges() {
-            await page.getByText('Save changes', { exact: true }).click();
-        },
-        getByLabel<T extends FieldValues>(label: FieldPath<T>) {
-            return page.getByLabel(beautifyObjectName(label));
-        },
+    async function createFillScalarLeaseFields({ startDate }: { startDate: string }) {
+        await clickButton('Create Lease');
 
-        async selectFromCombo<T extends FieldValues>(label: FieldPath<T>, type: string) {
-            await page.getByTestId(`${beautifyObjectName(label)}-button-combo`).click();
-            await page.locator(`span:has-text("${type}")`).click();
-        },
-        async openHomeCreateSpace() {
-            await page.goto('http://localhost:3000/');
-            await page.getByText('Select space').click();
-            await page.getByText('Create space').click();
-            // Button in menu above, redundant button in page below
-            await page.getByText('Create space').click();
+        const rentAmount = faker.number.int({ max: 50000 });
+        await getByLabel<Lease>('startDate').fill(startDate);
+        await getByLabel<Lease>('rentAmount').fill(rentAmount.toString());
+        return rentAmount;
+    }
 
-            const name = faker.word.words(5);
-            await this.getByLabel<Space>('name').fill(name);
-            await this.clickSaveChanges();
-            await page.getByRole('link', { name }).click();
-        },
+    async function createLease({ streetAddress, startDate }: { streetAddress: string; startDate: string }) {
+        const rentAmount = await createFillScalarLeaseFields({ startDate });
+        await clickSaveChanges();
 
-        async checkToastCreated(name: string) {
-            await expect(page.getByText(`${name} created successfully!`)).toBeVisible();
-        },
+        await expect(page.getByText(streetAddress)).toBeVisible();
+        await expect(page.getByText(`Start Date: ${startDate}`)).toBeVisible();
+        await expect(page.getByText(`$${rentAmount}`)).toBeVisible();
+    }
+
+    async function createLeaseFindProperty({ startDate }: { startDate: string }) {
+        await createFillScalarLeaseFields({ startDate });
+
+        await clickSaveChanges();
+    }
+
+    async function clickButton(name: string) {
+        await page.getByRole('button', { name }).click();
+    }
+    async function clickSaveChanges() {
+        await page.getByText('Save changes', { exact: true }).click();
+    }
+    function getByLabel<T extends FieldValues>(label: FieldPath<T>) {
+        return page.getByLabel(beautifyObjectName(label));
+    }
+
+    async function selectFromCombo<T extends FieldValues>(label: FieldPath<T>, type: string) {
+        await page.getByTestId(`${beautifyObjectName(label)}-button-combo`).click();
+        await page.locator(`span:has-text("${type}")`).click();
+    }
+
+    async function openHomeCreateSpace() {
+        await page.goto('http://localhost:3000/');
+        await page.getByText('Select space').click();
+        await page.getByText('Create space').click();
+        // Button in menu above, redundant button in page below
+        await page.getByText('Create space').click();
+
+        const name = faker.word.words(5);
+        await getByLabel<Space>('name').fill(name);
+        await clickSaveChanges();
+        await page.getByRole('link', { name }).click();
+    }
+
+    async function checkToastCreated(name: string) {
+        await expect(page.getByText(`${name} created successfully!`)).toBeVisible();
+    }
+
+    return {
+        openSettings,
+        generateDemonstration,
+        createProperty,
+        createPropertyTenancy,
+        createLease,
+        createLeaseFindProperty,
+        clickButton,
+        clickSaveChanges,
+        getByLabel,
+        selectFromCombo,
+        openHomeCreateSpace,
+        checkToastCreated,
     };
 }
