@@ -5,7 +5,6 @@ export function getLucideIcon({ icon }: { icon: IconName | null }) {
     if (!icon) {
         return null;
     }
-
     switch (icon) {
         case 'FolderKey':
             return <FolderKey />;
