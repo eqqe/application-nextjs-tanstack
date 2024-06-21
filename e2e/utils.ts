@@ -4,18 +4,23 @@ import { faker } from '@faker-js/faker';
 import { Lease, Person, PropertyTenancy, PropertyTenancyInCommon, Space } from '@zenstackhq/runtime/models';
 import { expect, Page, test as base } from '@playwright/test';
 import { Property } from '@prisma/client';
-import { fakePerson, fakeProperty, fakeTenancyInCommon } from '@/lib/demo/fake';
+import { fakeProperty, fakeTenancyInCommon } from '@/lib/demo/fake';
 import { PropertyTenancyCreateScalarSchema } from '@zenstackhq/runtime/zod/models';
 import { z } from 'zod';
+import { getAssetsUtils } from '@/e2e/applications/assets/utils';
 
-export const test = base.extend<{ page: Page; utils: ReturnType<typeof getUtils> }>({
+export const test = base.extend<{
+    page: Page;
+    utils: ReturnType<typeof getBaseUtils> & { assets: ReturnType<typeof getAssetsUtils> };
+}>({
     utils: async ({ page }, use) => {
-        const utils = getUtils(page);
-        await use(utils);
+        const base = getBaseUtils(page);
+        const assets = getAssetsUtils(base, page);
+        await use({ ...base, assets });
     },
 });
 
-function getUtils(page: Page) {
+export function getBaseUtils(page: Page) {
     async function openSettings() {
         await page.getByRole('link', { name: 'Settings' }).click();
         await expect(page.getByText(`Manage members`)).toBeVisible();
@@ -24,11 +29,6 @@ function getUtils(page: Page) {
     async function generateDemonstration() {
         await openSettings();
         await page.getByText('Generate Demonstration').click();
-    }
-
-    async function enableAssets() {
-        await openSettings();
-        await page.getByText('Enable Assets').click();
     }
 
     async function createProperty({ property }: { property: Partial<Property> }) {
@@ -92,12 +92,17 @@ function getUtils(page: Page) {
         await checkToastCreated(propertyTenancy.name);
     }
 
-    async function createLease({ streetAddress, startDate }: { streetAddress: string; startDate: string }) {
+    async function createFillScalarLeaseFields({ startDate }: { startDate: string }) {
         await clickButton('Create Lease');
 
         const rentAmount = faker.number.int({ max: 50000 });
         await getByLabel<Lease>('startDate').fill(startDate);
         await getByLabel<Lease>('rentAmount').fill(rentAmount.toString());
+        return rentAmount;
+    }
+
+    async function createLease({ streetAddress, startDate }: { streetAddress: string; startDate: string }) {
+        const rentAmount = await createFillScalarLeaseFields({ startDate });
         await clickSaveChanges();
 
         await expect(page.getByText(streetAddress)).toBeVisible();
@@ -105,8 +110,14 @@ function getUtils(page: Page) {
         await expect(page.getByText(`$${rentAmount}`)).toBeVisible();
     }
 
+    async function createLeaseFindProperty({ startDate }: { startDate: string }) {
+        await createFillScalarLeaseFields({ startDate });
+
+        await clickSaveChanges();
+    }
+
     async function clickButton(name: string) {
-        await page.getByRole('button', { name }).click();
+        await page.getByRole('button', { name, exact: true }).click();
     }
     async function clickSaveChanges() {
         await page.getByText('Save changes', { exact: true }).click();
@@ -120,13 +131,8 @@ function getUtils(page: Page) {
         await page.locator(`span:has-text("${type}")`).click();
     }
 
-    async function openHome() {
-        // TODO SRE re add home button in nav
-        await page.goto('http://localhost:3000/');
-    }
-
     async function openHomeCreateSpace() {
-        await openHome();
+        await page.goto('http://localhost:3000/');
         await page.getByText('Select space').click();
         await page.getByText('Create space').click();
         // Button in menu above, redundant button in page below
@@ -145,15 +151,14 @@ function getUtils(page: Page) {
     return {
         openSettings,
         generateDemonstration,
-        enableAssets,
         createProperty,
         createPropertyTenancy,
         createLease,
+        createLeaseFindProperty,
         clickButton,
         clickSaveChanges,
         getByLabel,
         selectFromCombo,
-        openHome,
         openHomeCreateSpace,
         checkToastCreated,
     };
