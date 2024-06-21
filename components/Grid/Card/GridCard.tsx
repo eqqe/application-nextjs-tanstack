@@ -7,13 +7,11 @@ import { FallbackError } from '@/components/layout/FallbackError';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Counter } from '@/components/Grid/Card/Counter';
 import { getLucideIcon } from '@/components/Grid/getLucideIcon';
-import { Chart, GridCardChartInclude } from './Chart';
 
 export const GridCardInclude = {
     include: {
         table: GridCardTableInclude,
         footer: GridCardFooterInclude,
-        chart: GridCardChartInclude,
     },
 };
 
@@ -39,7 +37,6 @@ export function GridCard({ card }: { card: Prisma.GridCardGetPayload<typeof Grid
                     )}
                     <div className="flex items-center gap-4">
                         {getLucideIcon(card)}
-                        {card.chart && <Chart />}
                         {card.count && <Counter type={card.count} />}
                     </div>
                 </CardHeader>

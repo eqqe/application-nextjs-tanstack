@@ -24,10 +24,8 @@ export function getAssetsUtils(base: ReturnType<typeof getBaseUtils>, page: Page
         await base.selectFromCombo<Lease>('duration', lease.duration);
         await base.getByLabel<Lease>('rentAmount').fill(lease.rentAmount.toString());
         await base.selectFromCombo<Lease>('periodicity', lease.periodicity);
-        await base.selectFromCombo<Lease>('quaterlyPeriodicity', lease.quaterlyPeriodicity);
         await base.selectFromCombo<Lease>('paymentType', lease.paymentType);
         await base.selectFromCombo<Lease>('paymentMode', lease.paymentMode);
-        await base.getByLabel<Lease>('notes').fill(lease.notes);
 
         return lease.rentAmount;
     }
