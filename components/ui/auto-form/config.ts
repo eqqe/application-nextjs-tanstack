@@ -5,6 +5,7 @@ import AutoFormFile from './fields/file';
 import AutoFormInput from './fields/input';
 import AutoFormNumber from './fields/number';
 import AutoFormRadioGroup from './fields/radio-group';
+import AutoFormSearch from './fields/search';
 import AutoFormSwitch from './fields/switch';
 import AutoFormTextarea from './fields/textarea';
 
@@ -18,6 +19,7 @@ export const INPUT_COMPONENTS = {
     number: AutoFormNumber,
     file: AutoFormFile,
     fallback: AutoFormInput,
+    search: AutoFormSearch,
 };
 
 /**
