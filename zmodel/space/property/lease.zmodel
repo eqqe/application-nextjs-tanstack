@@ -5,13 +5,76 @@ import "property"
 import "tenancy"
 import "../person/person"
 
+
+enum LeaseType {
+    Protected
+    Commercial
+    Furnished
+    Professional
+    Seasonal
+    Other
+}
+
+enum LeaseDurationType {
+    OneYear
+    TwoYears
+    ThreeYears
+    SixYears
+    NineYears
+    OtherDuration
+}
+
+enum LeasePeriodicityType {
+    Monthly
+    Quarterly
+    Yearly
+    OtherPeriodicity
+}
+
+
+enum LeaseQuaterlyPeriodicityType {
+    JanuaryAprilJulyOctober
+    FebruaryMayAugustNovember
+    MarchJuneSeptemberDecember
+}
+
+enum LeasePaymentType {
+    Advance
+    Arrears
+}
+
+enum LeasePaymentMode {
+    Cheque
+    WireTransfer
+    DirectDebit
+    Card
+    Other
+    Cash
+}
+
+
 model Lease extends PropertyComponent {
-    startDate  DateTime
-    endDate    DateTime?
-    rentAmount Int
-    payments   Payment[]
-    charges    Charge[]
-    tenants    LeaseTenant[]
+    startDate           DateTime
+    endDate             DateTime?
+    type                LeaseType
+    duration            LeaseDurationType
+    rentAmount          Int
+    periodicity         LeasePeriodicityType
+    quaterlyPeriodicity LeaseQuaterlyPeriodicityType?
+
+    paymentType         LeasePaymentType
+    paymentMode         LeasePaymentMode
+
+    iban                String?
+
+    mailOtherAddresses  LeaseMailOtherAddress[]
+
+
+
+    notes               String?
+    payments            Payment[]
+    charges             Charge[]
+    tenants             LeaseTenant[]
     @@allow('read', property.spaceId in auth().selectedSpaces && tenants?[person.user == auth()] && property.space.profiles?[users?[user.id == auth().id] && role == GUEST] )
 }
 
@@ -46,4 +109,6 @@ model Corporation extends Component, Address {
 model Payment extends LeaseComponent {
     amount Int
     date   DateTime
+}
+model LeaseMailOtherAddress extends LeaseComponent, Address {
 }

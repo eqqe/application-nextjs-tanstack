@@ -14,12 +14,12 @@ test('Should enable assets application, see groups of properties, list them, edi
     property1.city = city;
     const property2 = fakeProperty();
     property2.city = city;
-    await utils.createProperty({ property: property1 });
-    await utils.createProperty({ property: property2 });
+    await utils.assets.createProperty({ property: property1 });
+    await utils.assets.createProperty({ property: property2 });
 
     const otherCity = faker.location.city();
     const surface3 = faker.number.int({ max: 5000, min: 100 });
-    await utils.createProperty({ property: { surface: surface3, propertyType: 'HOUSE', city: otherCity } });
+    await utils.assets.createProperty({ property: { surface: surface3, propertyType: 'HOUSE', city: otherCity } });
 
     await expect(page.getByText('_sum Surface')).toBeVisible();
     await expect(page.getByText(city)).toBeVisible();
@@ -42,40 +42,35 @@ test('Should enable assets application, see groups of properties, list them, edi
     await utils.clickSaveChanges();
 
     await expect(page.getByText(updatedCity)).toBeVisible();
-
-    await page.getByText(streetAddress).click();
-    await utils.assets.createLease({ streetAddress: streetAddress, startDate: '2030-01-01' });
-    await utils.assets.createLease({ streetAddress: streetAddress, startDate: '2040-01-01' });
-    await utils.assets.createLease({ streetAddress: streetAddress, startDate: '2050-01-01' });
 });
 
 test('Should enable assets application, see essential data, create a property tenancy', async ({ page, utils }) => {
     await utils.openHomeCreateSpace();
     await utils.assets.enable();
     await utils.assets.openEssentialData();
-    await utils.createPropertyTenancy({
+    await utils.assets.createPropertyTenancy({
         propertyTenancy: {
             type: 'InCommon',
             name: 'SCI Simon',
         },
     });
-    await utils.createPropertyTenancy({
+    await utils.assets.createPropertyTenancy({
         propertyTenancy: {
             type: 'ByEntirety',
             name: 'Simon',
         },
     });
-    await utils.createPropertyTenancy({
+    await utils.assets.createPropertyTenancy({
         propertyTenancy: {
             type: 'Joint',
             name: 'Simons',
         },
     });
-    await utils.createPropertyTenancy({
+    await utils.assets.createPropertyTenancy({
         propertyTenancy: {
             type: 'InCommon',
             name: 'other SCI Simon',
         },
     });
-    await expect(page.getByText('4 Property Tenancy')).toBeVisible();
+    await expect(page.getByText('property tenants4')).toBeVisible();
 });

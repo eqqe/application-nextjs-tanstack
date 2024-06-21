@@ -37,7 +37,6 @@ export function GridCard({ card }: { card: Prisma.GridCardGetPayload<typeof Grid
                     )}
                     <div className="flex items-center gap-4">
                         {getLucideIcon(card)}
-
                         {card.count && <Counter type={card.count} />}
                     </div>
                 </CardHeader>

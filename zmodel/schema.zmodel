@@ -110,12 +110,12 @@ model User extends IdCreatedUpdated {
     propertyJointTenancies              PropertyJointTenancy[]          @relation("owner")
     propertyTenanciesByEntiretyOwned    PropertyTenancyByEntirety[]     @relation("owner")
     corporations                        Corporation[]                   @relation("owner")
+    leaseMailOtherAddresses             LeaseMailOtherAddress[]         @relation("owner")
 
     
     // next-auth
     accounts                            Account[]
 
-    // can be read by users sharing any space
     @@allow('read',  profiles?[profile.users?[user.id == auth().id] && (profile.role == ADMIN || profile.role == USER)])
 
     // full access by oneself

@@ -1,6 +1,6 @@
 import { GridElementType } from '@prisma/client';
 import { Type, Prisma, TypeTableRequest } from '@prisma/client';
-import { PropertyColumns } from '../columns';
+import { PropertyColumns, LeaseColumns } from '../columns';
 
 export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput = {
     versionMajor: 0,
@@ -109,6 +109,62 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                                 table: 'LeaseTenant',
                                                                             },
                                                                         },
+                                                                    },
+                                                                },
+                                                            },
+                                                        },
+                                                    },
+                                                    {
+                                                        type: GridElementType.Card,
+                                                        colSpan: 2,
+                                                        card: {
+                                                            create: {
+                                                                title: 'Your stats on leases',
+                                                                invertTitleDescription: false,
+                                                                description: `lease stats`,
+                                                                table: {
+                                                                    create: {
+                                                                        groupBy: {
+                                                                            create: {
+                                                                                fields: [LeaseColumns.type],
+                                                                                count: [LeaseColumns.id],
+                                                                            },
+                                                                        },
+                                                                        chart: {
+                                                                            create: {
+                                                                                type: 'BarChart',
+                                                                            },
+                                                                        },
+                                                                        type: 'Lease',
+                                                                        typeTableRequest: 'GroupBy',
+                                                                    },
+                                                                },
+                                                            },
+                                                        },
+                                                    },
+                                                    {
+                                                        type: GridElementType.Card,
+                                                        colSpan: 2,
+                                                        card: {
+                                                            create: {
+                                                                title: 'Surface of properties by city',
+                                                                invertTitleDescription: false,
+                                                                description: `surface by city`,
+                                                                table: {
+                                                                    create: {
+                                                                        groupBy: {
+                                                                            create: {
+                                                                                fields: [PropertyColumns.city],
+                                                                                sum: [PropertyColumns.surface],
+                                                                            },
+                                                                        },
+                                                                        chart: {
+                                                                            create: {
+                                                                                type: 'PieChart',
+                                                                            },
+                                                                        },
+                                                                        type: 'Property',
+                                                                        typeTableRequest: 'GroupBy',
                                                                     },
                                                                 },
                                                             },

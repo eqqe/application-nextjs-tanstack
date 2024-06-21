@@ -18,24 +18,39 @@ model GridCardTable extends IdCreatedUpdatedAuth {
     typeTableRequest TypeTableRequest
     columns          String[]
     groupBy          GroupBy?
+    chart            Chart?
 
     @@allow('read', parent.element.grid.subTab.tab.folder.applicationVersion.activations?[spaceId in auth().selectedSpaces && space.profiles?[users?[user.id == auth().id] && (role == ADMIN || role == USER)]])
     @@allow('read', parent.element.gridTabContent.tabs.element.grid.subTab.tab.folder.applicationVersion.activations?[spaceId in auth().selectedSpaces && space.profiles?[users?[user.id == auth().id] && (role == ADMIN || role == USER)]])
 }
 
 
-model GroupBy extends IdCreatedUpdatedAuth {
+abstract model GridCardTableLink extends IdCreatedUpdatedAuth {
+
     parent   GridCardTable @relation(fields: [parentId], references: [id], onDelete: Cascade)
     parentId String        @unique
+}
 
+model GroupBy extends GridCardTableLink {
+    fields  String[]
+    sum     String[]
+    count   String[]
+    avg     String[]
+    min     String[]
+    max     String[]
+    orderBy String?
 
-    fields   String[]
-    sum      String[]
-    count    String[]
-    avg      String[]
-    min      String[]
-    max      String[]
-    orderBy  String?
+    @@allow('read', parent.parent.element.grid.subTab.tab.folder.applicationVersion.activations?[spaceId in auth().selectedSpaces && space.profiles?[users?[user.id == auth().id] && (role == ADMIN || role == USER)]])
+    @@allow('read', parent.parent.element.gridTabContent.tabs.element.grid.subTab.tab.folder.applicationVersion.activations?[spaceId in auth().selectedSpaces && space.profiles?[users?[user.id == auth().id] && (role == ADMIN || role == USER)]])
+}
+
+enum ChartType {
+    BarChart
+    PieChart
+}
+
+model Chart extends GridCardTableLink {
+    type ChartType
 
     @@allow('read', parent.parent.element.grid.subTab.tab.folder.applicationVersion.activations?[spaceId in auth().selectedSpaces && space.profiles?[users?[user.id == auth().id] && (role == ADMIN || role == USER)]])
     @@allow('read', parent.parent.element.gridTabContent.tabs.element.grid.subTab.tab.folder.applicationVersion.activations?[spaceId in auth().selectedSpaces && space.profiles?[users?[user.id == auth().id] && (role == ADMIN || role == USER)]])

@@ -8,10 +8,12 @@ import { ColumnDef, PaginationState, RowData } from '@tanstack/react-table';
 import { z } from 'zod';
 import { AutoTable } from '@/components/AutoTable/AutoTable';
 import { ReactNode, useState } from 'react';
+import { Chart } from '@/components/Grid/Card/Chart';
 
 export const GridCardTableInclude = {
     include: {
         groupBy: true,
+        chart: true,
     },
 };
 
@@ -22,9 +24,12 @@ export type DisplayLink = {
 declare module '@tanstack/react-table' {
     interface ColumnMeta<TData extends RowData, TValue> extends DisplayLink {}
 }
+export const groupByTypes = ['sum', 'count', 'avg', 'min', 'max'] as const;
 
 export type CardTableComponentProps = { table: Prisma.GridCardTableGetPayload<typeof GridCardTableInclude> };
-export function CardTableComponent({ table: { type, typeTableRequest, columns, groupBy } }: CardTableComponentProps) {
+export function CardTableComponent({
+    table: { type, typeTableRequest, columns, groupBy, chart },
+}: CardTableComponentProps) {
     const { useHook, schema, useUpdate, useCount } = getTypeHook({ type });
 
     let count: number | undefined;
@@ -68,7 +73,7 @@ export function CardTableComponent({ table: { type, typeTableRequest, columns, g
                 const res: any = {
                     by: groupBy.fields,
                 };
-                (['sum', 'count', 'avg', 'min', 'max'] as const).forEach((name) => {
+                groupByTypes.forEach((name) => {
                     if (!groupBy) {
                         throw '! groupBy';
                     }
@@ -127,16 +132,20 @@ export function CardTableComponent({ table: { type, typeTableRequest, columns, g
     return (
         <div className="container mx-auto py-5">
             <ErrorBoundary fallback={<FallbackError />}>
-                <AutoTable
-                    type={type}
-                    formSchema={schema.base}
-                    additionalColumns={columnDataTable}
-                    onlyAdditionalColumns={
-                        (!!columns.length && typeTableRequest === 'FindMany') || typeTableRequest !== 'FindMany'
-                    }
-                    data={rows ?? []}
-                    pagination={typeTableRequest === 'FindMany' ? { pagination, setPagination, count } : void 0}
-                />
+                {chart && groupBy ? (
+                    <Chart data={rows ?? []} chart={chart} groupBy={groupBy} />
+                ) : (
+                    <AutoTable
+                        type={type}
+                        formSchema={schema.base}
+                        additionalColumns={columnDataTable}
+                        onlyAdditionalColumns={
+                            (!!columns.length && typeTableRequest === 'FindMany') || typeTableRequest !== 'FindMany'
+                        }
+                        data={rows ?? []}
+                        pagination={typeTableRequest === 'FindMany' ? { pagination, setPagination, count } : void 0}
+                    />
+                )}
             </ErrorBoundary>
         </div>
     );
