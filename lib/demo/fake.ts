@@ -1,5 +1,16 @@
 import { faker } from '@faker-js/faker';
-import { PropertyType, ChargeType, PropertyTenancyType, LeaseTenantType } from '@prisma/client';
+import {
+    PropertyType,
+    ChargeType,
+    PropertyTenancyType,
+    LeaseTenantType,
+    LeaseDuration,
+    LeasePaymentMode,
+    LeasePaymentType,
+    LeasePeriodicityType,
+    LeaseQuaterlyPeriodicityType,
+    LeaseType,
+} from '@prisma/client';
 import { z } from 'zod';
 import {
     PropertyCreateScalarSchema,
@@ -13,12 +24,11 @@ import {
 } from '@zenstackhq/runtime/zod/models';
 
 export const cityPlaywrightTest = 'City to find in Playwright test';
-
 const cities = Array.from({ length: 10 }).map(() => faker.location.city());
 export const fakeProperty = (): z.infer<typeof PropertyCreateScalarSchema> => ({
     ...fakeAddress(),
     name: faker.word.noun(),
-    propertyType: PropertyType.COMMERCIAL,
+    propertyType: pickRandom(PropertyType),
     surface: faker.number.int({ max: 50000, min: 100 }),
 });
 
@@ -26,6 +36,14 @@ export const fakeLease = (): z.infer<typeof LeaseCreateScalarSchema> => ({
     startDate: faker.date.past(),
     endDate: faker.date.future(),
     rentAmount: faker.number.int({ min: 5, max: 50000 }),
+    duration: pickRandom(LeaseDuration),
+    paymentMode: pickRandom(LeasePaymentMode),
+    paymentType: pickRandom(LeasePaymentType),
+    type: pickRandom(LeaseType),
+    notes: faker.word.words(),
+    periodicity: pickRandom(LeasePeriodicityType),
+    quaterlyPeriodicity: pickRandom(LeaseQuaterlyPeriodicityType),
+    iban: faker.finance.accountNumber(),
 });
 
 export const fakeTenancyInCommon = (): z.infer<typeof PropertyTenancyInCommonCreateScalarSchema> => ({
@@ -127,4 +145,8 @@ export function generateData({ length, spaceId }: { length: number; spaceId: str
             },
         },
     };
+}
+
+function pickRandom(enumType: any) {
+    return enumType[Object.keys(enumType)[Math.floor(Math.random() * Object.keys(enumType).length)]];
 }

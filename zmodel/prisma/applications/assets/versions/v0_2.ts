@@ -114,6 +114,20 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                             },
                                                         },
                                                     },
+                                                    {
+                                                        type: GridElementType.Card,
+                                                        colSpan: 2,
+                                                        card: {
+                                                            create: {
+                                                                title: 'Your stats on leases',
+                                                                invertTitleDescription: false,
+                                                                description: `lease stats`,
+                                                                chart: {
+                                                                    create: {},
+                                                                },
+                                                            },
+                                                        },
+                                                    },
                                                 ],
                                             },
                                         },

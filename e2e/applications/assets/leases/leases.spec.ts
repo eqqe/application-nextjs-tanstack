@@ -10,7 +10,7 @@ test('Should add lease on property', async ({ page, utils }) => {
     await utils.assets.openEssentialData();
 
     const name = faker.word.noun();
-    await utils.createProperty({ property: { name } });
+    await utils.assets.createProperty({ property: { name } });
 
     await expect(page.getByText(`leases0 Lease`)).toBeVisible();
 

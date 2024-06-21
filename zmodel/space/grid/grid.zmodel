@@ -3,6 +3,7 @@ import "../../schema.zmodel"
 import "../space.zmodel"
 import "../../application"
 import "table"
+import "chart"
 
 abstract model BaseGrid extends IdCreatedUpdatedAuth, Named {
     elements GridElement[]
@@ -70,6 +71,7 @@ model GridCard extends IdCreatedUpdatedAuth, OptionalIcon {
     count                  Type?
 
     table                  GridCardTable?
+    chart                  GridCardChart?
 
     footer                 GridCardFooter?
 
