@@ -103,6 +103,10 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
                     />
 
                     {children}
+
+                    <div className="modal-action">
+                        <Button type="submit">Save changes</Button>
+                    </div>
                 </form>
             </Form>
         </div>

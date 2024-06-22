@@ -1,6 +1,6 @@
 import { AutoFormDialog } from '@/components/Form/AutoFormDialog';
 import { WithNavBar } from '@/components/layout/WithNavBar';
-import { useCurrentUser, useSelectedSpaces } from '@/lib/context';
+import { useCurrentSessionUser, useSelectedSpaces } from '@/lib/context';
 import { getNewSpace } from '@/lib/getNewSpace';
 import { useCreateSpace } from '@/zmodel/lib/hooks';
 import { SpaceCreateScalarSchema } from '@zenstackhq/runtime/zod/models';
@@ -9,7 +9,7 @@ import { toast } from 'react-toastify';
 
 export const Home: NextPage = () => {
     const createSpace = useCreateSpace();
-    const user = useCurrentUser();
+    const user = useCurrentSessionUser();
     const { switchSpace } = useSelectedSpaces();
     if (!user) {
         return <></>;
