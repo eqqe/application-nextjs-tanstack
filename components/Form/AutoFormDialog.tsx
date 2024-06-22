@@ -45,7 +45,7 @@ export function AutoFormDialog<SchemaType extends ZodObjectOrWrapped>({
             <DialogTrigger asChild>
                 <Button variant="outline">{title}</Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[625px]">
+            <DialogContent className="sm:max-w-[60vw]">
                 <ScrollArea className="max-h-[80vh] pl-2 pr-6 pt-2">
                     <DialogHeader>
                         <DialogTitle>{title}</DialogTitle>

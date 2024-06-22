@@ -49,7 +49,7 @@ export function DataTable<TData extends Id, TValue>({
             <div className="rounded-md border">
                 <Table>
                     <ErrorBoundary fallback={<FallbackError />}>
-                        <TableHeader className={'bg-primary-foreground sticky top-0 [&_tr]:border-b'}>
+                        <TableHeader>
                             {table.getHeaderGroups().map((headerGroup) => (
                                 <TableRow key={headerGroup.id}>
                                     {headerGroup.headers.map((header) => {

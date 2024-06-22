@@ -10,7 +10,6 @@ import { ReactNode, useState, useMemo } from 'react';
 import { Chart } from '@/components/Grid/Card/Chart';
 import { getColumnDef } from '@/components/AutoTable/getColumnDef';
 import { getOrFilter } from '@/lib/getOrFilter';
-import { useFindManyProperty } from '@/zmodel/lib/hooks';
 import { keepPreviousData } from '@tanstack/react-query';
 
 export const GridCardTableInclude = {
@@ -29,10 +28,20 @@ declare module '@tanstack/react-table' {
 }
 export const groupByTypes = ['sum', 'count', 'avg', 'min', 'max'] as const;
 
-export type CardTableComponentProps = { table: Prisma.GridCardTableGetPayload<typeof GridCardTableInclude> };
+export type CardTableComponentProps = {
+    table: Omit<
+        Prisma.GridCardTableGetPayload<typeof GridCardTableInclude>,
+        'id' | 'parentId' | 'updatedAt' | 'createdAt'
+    >;
+};
 export function CardTableComponent({
     table: { type, typeTableRequest, columns, groupBy, chart },
-}: CardTableComponentProps) {
+    pageSize,
+    editableItems,
+}: CardTableComponentProps & {
+    pageSize: number;
+    editableItems: boolean;
+}) {
     const { useHook, schema, useUpdate, useCount } = getTypeHook({ type });
 
     let count: number | undefined;
@@ -40,7 +49,7 @@ export function CardTableComponent({
     count = useCount().data;
     const [pagination, setPagination] = useState<PaginationState>({
         pageIndex: 0,
-        pageSize: 50,
+        pageSize: pageSize,
     });
 
     const [sorting, setSorting] = useState<SortingState>([{ id: 'updatedAt', desc: true }]);
@@ -118,7 +127,7 @@ export function CardTableComponent({
         let colsRes: ColumnDefFromSchema[] = cols.map((column) =>
             getColumnDef({ currentPrefix: column, link: findMany, enableSorting: findMany })
         );
-        if (findMany) {
+        if (findMany && editableItems) {
             colsRes.push({
                 accessorKey: 'edit',
                 header: 'Edit',
@@ -141,7 +150,7 @@ export function CardTableComponent({
             });
         }
         return colsRes;
-    }, [columns, findMany, groupBy, schema.update, type, typeTableRequest, update]);
+    }, [columns, editableItems, findMany, groupBy, schema.update, type, typeTableRequest, update]);
 
     const useHookTyped = useHook[typeTableRequest];
 
