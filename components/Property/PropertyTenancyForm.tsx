@@ -1,4 +1,4 @@
-import { useCreatePropertyTenancy, useFindManyProperty } from '@/zmodel/lib/hooks';
+import { useCreatePropertyTenancy } from '@/zmodel/lib/hooks';
 import { toast } from 'react-toastify';
 import { z } from 'zod';
 import {

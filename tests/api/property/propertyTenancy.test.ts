@@ -8,6 +8,7 @@ import {
     propertyTenancyInCommonCreateArgs,
 } from '@/tests/api/property/tenancyUtils';
 import { Prisma } from '@prisma/client';
+import { orderByCreatedAt } from '@/lib/utils';
 
 it('Should allow a user to create property tenancy and list and group by them', async () => {
     const { user1, user2, user3 } = await getEnhancedPrisma();
@@ -51,9 +52,7 @@ it('Should allow a user to create property tenancy and list and group by them', 
                     },
                 },
             },
-            orderBy: {
-                createdAt: Prisma.SortOrder.desc,
-            },
+            ...orderByCreatedAt
         });
     }
     let properties = await getProperties();

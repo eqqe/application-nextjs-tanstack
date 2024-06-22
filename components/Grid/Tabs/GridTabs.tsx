@@ -1,6 +1,5 @@
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { GridTabContent, GridTabContentInclude } from './GridTabContent';
-
 import { Prisma } from '@prisma/client';
 
 export const GridTabsInclude = {
@@ -25,7 +24,7 @@ export function GridTabs({ tabs }: { tabs: Prisma.GridTabsGetPayload<typeof Grid
                     ))}
                 </TabsList>
             </div>
-            {tabsContent.map((tabContent) => (
+            {tabsContent.reverse().map((tabContent) => (
                 <GridTabContent key={tabContent.id} tabContent={tabContent} />
             ))}
         </Tabs>
