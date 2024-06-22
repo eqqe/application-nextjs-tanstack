@@ -1,6 +1,6 @@
 'use client';
 import { Form } from '@/components/ui/form';
-import React from 'react';
+import React, { useState } from 'react';
 import { DefaultValues, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -32,7 +32,7 @@ export function AutoFormSubmit({
 export type AutoFormProps<SchemaType extends ZodObjectOrWrapped> = {
     onValuesChange?: (values: Partial<z.infer<SchemaType>>) => void;
     onParsedValuesChange?: (values: Partial<z.infer<SchemaType>>) => void;
-    onSubmit?: (values: z.infer<SchemaType>) => void;
+    onSubmit?: (values: z.infer<SchemaType>) => Promise<void>;
     fieldConfig?: FieldConfig<z.infer<SchemaType>>;
     children?: React.ReactNode;
     className?: string;
@@ -62,10 +62,14 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
         values: valuesProp,
     });
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
+    const [submitDisabled, setSubmitDisabled] = useState(false);
+
+    async function onSubmit(values: z.infer<typeof formSchema>) {
         const parsedValues = formSchema.safeParse(values);
         if (parsedValues.success) {
-            onSubmitProp?.(parsedValues.data);
+            setSubmitDisabled(true);
+            await onSubmitProp?.(parsedValues.data);
+            setSubmitDisabled(false);
         }
     }
 
@@ -105,7 +109,9 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
                     {children}
 
                     <div className="modal-action">
-                        <Button type="submit">Save changes</Button>
+                        <Button type="submit" disabled={submitDisabled}>
+                            Save changes
+                        </Button>
                     </div>
                 </form>
             </Form>
