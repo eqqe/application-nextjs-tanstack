@@ -13,6 +13,7 @@ import { Type } from '@prisma/client';
 import { getTypeHook } from '@/components/Grid/Table/getTypeHook';
 import { ColumnDef, PaginationState } from '@tanstack/react-table';
 import { Dispatch, ReactNode, SetStateAction, useMemo, useState } from 'react';
+import { dateFormat } from '@/lib/utils';
 
 export type PaginationProps = {
     count?: number;
@@ -71,6 +72,12 @@ export function AutoTable<SchemaType extends ZodObjectOrWrapped>({
                     header: beautifyObjectName(currentPrefix),
                     meta: {
                         link: true,
+                    },
+                    cell: ({ getValue }) => {
+                        if (zodBaseType === 'ZodDate') {
+                            return dateFormat(new Date(getValue() as string));
+                        }
+                        return getValue();
                     },
                 },
             ];

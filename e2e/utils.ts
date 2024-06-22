@@ -63,6 +63,15 @@ export function getBaseUtils(page: Page) {
         await expect(page.getByText(`${name} created successfully!`)).toBeVisible();
     }
 
+    async function search(query: string) {
+        await page.getByPlaceholder('Search...').fill(query);
+        await page.keyboard.press('Enter');
+    }
+
+    async function checkCountInCard({ title, count }: { title: string; count: number }) {
+        await expect(page.getByText(title).locator('..').getByText(count.toString())).toBeVisible();
+    }
+
     return {
         openSettings,
         generateDemonstration,
@@ -72,5 +81,7 @@ export function getBaseUtils(page: Page) {
         selectFromCombo,
         openHomeCreateSpace,
         checkToastCreated,
+        search,
+        checkCountInCard,
     };
 }

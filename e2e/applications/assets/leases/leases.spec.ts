@@ -12,8 +12,11 @@ test('Should add lease on property', async ({ page, utils }) => {
     const name = faker.word.noun();
     await utils.assets.createProperty({ property: { name } });
 
-    await expect(page.getByText(`leases0`)).toBeVisible();
+    await utils.checkCountInCard({ title: 'Your leases', count: 0 });
 
     await assets.createLeaseFindProperty({ name, startDate: '2050-05-12' });
-    await expect(page.getByText(`leases1`)).toBeVisible();
+    await utils.checkCountInCard({ title: 'Your leases', count: 1 });
+
+    await assets.createLeaseFindProperty({ name, startDate: '2060-05-12' });
+    await utils.checkCountInCard({ title: 'Your leases', count: 2 });
 });
