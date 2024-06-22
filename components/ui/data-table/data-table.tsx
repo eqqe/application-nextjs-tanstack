@@ -4,7 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { ErrorBoundary } from 'react-error-boundary';
 import { FallbackError } from '../../layout/FallbackError';
 import { useRouter } from 'next/router';
-import { PaginationProps } from '../../AutoTable/AutoTable';
+import { TableStateProps } from '../../AutoTable/AutoTable';
 import {
     Pagination,
     PaginationContent,
@@ -24,34 +24,37 @@ interface DataTableProps<TData extends Id, TValue> {
     columns: ColumnDef<TData, TValue>[];
     data: TData[];
     getRowLink?: (id: string) => string;
-    pagination?: PaginationProps;
+    tableState?: TableStateProps;
 }
 
 export function DataTable<TData extends Id, TValue>({
     columns,
     data,
     getRowLink,
-    pagination,
+    tableState,
 }: DataTableProps<TData, TValue>) {
     const table = useReactTable({
         data,
         columns,
         getCoreRowModel: getCoreRowModel(),
+        manualSorting: true,
         manualPagination: true,
-        rowCount: pagination?.count,
+        rowCount: tableState?.count,
         state: {
-            pagination: pagination?.pagination,
+            pagination: tableState?.pagination,
+            sorting: tableState?.sorting,
         },
-        onPaginationChange: pagination?.setPagination,
+        onPaginationChange: tableState?.setPagination,
+        onSortingChange: tableState?.setSorting,
     });
 
     const router = useRouter();
 
-    const currentPageNumber = pagination?.pagination ? pagination.pagination.pageIndex + 1 : undefined;
+    const currentPageNumber = tableState?.pagination ? tableState.pagination.pageIndex + 1 : undefined;
 
     return (
         <>
-            {pagination && (
+            {tableState?.pagination && (
                 <div className="flex cursor-default items-center justify-end space-x-2 py-4">
                     <Pagination>
                         <PaginationContent>

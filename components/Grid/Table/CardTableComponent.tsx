@@ -1,10 +1,9 @@
-import { beautifyObjectName } from '@/components/ui/auto-form/utils';
 import { Prisma } from '@prisma/client';
 import { getTypeHook } from './getTypeHook';
 import { AutoFormDialog } from '@/components/Form/AutoFormDialog';
 import { FallbackError } from '@/components/layout/FallbackError';
 import { ErrorBoundary } from 'react-error-boundary';
-import { ColumnDef, PaginationState, RowData } from '@tanstack/react-table';
+import { ColumnDef, PaginationState, RowData, SortingState } from '@tanstack/react-table';
 import { z } from 'zod';
 import { AutoTable } from '@/components/AutoTable/AutoTable';
 import { ReactNode, useState } from 'react';
@@ -41,6 +40,8 @@ export function CardTableComponent({
         pageSize: 50,
     });
 
+    const [sorting, setSorting] = useState<SortingState>([{ id: 'updatedAt', desc: true }]);
+
     function getParams() {
         function reducer(list: string[]) {
             return list.reduce<Record<string, boolean>>((previousValue, currentValue) => {
@@ -57,10 +58,12 @@ export function CardTableComponent({
             case 'FindMany':
                 return {
                     params: {
-                        orderBy: {
-                            updatedAt: 'desc',
-                        },
-
+                        orderBy: sorting.reduce((accumulator, currentValue) => {
+                            accumulator[currentValue.id] = currentValue.desc
+                                ? Prisma.SortOrder.desc
+                                : Prisma.SortOrder.asc;
+                            return accumulator;
+                        }, {} as Record<string, Prisma.SortOrder>),
                         take: pagination.pageSize,
                         skip: pagination.pageSize * pagination.pageIndex,
                     },
@@ -99,11 +102,13 @@ export function CardTableComponent({
     rows = useHookTyped(params).data;
 
     type ColumnDefFromSchema = ColumnDef<z.infer<typeof schema.base>, ReactNode>;
+
+    const findMany = typeTableRequest === 'FindMany';
     const columnDataTable: ColumnDefFromSchema[] = cols.map((column) =>
-        getColumnDef({ currentPrefix: column, link: typeTableRequest === 'FindMany', enableSorting: false })
+        getColumnDef({ currentPrefix: column, link: findMany, enableSorting: findMany })
     );
 
-    if (typeTableRequest === 'FindMany') {
+    if (findMany) {
         columnDataTable.push({
             accessorKey: 'edit',
             header: 'Edit',
@@ -136,11 +141,9 @@ export function CardTableComponent({
                         type={type}
                         formSchema={schema.base}
                         additionalColumns={columnDataTable}
-                        onlyAdditionalColumns={
-                            (!!columns.length && typeTableRequest === 'FindMany') || typeTableRequest !== 'FindMany'
-                        }
+                        onlyAdditionalColumns={(!!columns.length && findMany) || !findMany}
                         data={rows ?? []}
-                        pagination={typeTableRequest === 'FindMany' ? { pagination, setPagination, count } : void 0}
+                        tableState={findMany ? { pagination, setPagination, count, sorting, setSorting } : void 0}
                     />
                 )}
             </ErrorBoundary>
