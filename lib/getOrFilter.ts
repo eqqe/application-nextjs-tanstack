@@ -8,6 +8,9 @@ export function getOrFilter({
     formSchema: ReturnType<typeof getTypeHook>['schema']['base'];
     query: string;
 }) {
+    if (!query) {
+        return [];
+    }
     return Object.entries(formSchema.shape).flatMap(([key, zodType]) => {
         const isString = zodType._def.typeName === z.ZodFirstPartyTypeKind.ZodString;
         // Todo SRE : ZodEnum
