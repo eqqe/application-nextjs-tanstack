@@ -526,6 +526,122 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                         },
 
                                         {
+                                            name: 'Leases',
+                                            columns: 4,
+                                            icon: 'FolderKey',
+                                            elements: {
+                                                create: [
+                                                    {
+                                                        type: GridElementType.Card,
+                                                        colSpan: 1,
+                                                        card: {
+                                                            create: {
+                                                                title: 'Leases',
+                                                                invertTitleDescription: false,
+                                                                description: `Click here to add one`,
+                                                                count: 'Lease',
+                                                                footer: {
+                                                                    create: {
+                                                                        button: {
+                                                                            create: {
+                                                                                text: 'Create Lease',
+                                                                                table: 'Lease',
+                                                                            },
+                                                                        },
+                                                                    },
+                                                                },
+                                                            },
+                                                        },
+                                                    },
+
+                                                    {
+                                                        type: GridElementType.Card,
+                                                        colSpan: 1,
+                                                        card: {
+                                                            create: {
+                                                                title: 'Tenants',
+                                                                invertTitleDescription: false,
+                                                                description: `Click here to add one`,
+                                                                count: 'LeaseTenant',
+                                                                footer: {
+                                                                    create: {
+                                                                        button: {
+                                                                            create: {
+                                                                                text: 'Create Lease Tenants',
+                                                                                table: 'LeaseTenant',
+                                                                            },
+                                                                        },
+                                                                    },
+                                                                },
+                                                            },
+                                                        },
+                                                    },
+                                                    {
+                                                        type: GridElementType.Tabs,
+                                                        colSpan: 4,
+                                                        tabs: {
+                                                            create: {
+                                                                tabsContent: {
+                                                                    create: [
+                                                                        {
+                                                                            name: 'Leases',
+                                                                            elements: {
+                                                                                create: {
+                                                                                    type: GridElementType.Card,
+                                                                                    colSpan: 4,
+                                                                                    card: {
+                                                                                        create: {
+                                                                                            title: 'Your Leases',
+                                                                                            invertTitleDescription:
+                                                                                                false,
+                                                                                            description: `List`,
+                                                                                            table: {
+                                                                                                create: {
+                                                                                                    type: 'Lease',
+                                                                                                    columns: [],
+                                                                                                    typeTableRequest:
+                                                                                                        'FindMany',
+                                                                                                },
+                                                                                            },
+                                                                                        },
+                                                                                    },
+                                                                                },
+                                                                            },
+                                                                        },
+                                                                        {
+                                                                            name: 'Tenants',
+                                                                            elements: {
+                                                                                create: {
+                                                                                    type: GridElementType.Card,
+                                                                                    colSpan: 4,
+                                                                                    card: {
+                                                                                        create: {
+                                                                                            title: 'Your Lease tenants',
+                                                                                            invertTitleDescription:
+                                                                                                false,
+                                                                                            description: `List`,
+                                                                                            table: {
+                                                                                                create: {
+                                                                                                    type: 'LeaseTenant',
+                                                                                                    typeTableRequest:
+                                                                                                        'FindMany',
+                                                                                                },
+                                                                                            },
+                                                                                        },
+                                                                                    },
+                                                                                },
+                                                                            },
+                                                                        },
+                                                                    ],
+                                                                },
+                                                            },
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+
+                                        {
                                             name: 'Your essential data',
                                             columns: 4,
                                             icon: 'Gauge',
