@@ -9,7 +9,6 @@ import { AutoTable } from '@/components/AutoTable/AutoTable';
 import { ReactNode, useState, useMemo, useEffect, useCallback } from 'react';
 import { Chart } from '@/components/Grid/Card/Chart';
 import { getColumnDef } from '@/components/AutoTable/getColumnDef';
-import { getOrFilter } from '@/lib/getOrFilter';
 import { keepPreviousData } from '@tanstack/react-query';
 import { beautifyObjectName } from '@/components/ui/auto-form/utils';
 import { useSearchParams } from 'next/navigation';
@@ -73,10 +72,27 @@ export function CardTableComponent({
     }, [searchParams]);
     const update = useUpdate.single();
 
-    const orFilter = useMemo(
-        () => getOrFilter({ formSchema: schema.base, query: globalFilter }),
-        [globalFilter, schema.base]
-    );
+    const orFilter = useMemo(() => {
+        if (!globalFilter) {
+            return [];
+        }
+        return Object.entries(schema.base.shape).flatMap(([key, zodType]) => {
+            const isString = zodType._def.typeName === z.ZodFirstPartyTypeKind.ZodString;
+            // Todo SRE : ZodEnum
+            // Search in all string to include the search value, excluding the ids (uuids unknown by user).
+            if (isString && !key.includes('id')) {
+                return [
+                    {
+                        [key]: {
+                            contains: globalFilter,
+                            mode: 'insensitive',
+                        },
+                    },
+                ];
+            }
+            return [];
+        });
+    }, [globalFilter, schema.base]);
 
     const params = useMemo(() => {
         function reducer(list: string[]) {
