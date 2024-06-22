@@ -162,8 +162,13 @@ export function CardTableComponent({
         }
 
         let colsRes: ColumnDefFromSchema[] = cols.map((column) => {
-            // @ts-expect-error try to restore zod type from column name
-            const zodBaseType = schema.base.shape[column]._def.typeName;
+            let zodBaseType = 'ZodString';
+            try {
+                // @ts-expect-error try to restore zod type from column name
+                zodBaseType = schema.base.shape[column]._def.typeName;
+            } catch {
+                // continue
+            }
 
             return getColumnDef({
                 currentPrefix: column,
