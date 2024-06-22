@@ -8,6 +8,7 @@ import { getTypeHook } from '@/components/Grid/Table/getTypeHook';
 import { ColumnDef, PaginationState, SortingState } from '@tanstack/react-table';
 import { Dispatch, ReactNode, SetStateAction, useMemo, useState } from 'react';
 import { getColumnDef } from '@/components/AutoTable/getColumnDef';
+import { FilterState } from '@/components/ui/data-table/data-table-toolbar';
 
 export type TableStateProps = {
     count?: number;
@@ -24,13 +25,15 @@ export function AutoTable<SchemaType extends ZodObjectOrWrapped>({
     onlyAdditionalColumns,
     type,
     tableState,
-}: CommonFormTable<SchemaType> & {
-    additionalColumns?: ColumnDef<z.infer<typeof formSchema> & Id, ReactNode>[];
-    data: (Partial<z.infer<SchemaType>> & Id)[];
-    onlyAdditionalColumns?: boolean;
-    type?: Type;
-    tableState?: TableStateProps;
-}) {
+    filterState,
+}: CommonFormTable<SchemaType> &
+    FilterState & {
+        additionalColumns?: ColumnDef<z.infer<typeof formSchema> & Id, ReactNode>[];
+        data: (Partial<z.infer<SchemaType>> & Id)[];
+        onlyAdditionalColumns?: boolean;
+        type?: Type;
+        tableState?: TableStateProps;
+    }) {
     const getRowLink = useMemo(() => (type ? getTypeHook({ type })?.getLink : undefined), [type]);
     const objectFormSchema = getObjectFormSchema(formSchema);
     if (!objectFormSchema) {
@@ -70,5 +73,13 @@ export function AutoTable<SchemaType extends ZodObjectOrWrapped>({
         ? additionalColumns ?? []
         : getAccessor(objectFormSchema).concat(additionalColumns ?? []);
 
-    return <DataTable tableState={tableState} columns={columns} data={data} getRowLink={getRowLink} />;
+    return (
+        <DataTable
+            tableState={tableState}
+            filterState={filterState}
+            columns={columns}
+            data={data}
+            getRowLink={getRowLink}
+        />
+    );
 }

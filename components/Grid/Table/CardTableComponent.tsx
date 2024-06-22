@@ -9,6 +9,7 @@ import { AutoTable } from '@/components/AutoTable/AutoTable';
 import { ReactNode, useState } from 'react';
 import { Chart } from '@/components/Grid/Card/Chart';
 import { getColumnDef } from '@/components/AutoTable/getColumnDef';
+import { getOrFilter } from '@/lib/getOrFilter';
 
 export const GridCardTableInclude = {
     include: {
@@ -41,6 +42,7 @@ export function CardTableComponent({
     });
 
     const [sorting, setSorting] = useState<SortingState>([{ id: 'updatedAt', desc: true }]);
+    const [filter, setFilter] = useState('');
 
     function getParams() {
         function reducer(list: string[]) {
@@ -55,7 +57,8 @@ export function CardTableComponent({
                     params: {},
                     columns,
                 };
-            case 'FindMany':
+            case 'FindMany': {
+                const orFilter = getOrFilter({ formSchema: schema.base, query: filter });
                 return {
                     params: {
                         orderBy: sorting.reduce((accumulator, currentValue) => {
@@ -64,11 +67,17 @@ export function CardTableComponent({
                                 : Prisma.SortOrder.asc;
                             return accumulator;
                         }, {} as Record<string, Prisma.SortOrder>),
+                        ...(orFilter.length && {
+                            where: {
+                                OR: orFilter,
+                            },
+                        }),
                         take: pagination.pageSize,
                         skip: pagination.pageSize * pagination.pageIndex,
                     },
                     columns,
                 };
+            }
             case 'GroupBy':
                 if (!groupBy) {
                     throw '! table.groupBy';
@@ -143,7 +152,18 @@ export function CardTableComponent({
                         additionalColumns={columnDataTable}
                         onlyAdditionalColumns={(!!columns.length && findMany) || !findMany}
                         data={rows ?? []}
-                        tableState={findMany ? { pagination, setPagination, count, sorting, setSorting } : void 0}
+                        tableState={
+                            findMany
+                                ? {
+                                      pagination,
+                                      setPagination,
+                                      count,
+                                      sorting,
+                                      setSorting,
+                                  }
+                                : void 0
+                        }
+                        filterState={findMany ? { filter, setFilter } : void 0}
                     />
                 )}
             </ErrorBoundary>

@@ -1,5 +1,5 @@
 'use client';
-import { ColumnDef, flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table';
+import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ErrorBoundary } from 'react-error-boundary';
 import { FallbackError } from '../../layout/FallbackError';
@@ -15,6 +15,7 @@ import {
     PaginationPrevious,
 } from '@/components/ui/pagination';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { DataTableToolbar, FilterState } from '@/components/ui/data-table/data-table-toolbar';
 
 export type Id = {
     id: string;
@@ -32,7 +33,8 @@ export function DataTable<TData extends Id, TValue>({
     data,
     getRowLink,
     tableState,
-}: DataTableProps<TData, TValue>) {
+    filterState,
+}: DataTableProps<TData, TValue> & FilterState) {
     const table = useReactTable({
         data,
         columns,
@@ -117,8 +119,9 @@ export function DataTable<TData extends Id, TValue>({
                     </Pagination>
                 </div>
             )}
-            <div className="rounded-md border">
-                <ScrollArea className="max-h-[300px] rounded-md">
+            <div className="space-y-4">
+                <DataTableToolbar table={table} filterState={filterState} />
+                <ScrollArea className="max-h-[300px] rounded-md border">
                     <Table>
                         <ErrorBoundary fallback={<FallbackError />}>
                             <TableHeader className={'bg-primary-foreground sticky top-0 [&_tr]:border-b'}>
