@@ -6,7 +6,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { ColumnDef, PaginationState, RowData, SortingState } from '@tanstack/react-table';
 import { z } from 'zod';
 import { AutoTable } from '@/components/AutoTable/AutoTable';
-import { ReactNode, useState, useMemo } from 'react';
+import { ReactNode, useState, useMemo, useEffect, useCallback } from 'react';
 import { Chart } from '@/components/Grid/Card/Chart';
 import { getColumnDef } from '@/components/AutoTable/getColumnDef';
 import { getOrFilter } from '@/lib/getOrFilter';
@@ -38,18 +38,26 @@ export function CardTableComponent({
     table: { type, typeTableRequest, columns, groupBy, chart },
     pageSize,
     editableItems,
+    onRowSelection,
     enableRowSelection,
     enableMultiRowSelection,
 }: CardTableComponentProps & {
     pageSize: number;
     editableItems: boolean;
+    onRowSelection?: (id: string) => void;
     enableRowSelection: boolean;
     enableMultiRowSelection: boolean;
 }) {
     const { useHook, schema, useUpdate, useCount } = getTypeHook({ type });
 
     const [rowSelection, onRowSelectionChange] = useState({});
-    console.log(rowSelection);
+
+    useEffect(() => {
+        if (onRowSelection) {
+            onRowSelection(Object.keys(rowSelection)[0] ?? '');
+        }
+    }, [onRowSelection, rowSelection]);
+
     const [pagination, onPaginationChange] = useState<PaginationState>({
         pageIndex: 0,
         pageSize: pageSize,

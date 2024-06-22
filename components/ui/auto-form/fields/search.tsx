@@ -5,6 +5,7 @@ import AutoFormTooltip from '../common/tooltip';
 import { AutoFormInputComponentProps } from '../types';
 import { CardTableComponent } from '@/components/Grid/Table/CardTableComponent';
 import { PropertyColumns } from '@/zmodel/prisma/applications/assets/columns';
+import { useFormContext } from 'react-hook-form';
 
 export default function AutoFormSearch({
     label,
@@ -20,7 +21,9 @@ export default function AutoFormSearch({
         throw 'search should be configured for search autoform';
     }
     const { type, enableMultiRowSelection } = search;
-
+    const { setValue } = useFormContext();
+    // TODO SRE : change not only properties !!!
+    const onRowSelection = React.useCallback((id: string) => setValue('propertyId', id), [setValue]);
     return (
         <FormItem className="flex w-full flex-col justify-start">
             {showLabel && <AutoFormLabel label={fieldConfigItem?.label || label} isRequired={isRequired} />}
@@ -40,6 +43,7 @@ export default function AutoFormSearch({
                     }}
                     pageSize={5}
                     editableItems={false}
+                    onRowSelection={onRowSelection}
                     enableRowSelection={true}
                     enableMultiRowSelection={enableMultiRowSelection}
                 />

@@ -29,14 +29,17 @@ export function DataTable<TData extends Id>({
 }) {
     const selectColumn: ColumnDef<TData> = {
         id: 'select',
-        header: ({ table }) => (
-            <Checkbox
-                checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
-                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-                aria-label="Select all"
-                className="translate-y-[2px]"
-            />
-        ),
+        header: ({ table }) =>
+            enableMultiRowSelection ? (
+                <Checkbox
+                    checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
+                    onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+                    aria-label="Select all"
+                    className="translate-y-[2px]"
+                />
+            ) : (
+                <></>
+            ),
         cell: ({ row }) => (
             <Checkbox
                 checked={row.getIsSelected()}
@@ -65,6 +68,7 @@ export function DataTable<TData extends Id>({
         onSortingChange,
         onGlobalFilterChange,
         onRowSelectionChange,
+        getRowId: (row) => row.id,
     });
 
     const router = useRouter();
