@@ -1,19 +1,13 @@
 import { z } from 'zod';
-import { DataTable, Id } from '@/components/ui/data-table';
+import { DataTable, Id } from '@/components/ui/data-table/data-table';
 import { handleIfZodNumber } from '@/components/ui/auto-form/fields/object';
-import {
-    ZodObjectOrWrapped,
-    beautifyObjectName,
-    getBaseSchema,
-    getBaseType,
-    getObjectFormSchema,
-} from '@/components/ui/auto-form/utils';
+import { ZodObjectOrWrapped, getBaseSchema, getBaseType, getObjectFormSchema } from '@/components/ui/auto-form/utils';
 import { CommonFormTable } from '../ui/auto-common/types';
 import { Type } from '@prisma/client';
 import { getTypeHook } from '@/components/Grid/Table/getTypeHook';
 import { ColumnDef, PaginationState } from '@tanstack/react-table';
 import { Dispatch, ReactNode, SetStateAction, useMemo, useState } from 'react';
-import { dateFormat } from '@/lib/utils';
+import { getColumnDef } from '@/components/AutoTable/getColumnDef';
 
 export type PaginationProps = {
     count?: number;
@@ -66,21 +60,7 @@ export function AutoTable<SchemaType extends ZodObjectOrWrapped>({
                 return [];
             }
 
-            return [
-                {
-                    accessorKey: currentPrefix,
-                    header: beautifyObjectName(currentPrefix),
-                    meta: {
-                        link: true,
-                    },
-                    cell: ({ getValue }) => {
-                        if (zodBaseType === 'ZodDate') {
-                            return dateFormat(new Date(getValue() as string));
-                        }
-                        return getValue();
-                    },
-                },
-            ];
+            return [getColumnDef({ currentPrefix, zodBaseType, link: true })];
         });
     }
 

@@ -9,6 +9,7 @@ import { z } from 'zod';
 import { AutoTable } from '@/components/AutoTable/AutoTable';
 import { ReactNode, useState } from 'react';
 import { Chart } from '@/components/Grid/Card/Chart';
+import { getColumnDef } from '@/components/AutoTable/getColumnDef';
 
 export const GridCardTableInclude = {
     include: {
@@ -98,13 +99,9 @@ export function CardTableComponent({
     rows = useHookTyped(params).data;
 
     type ColumnDefFromSchema = ColumnDef<z.infer<typeof schema.base>, ReactNode>;
-    const columnDataTable: ColumnDefFromSchema[] = cols.map((column) => ({
-        accessorKey: column,
-        meta: {
-            link: typeTableRequest === 'FindMany',
-        },
-        header: beautifyObjectName(column),
-    }));
+    const columnDataTable: ColumnDefFromSchema[] = cols.map((column) =>
+        getColumnDef({ currentPrefix: column, link: typeTableRequest === 'FindMany' })
+    );
 
     if (typeTableRequest === 'FindMany') {
         columnDataTable.push({

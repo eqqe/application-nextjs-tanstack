@@ -2,9 +2,9 @@
 import { ColumnDef, flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ErrorBoundary } from 'react-error-boundary';
-import { FallbackError } from '../layout/FallbackError';
+import { FallbackError } from '../../layout/FallbackError';
 import { useRouter } from 'next/router';
-import { PaginationProps } from '../AutoTable/AutoTable';
+import { PaginationProps } from '../../AutoTable/AutoTable';
 import {
     Pagination,
     PaginationContent,
