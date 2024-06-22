@@ -63,6 +63,11 @@ export function getBaseUtils(page: Page) {
         await expect(page.getByText(`${name} created successfully!`)).toBeVisible();
     }
 
+    async function search(query: string) {
+        await page.getByPlaceholder('Search...').fill(query);
+        await page.keyboard.press('Enter');
+    }
+
     return {
         openSettings,
         generateDemonstration,
@@ -72,5 +77,6 @@ export function getBaseUtils(page: Page) {
         selectFromCombo,
         openHomeCreateSpace,
         checkToastCreated,
+        search,
     };
 }
