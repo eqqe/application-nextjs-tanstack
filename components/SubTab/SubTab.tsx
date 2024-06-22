@@ -4,5 +4,5 @@ import { useCurrentSubTab } from '@/hooks/useCurrentSubTab';
 
 export const SubTab = () => {
     const subTab = useCurrentSubTab();
-    return <AutoTable type={'Grid'} data={subTab?.grids ?? []} formSchema={GridScalarSchema} />;
+    return <AutoTable type={'Grid'} data={subTab?.grids ?? []} formSchema={GridScalarSchema} state={{}} />;
 };

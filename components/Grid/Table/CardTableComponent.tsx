@@ -44,13 +44,13 @@ export function CardTableComponent({
 }) {
     const { useHook, schema, useUpdate, useCount } = getTypeHook({ type });
 
-    const [pagination, setPagination] = useState<PaginationState>({
+    const [pagination, onPaginationChange] = useState<PaginationState>({
         pageIndex: 0,
         pageSize: pageSize,
     });
 
-    const [sorting, setSorting] = useState<SortingState>([{ id: 'updatedAt', desc: true }]);
-    const [globalFilter, setGlobalFilter] = useState('');
+    const [sorting, onSortingChange] = useState<SortingState>([{ id: 'updatedAt', desc: true }]);
+    const [globalFilter, onGlobalFilterChange] = useState('');
     const update = useUpdate.single();
 
     const params = useMemo(() => {
@@ -157,9 +157,9 @@ export function CardTableComponent({
     // @ts-expect-error
     rows = useHookTyped(params, paramLagged).data;
 
-    let count: number | undefined;
+    let rowCount: number | undefined;
     // @ts-expect-error
-    count = useCount({ where: params.where ?? {} }).data;
+    rowCount = useCount({ where: params.where ?? {} }).data;
 
     return (
         <div className="container mx-auto py-5">
@@ -173,19 +173,11 @@ export function CardTableComponent({
                         additionalColumns={columnDataTable}
                         onlyAdditionalColumns={(!!columns.length && findMany) || !findMany}
                         data={rows ?? []}
-                        tableState={
-                            findMany
-                                ? {
-                                      pagination,
-                                      setPagination,
-                                      count,
-                                      sorting,
-                                      setSorting,
-                                      globalFilter,
-                                      setGlobalFilter,
-                                  }
-                                : void 0
-                        }
+                        state={findMany ? { pagination, sorting, globalFilter } : {}}
+                        rowCount={rowCount}
+                        onPaginationChange={onPaginationChange}
+                        onSortingChange={onSortingChange}
+                        onGlobalFilterChange={onGlobalFilterChange}
                     />
                 )}
             </ErrorBoundary>

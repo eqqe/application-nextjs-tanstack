@@ -4,5 +4,5 @@ import { useSubTabs } from '@/lib/context';
 
 export function SpaceHomeComponent() {
     const subTabs = useSubTabs();
-    return <AutoTable type={'SubTabFolder'} data={subTabs ?? []} formSchema={SubTabFolderScalarSchema} />;
+    return <AutoTable type={'SubTabFolder'} data={subTabs ?? []} formSchema={SubTabFolderScalarSchema} state={{}} />;
 }

@@ -54,7 +54,7 @@ export const Search: NextPage = () => {
                   return [
                       <div key={type} className="pb-4">
                           <div className="p-1">{beautifyObjectName(type)}</div>
-                          <AutoTable data={data} formSchema={formSchema} />
+                          <AutoTable data={data} formSchema={formSchema} state={{}} />
                       </div>,
                   ];
               })

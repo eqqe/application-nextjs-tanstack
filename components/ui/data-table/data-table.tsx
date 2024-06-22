@@ -1,10 +1,9 @@
 'use client';
-import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
+import { TableOptions, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ErrorBoundary } from 'react-error-boundary';
 import { FallbackError } from '../../layout/FallbackError';
 import { useRouter } from 'next/router';
-import { TableStateProps } from '../../AutoTable/AutoTable';
 import { DataTableToolbar } from '@/components/ui/data-table/data-table-toolbar';
 import { DataTablePagination } from './data-table-pagination';
 
@@ -12,19 +11,18 @@ export type Id = {
     id: string;
 };
 
-interface DataTableProps<TData extends Id, TValue> {
-    columns: ColumnDef<TData, TValue>[];
-    data: TData[];
-    getRowLink?: (id: string) => string;
-    tableState?: TableStateProps;
-}
-
-export function DataTable<TData extends Id, TValue>({
+export function DataTable<TData extends Id>({
     columns,
     data,
+    state,
+    rowCount,
+    onPaginationChange,
+    onSortingChange,
+    onGlobalFilterChange,
     getRowLink,
-    tableState,
-}: DataTableProps<TData, TValue>) {
+}: Omit<TableOptions<TData>, 'getCoreRowModel'> & {
+    getRowLink?: (id: string) => string;
+}) {
     const table = useReactTable({
         data,
         columns,
@@ -32,22 +30,18 @@ export function DataTable<TData extends Id, TValue>({
         manualSorting: true,
         manualPagination: true,
         manualFiltering: true,
-        rowCount: tableState?.count,
-        state: {
-            pagination: tableState?.pagination,
-            sorting: tableState?.sorting,
-            globalFilter: tableState?.globalFilter,
-        },
-        onPaginationChange: tableState?.setPagination,
-        onSortingChange: tableState?.setSorting,
-        onGlobalFilterChange: tableState?.setGlobalFilter,
+        rowCount: rowCount,
+        state,
+        onPaginationChange,
+        onSortingChange,
+        onGlobalFilterChange,
     });
 
     const router = useRouter();
 
     return (
         <div className="space-y-4">
-            <DataTableToolbar table={table} tableState={tableState} />
+            <DataTableToolbar table={table} />
             <div className="rounded-md border">
                 <Table>
                     <ErrorBoundary fallback={<FallbackError />}>
@@ -95,7 +89,7 @@ export function DataTable<TData extends Id, TValue>({
                     </ErrorBoundary>
                 </Table>
             </div>
-            {tableState?.pagination && <DataTablePagination table={table} />}
+            {state?.pagination && <DataTablePagination table={table} />}
         </div>
     );
 }
