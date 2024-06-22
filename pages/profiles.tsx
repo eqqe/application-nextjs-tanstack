@@ -18,7 +18,7 @@ export const Profiles: NextPage = () => {
                     onSubmit={async (data) => {
                         try {
                             await update.mutateAsync({ data, where: { id: profile.id } });
-                            toast.success(`User updated successfully!`);
+                            toast.success(`Profile updated successfully!`);
                         } catch {
                             toast.success(`Cannot update user!`);
                         }

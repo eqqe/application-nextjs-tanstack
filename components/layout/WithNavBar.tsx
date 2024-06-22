@@ -7,6 +7,7 @@ import { useNavItems } from '@/hooks/useNavItems';
 import { ErrorBoundary } from 'react-error-boundary';
 import { FallbackError } from './FallbackError';
 import { TopLoadingBar } from './TopLoadingBar';
+import { settingsUrl } from '@/lib/urls';
 
 type Props = {
     children: ReactNode | ReactNode[] | undefined;
@@ -38,7 +39,7 @@ export function WithNavBar({ children }: Props) {
                         <Tooltip>
                             <TooltipTrigger asChild>
                                 <Link
-                                    href="/settings"
+                                    href={settingsUrl}
                                     className="text-muted-foreground hover:text-foreground flex size-9 items-center justify-center rounded-lg transition-colors md:size-8"
                                 >
                                     <Settings />

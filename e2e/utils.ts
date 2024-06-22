@@ -50,8 +50,6 @@ export function getBaseUtils(page: Page) {
         await page.goto('http://localhost:3000/');
         await page.getByText('Select space').click();
         await page.getByText('Create space').click();
-        // Button in menu above, redundant button in page below
-        await page.getByText('Create space').click();
 
         const name = faker.word.words(5);
         await getByLabel<Space>('name').fill(name);
