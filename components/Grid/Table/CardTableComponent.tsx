@@ -3,7 +3,7 @@ import { getTypeHook } from './getTypeHook';
 import { AutoFormDialog } from '@/components/Form/AutoFormDialog';
 import { FallbackError } from '@/components/layout/FallbackError';
 import { ErrorBoundary } from 'react-error-boundary';
-import { ColumnDef, PaginationState, RowData, SortingState } from '@tanstack/react-table';
+import { ColumnDef, PaginationState, RowData, RowSelectionState, SortingState } from '@tanstack/react-table';
 import { z } from 'zod';
 import { AutoTable } from '@/components/AutoTable/AutoTable';
 import { ReactNode, useState, useMemo, useEffect, useCallback } from 'react';
@@ -50,13 +50,17 @@ export function CardTableComponent({
 }) {
     const { useHook, schema, useUpdate, useCount } = getTypeHook({ type });
 
-    const [rowSelection, onRowSelectionChange] = useState({});
+    const [rowSelection, setRowSelection] = useState({});
 
-    useEffect(() => {
-        if (onRowSelection) {
-            onRowSelection(Object.keys(rowSelection)[0] ?? '');
-        }
-    }, [onRowSelection, rowSelection]);
+    const onRowSelectionChange = useCallback(
+        (newRowSelection: RowSelectionState) => {
+            if (onRowSelection) {
+                onRowSelection(Object.keys(newRowSelection())[0] ?? '');
+            }
+            setRowSelection(newRowSelection);
+        },
+        [onRowSelection]
+    );
 
     const [pagination, onPaginationChange] = useState<PaginationState>({
         pageIndex: 0,
