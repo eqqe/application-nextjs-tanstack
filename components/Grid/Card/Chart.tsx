@@ -36,7 +36,6 @@ export function Chart({ data: dataProps, chart, groupBy }: { data: any[]; chart:
                 );
             }
             case 'PieChart': {
-                console.log(dataKey);
                 return (
                     <PieChart width={800} height={400}>
                         <Pie
