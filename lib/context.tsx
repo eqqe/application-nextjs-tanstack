@@ -54,7 +54,7 @@ export const useSubTabs = () => {
 export const SelectedSpacesProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [selectedSpaces, setSelectedSpaces] = useState<SelectedSpaces>([]);
 
-    const currentUser = useCurrentUser();
+    const currentUser = useCurrentSessionUser();
     const queryClient = useQueryClient();
 
     const { data: spaces } = useFindManySpace();
@@ -95,9 +95,14 @@ export const SelectedSpacesProvider: React.FC<{ children: ReactNode }> = ({ chil
     );
 };
 
-export function useCurrentUser() {
+export function useCurrentSessionUser() {
     const { data: session } = useSession();
-    const { data: user } = useFindUniqueUser({ where: { id: session?.user.id } }, { enabled: !!session?.user.id });
+    return session?.user;
+}
+
+export function useCurrentUser() {
+    const sessionUser = useCurrentSessionUser();
+    const { data: user } = useFindUniqueUser({ where: { id: sessionUser?.id } }, { enabled: !!sessionUser });
     return user;
 }
 
