@@ -16,6 +16,10 @@ export function AutoTable<SchemaType extends ZodObjectOrWrapped>({
     onlyAdditionalColumns,
     type,
     state,
+    onGlobalFilterChange,
+    onPaginationChange,
+    onSortingChange,
+    rowCount,
 }: CommonFormTable<SchemaType> &
     Omit<TableOptions<z.infer<SchemaType> & Id>, 'columns' | 'getCoreRowModel'> & {
         additionalColumns?: ColumnDef<z.infer<SchemaType> & Id, ReactNode>[];
@@ -62,5 +66,16 @@ export function AutoTable<SchemaType extends ZodObjectOrWrapped>({
         ? additionalColumns ?? []
         : getAccessor(objectFormSchema).concat(additionalColumns ?? []);
 
-    return <DataTable<z.infer<SchemaType> & Id> state={state} columns={columns} data={data} getRowLink={getRowLink} />;
+    return (
+        <DataTable<z.infer<SchemaType> & Id>
+            state={state}
+            onPaginationChange={onPaginationChange}
+            onGlobalFilterChange={onGlobalFilterChange}
+            onSortingChange={onSortingChange}
+            columns={columns}
+            data={data}
+            getRowLink={getRowLink}
+            rowCount={rowCount}
+        />
+    );
 }

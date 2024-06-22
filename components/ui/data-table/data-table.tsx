@@ -30,7 +30,7 @@ export function DataTable<TData extends Id>({
         manualSorting: true,
         manualPagination: true,
         manualFiltering: true,
-        rowCount: rowCount,
+        rowCount,
         state,
         onPaginationChange,
         onSortingChange,

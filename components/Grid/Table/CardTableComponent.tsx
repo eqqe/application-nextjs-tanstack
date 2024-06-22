@@ -175,9 +175,9 @@ export function CardTableComponent({
                         data={rows ?? []}
                         state={findMany ? { pagination, sorting, globalFilter } : {}}
                         rowCount={rowCount}
-                        onPaginationChange={onPaginationChange}
-                        onSortingChange={onSortingChange}
-                        onGlobalFilterChange={onGlobalFilterChange}
+                        onPaginationChange={findMany ? onPaginationChange : void 0}
+                        onSortingChange={findMany ? onSortingChange : void 0}
+                        onGlobalFilterChange={findMany ? onGlobalFilterChange : void 0}
                     />
                 )}
             </ErrorBoundary>
