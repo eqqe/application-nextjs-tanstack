@@ -22,7 +22,10 @@ export default function AutoFormSearch({
     }
     const { type, enableMultiRowSelection } = search;
     const { setValue } = useFormContext();
-    const onRowSelection = React.useCallback((id: string) => setValue(fieldProps.name, id), [fieldProps, setValue]);
+    const onRowSelection = React.useCallback(
+        (ids: { id: string }[]) => setValue(fieldProps.name, ids.join(',')),
+        [fieldProps, setValue]
+    );
     return (
         <FormItem className="flex w-full flex-col justify-start">
             {showLabel && <AutoFormLabel label={fieldConfigItem?.label || label} isRequired={isRequired} />}

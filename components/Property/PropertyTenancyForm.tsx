@@ -10,13 +10,12 @@ import {
 } from '@zenstackhq/runtime/zod/models';
 import { PropertyTenancyType } from '@prisma/client';
 import { AutoFormDialogEnumType } from '../Form/AutoFormDialogEnumType';
-import { fakeJointTenancyTenant, fakePerson } from '@/lib/demo/fake';
 
 export function PropertyTenancyForm() {
     const create = useCreatePropertyTenancy();
     return (
         <AutoFormDialogEnumType
-            baseSchema={PropertyTenancyCreateScalarSchema}
+            baseSchema={z.object({ properties: z.string() }).extend(PropertyTenancyCreateScalarSchema.shape)}
             typedSchemas={z.object({
                 [PropertyTenancyType.ByEntirety]: PropertyTenancyByEntiretyCreateScalarSchema.extend({
                     person: PersonCreateScalarSchema,
@@ -28,6 +27,7 @@ export function PropertyTenancyForm() {
                 await create.mutateAsync({
                     data: {
                         ...data.base,
+                        //properties: [data.properties.map((id) => ({ connect: { id } }))],
                         ...(data.base.type === 'InCommon' && {
                             tenancyInCommon: {
                                 create: data.InCommon,
@@ -46,6 +46,15 @@ export function PropertyTenancyForm() {
                     },
                 });
                 toast.success(`${data.base.name} created successfully!`);
+            }}
+            fieldConfig={{
+                properties: {
+                    fieldType: 'search',
+                    search: {
+                        type: 'Property',
+                        enableMultiRowSelection: true,
+                    },
+                },
             }}
             title={'Create Property Tenancy'}
         />

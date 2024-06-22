@@ -721,17 +721,17 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                         colSpan: 2,
                                                         card: {
                                                             create: {
-                                                                title: 'Your lease tenants',
+                                                                title: 'Your persons',
                                                                 invertTitleDescription: false,
-                                                                description: `lease tenants`,
-                                                                count: 'LeaseTenant',
+                                                                description: `persons`,
+                                                                count: 'Person',
                                                                 icon: 'Users',
                                                                 footer: {
                                                                     create: {
                                                                         button: {
                                                                             create: {
-                                                                                text: 'Create Lease Tenant',
-                                                                                table: 'LeaseTenant',
+                                                                                text: 'Create person',
+                                                                                table: 'Person',
                                                                             },
                                                                         },
                                                                     },

@@ -46,7 +46,7 @@ export function CardTableComponent({
 }: CardTableComponentProps & {
     pageSize: number;
     editableItems: boolean;
-    onRowSelection?: (id: string) => void;
+    onRowSelection?: (ids: { id: string }[]) => void;
     enableRowSelection: boolean;
     enableMultiRowSelection: boolean;
     multiTablesGlobalFilter?: boolean;
@@ -255,7 +255,7 @@ export function CardTableComponent({
                                               ? newRowSelection(rowSelection)
                                               : newRowSelection;
                                       if (onRowSelection) {
-                                          onRowSelection(Object.keys(newValue)[0] ?? '');
+                                          onRowSelection(Object.keys(newValue).map((id) => id));
                                       }
                                       setRowSelection(newValue);
                                   }
