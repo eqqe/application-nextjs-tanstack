@@ -20,13 +20,14 @@ test('Should enable assets application, see groups of properties, list them, edi
     const otherCity = faker.location.city();
     const surface3 = faker.number.int({ max: 5000, min: 100 });
     await utils.assets.createProperty({ property: { surface: surface3, propertyType: 'HOUSE', city: otherCity } });
+    await page.getByRole('tab', { name: 'Surface / city' }).click();
 
     await expect(page.getByText('_sum Surface')).toBeVisible();
     await expect(page.getByText(city)).toBeVisible();
     await expect(page.getByText((property1.surface + property2.surface).toString())).toBeVisible();
     await expect(page.getByText(surface3.toString())).toBeVisible();
 
-    await page.getByRole('tab', { name: 'Month' }).click();
+    await page.getByRole('tab', { name: 'All' }).click();
 
     // '..' is a xPath we use to get the parent element
     await page.getByText(otherCity).locator('..').getByText('Edit Property').click();
@@ -49,7 +50,7 @@ test('Should enable assets application, see essential data, create a property te
     await utils.assets.enable();
     await utils.assets.openEssentialData();
 
-    const property = fakeProperty();
+    let property = fakeProperty();
     await utils.assets.createProperty({ property });
 
     const title = 'Your property tenancies';
@@ -62,6 +63,10 @@ test('Should enable assets application, see essential data, create a property te
         surface: property.surface,
     });
     await utils.checkCountInCard({ title, count: 1 });
+
+    property = fakeProperty();
+    await utils.assets.createProperty({ property });
+
     await utils.assets.createPropertyTenancy({
         propertyTenancy: {
             type: 'ByEntirety',
@@ -70,6 +75,10 @@ test('Should enable assets application, see essential data, create a property te
         surface: property.surface,
     });
     await utils.checkCountInCard({ title, count: 2 });
+
+    property = fakeProperty();
+    await utils.assets.createProperty({ property });
+
     await utils.assets.createPropertyTenancy({
         propertyTenancy: {
             type: 'Joint',
