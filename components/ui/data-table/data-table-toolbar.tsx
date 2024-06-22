@@ -7,30 +7,29 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 import { DataTableViewOptions } from './data-table-view-options';
-import { Dispatch, SetStateAction } from 'react';
+import { TableStateProps } from '@/components/AutoTable/AutoTable';
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>;
 }
 
-export type FilterState = {
-    filterState?: {
-        filter: string;
-        setFilter: Dispatch<SetStateAction<string>>;
-    };
-};
-
-export function DataTableToolbar<TData>({ table, filterState }: DataTableToolbarProps<TData> & FilterState) {
+export function DataTableToolbar<TData>({
+    table,
+    tableState,
+}: DataTableToolbarProps<TData> & { tableState?: TableStateProps }) {
     const isFiltered = table.getState().columnFilters.length > 0;
 
     return (
         <div className="flex items-center justify-between">
             <div className="flex flex-1 items-center space-x-2">
-                {filterState && (
+                {tableState && (
                     <Input
                         placeholder="Filter..."
-                        value={filterState.filter}
-                        onChange={(event) => filterState.setFilter(event.target.value)}
+                        value={tableState.filter}
+                        onChange={(event) => {
+                            table.setPageIndex(0);
+                            tableState.setFilter(event.target.value);
+                        }}
                         className="h-8 w-[150px] lg:w-[250px]"
                     />
                 )}

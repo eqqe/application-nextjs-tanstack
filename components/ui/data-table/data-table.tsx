@@ -5,7 +5,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { FallbackError } from '../../layout/FallbackError';
 import { useRouter } from 'next/router';
 import { TableStateProps } from '../../AutoTable/AutoTable';
-import { DataTableToolbar, FilterState } from '@/components/ui/data-table/data-table-toolbar';
+import { DataTableToolbar } from '@/components/ui/data-table/data-table-toolbar';
 import { DataTablePagination } from './data-table-pagination';
 
 export type Id = {
@@ -24,8 +24,7 @@ export function DataTable<TData extends Id, TValue>({
     data,
     getRowLink,
     tableState,
-    filterState,
-}: DataTableProps<TData, TValue> & FilterState) {
+}: DataTableProps<TData, TValue>) {
     const table = useReactTable({
         data,
         columns,
@@ -45,7 +44,7 @@ export function DataTable<TData extends Id, TValue>({
 
     return (
         <div className="space-y-4">
-            <DataTableToolbar table={table} filterState={filterState} />
+            <DataTableToolbar table={table} tableState={tableState} />
             <div className="rounded-md border">
                 <Table>
                     <ErrorBoundary fallback={<FallbackError />}>

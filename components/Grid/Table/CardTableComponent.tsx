@@ -181,10 +181,11 @@ export function CardTableComponent({
                                       count,
                                       sorting,
                                       setSorting,
+                                      filter,
+                                      setFilter,
                                   }
                                 : void 0
                         }
-                        filterState={findMany ? { filter, setFilter } : void 0}
                     />
                 )}
             </ErrorBoundary>
