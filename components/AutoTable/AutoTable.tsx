@@ -11,12 +11,12 @@ import { getColumnDef } from '@/components/AutoTable/getColumnDef';
 
 export type TableStateProps = {
     count?: number;
-    pagination: PaginationState;
-    setPagination: Dispatch<SetStateAction<PaginationState>>;
-    sorting: SortingState;
-    setSorting: Dispatch<SetStateAction<SortingState>>;
-    globalFilter: string;
-    setGlobalFilter: Dispatch<SetStateAction<string>>;
+    pagination?: PaginationState;
+    setPagination?: Dispatch<SetStateAction<PaginationState>>;
+    sorting?: SortingState;
+    setSorting?: Dispatch<SetStateAction<SortingState>>;
+    globalFilter?: string;
+    setGlobalFilter?: Dispatch<SetStateAction<string>>;
 };
 
 export function AutoTable<SchemaType extends ZodObjectOrWrapped>({
