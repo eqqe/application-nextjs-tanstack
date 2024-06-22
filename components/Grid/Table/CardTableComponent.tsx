@@ -44,9 +44,6 @@ export function CardTableComponent({
 }) {
     const { useHook, schema, useUpdate, useCount } = getTypeHook({ type });
 
-    let count: number | undefined;
-    // @ts-expect-error
-    count = useCount().data;
     const [pagination, setPagination] = useState<PaginationState>({
         pageIndex: 0,
         pageSize: pageSize,
@@ -159,6 +156,10 @@ export function CardTableComponent({
     const paramLagged = { placeholderData: keepPreviousData };
     // @ts-expect-error
     rows = useHookTyped(params, paramLagged).data;
+
+    let count: number | undefined;
+    // @ts-expect-error
+    count = useCount({ where: params.where ?? {} }).data;
 
     return (
         <div className="container mx-auto py-5">
