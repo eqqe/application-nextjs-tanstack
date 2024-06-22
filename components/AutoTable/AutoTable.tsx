@@ -19,6 +19,8 @@ export function AutoTable<SchemaType extends ZodObjectOrWrapped>({
     onGlobalFilterChange,
     onPaginationChange,
     onSortingChange,
+    onRowSelectionChange,
+    enableRowSelection,
     rowCount,
 }: CommonFormTable<SchemaType> &
     Omit<TableOptions<z.infer<SchemaType> & Id>, 'columns' | 'getCoreRowModel'> & {
@@ -72,6 +74,8 @@ export function AutoTable<SchemaType extends ZodObjectOrWrapped>({
             onPaginationChange={onPaginationChange}
             onGlobalFilterChange={onGlobalFilterChange}
             onSortingChange={onSortingChange}
+            onRowSelectionChange={onRowSelectionChange}
+            enableRowSelection={enableRowSelection}
             columns={columns}
             data={data}
             getRowLink={getRowLink}

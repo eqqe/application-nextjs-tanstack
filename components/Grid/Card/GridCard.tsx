@@ -46,7 +46,14 @@ export function GridCard({ card }: { card: Prisma.GridCardGetPayload<typeof Grid
                     {card.content && <div className="text-muted-foreground text-xs">{card.content}</div>}
                 </ErrorBoundary>
                 <ErrorBoundary fallback={<FallbackError />}>
-                    {card.table && <CardTableComponent table={card.table} editableItems={true} pageSize={50} />}
+                    {card.table && (
+                        <CardTableComponent
+                            table={card.table}
+                            editableItems={true}
+                            pageSize={50}
+                            enableRowSelection={false}
+                        />
+                    )}
                 </ErrorBoundary>
             </CardContent>
             <ErrorBoundary fallback={<FallbackError />}>

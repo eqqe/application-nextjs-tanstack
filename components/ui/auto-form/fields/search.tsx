@@ -5,6 +5,7 @@ import AutoFormTooltip from '../common/tooltip';
 import { AutoFormInputComponentProps } from '../types';
 import { CardTableComponent } from '@/components/Grid/Table/CardTableComponent';
 import { PropertyColumns } from '@/zmodel/prisma/applications/assets/columns';
+import { useState } from 'react';
 
 export default function AutoFormSearch({
     label,
@@ -40,6 +41,7 @@ export default function AutoFormSearch({
                     }}
                     pageSize={5}
                     editableItems={false}
+                    enableRowSelection={true}
                 />
             </FormControl>
             <AutoFormTooltip fieldConfigItem={fieldConfigItem} />

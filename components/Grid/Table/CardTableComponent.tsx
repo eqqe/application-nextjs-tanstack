@@ -38,12 +38,15 @@ export function CardTableComponent({
     table: { type, typeTableRequest, columns, groupBy, chart },
     pageSize,
     editableItems,
+    enableRowSelection,
 }: CardTableComponentProps & {
     pageSize: number;
     editableItems: boolean;
+    enableRowSelection: boolean;
 }) {
     const { useHook, schema, useUpdate, useCount } = getTypeHook({ type });
 
+    const [rowSelection, onRowSelectionChange] = useState({});
     const [pagination, onPaginationChange] = useState<PaginationState>({
         pageIndex: 0,
         pageSize: pageSize,
@@ -173,11 +176,13 @@ export function CardTableComponent({
                         additionalColumns={columnDataTable}
                         onlyAdditionalColumns={(!!columns.length && findMany) || !findMany}
                         data={rows ?? []}
-                        state={findMany ? { pagination, sorting, globalFilter } : {}}
+                        state={findMany ? { pagination, sorting, globalFilter, rowSelection } : {}}
                         rowCount={rowCount}
                         onPaginationChange={findMany ? onPaginationChange : void 0}
                         onSortingChange={findMany ? onSortingChange : void 0}
                         onGlobalFilterChange={findMany ? onGlobalFilterChange : void 0}
+                        onRowSelectionChange={enableRowSelection ? onRowSelectionChange : void 0}
+                        enableRowSelection={enableRowSelection}
                     />
                 )}
             </ErrorBoundary>
