@@ -1,6 +1,6 @@
 import { LeaseForm } from '@/components/Lease/LeaseForm';
 import { PropertyTenancyForm } from '@/components/Property/PropertyTenancyForm';
-import { getGridUrl, getPropertyUrl, getSubTabFolderUrl } from '@/lib/urls';
+import { getGridUrl, getSubTabFolderUrl } from '@/lib/urls';
 import {
     useAggregateProperty,
     useFindManyProperty,
@@ -195,7 +195,6 @@ export function getTypeHook({ type }: { type: Type }) {
                     single: useCreateProperty,
                     many: useCreateManyProperty,
                 },
-                getLink: getPropertyUrl,
             };
         case 'Charge':
             return {
