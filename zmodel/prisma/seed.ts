@@ -5,7 +5,7 @@ import { createUserWithSpace } from '@/tests/mock/enhanced-prisma';
 
 const prisma = new PrismaClient();
 async function main() {
-    updateApplications(prisma);
+    await updateApplications(prisma);
     const user = await createUserWithSpace({ email: testUser.email });
     await user.enableAssets();
 }

@@ -26,11 +26,11 @@ test('Should enable assets application, rollback, and update', async ({ page, ut
     await utils.checkCountInCard({ title: 'Your property tenancies', count: lenghtDemo });
     await utils.checkCountInCard({ title: 'Your leases', count: lenghtDemo * lenghtDemo });
     await utils.checkCountInCard({ title: 'Your properties', count: lenghtDemo });
-    await utils.checkCountInCard({ title: 'Your lease tenants', count: lenghtDemo * lenghtDemo });
+    await utils.checkCountInCard({ title: 'Your persons', count: 2 * lenghtDemo * lenghtDemo });
 
     await utils.openSettings();
     await page.getByText('Properties').click();
-    await page.getByRole('tab', { name: 'Month' }).click();
+    await page.getByRole('tab', { name: 'All' }).click();
     await expect(page.getByText(cityPlaywrightTest)).toBeVisible();
     await openSettings();
     const rollbackButtonText = 'Rollback to version 0.1';
@@ -41,6 +41,6 @@ test('Should enable assets application, rollback, and update', async ({ page, ut
     await page.getByText('Update to version 0.2').click();
     await expect(page.getByText(rollbackButtonText)).toBeVisible();
     await page.getByText('Properties').click();
-    await page.getByRole('tab', { name: 'Month' }).click();
+    await page.getByRole('tab', { name: 'All' }).click();
     await expect(page.getByText(cityPlaywrightTest)).toBeVisible();
 });

@@ -48,6 +48,10 @@ test('Should enable assets application, see essential data, create a property te
     await utils.openHomeCreateSpace();
     await utils.assets.enable();
     await utils.assets.openEssentialData();
+
+    const property = fakeProperty();
+    await utils.assets.createProperty({ property });
+
     const title = 'Your property tenancies';
     await utils.checkCountInCard({ title, count: 0 });
     await utils.assets.createPropertyTenancy({
@@ -55,6 +59,7 @@ test('Should enable assets application, see essential data, create a property te
             type: 'InCommon',
             name: 'SCI Simon',
         },
+        surface: property.surface,
     });
     await utils.checkCountInCard({ title, count: 1 });
     await utils.assets.createPropertyTenancy({
@@ -62,6 +67,7 @@ test('Should enable assets application, see essential data, create a property te
             type: 'ByEntirety',
             name: 'Simon',
         },
+        surface: property.surface,
     });
     await utils.checkCountInCard({ title, count: 2 });
     await utils.assets.createPropertyTenancy({
@@ -69,6 +75,7 @@ test('Should enable assets application, see essential data, create a property te
             type: 'Joint',
             name: 'Simons',
         },
+        surface: property.surface,
     });
     await utils.checkCountInCard({ title, count: 3 });
 });
