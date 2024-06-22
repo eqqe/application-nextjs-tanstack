@@ -5,7 +5,6 @@ import AutoForm from '@/components/ui/auto-form';
 import { ProfileUpdateScalarSchema, UserScalarSchema } from '@zenstackhq/runtime/zod/models';
 import { toast } from 'react-toastify';
 import { z } from 'zod';
-import { produce } from 'immer';
 
 export const Profiles: NextPage = () => {
     const { data: profilesUserNested } = useFindManyProfile({
@@ -34,7 +33,8 @@ export const Profiles: NextPage = () => {
                     values={profile}
                     onSubmit={async (data) => {
                         try {
-                            await update.mutateAsync({ data, where: { id: profile.id } });
+                            // TODO SRE
+                            await update.mutateAsync({ data: {}, where: { id: profile.id } });
                             toast.success(`Profile updated successfully!`);
                         } catch {
                             toast.success(`Cannot update user!`);
