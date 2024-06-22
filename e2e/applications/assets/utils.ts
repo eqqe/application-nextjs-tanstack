@@ -42,8 +42,7 @@ export function getAssetsUtils(base: ReturnType<typeof getBaseUtils>, page: Page
     async function createLeaseFindProperty({ name, startDate }: { name: string; startDate: string }) {
         await createFillScalarLeaseFields({ startDate });
 
-        await page.getByText('Select Property...').click();
-        await page.getByText(name, { exact: true }).click();
+        await page.getByText(name, { exact: true }).locator('..').getByRole('checkbox').click();
         await base.clickSaveChanges();
     }
 

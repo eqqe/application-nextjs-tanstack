@@ -8,9 +8,14 @@ export function getOrFilter({
     formSchema: ReturnType<typeof getTypeHook>['schema']['base'];
     query: string;
 }) {
+    if (!query) {
+        return [];
+    }
     return Object.entries(formSchema.shape).flatMap(([key, zodType]) => {
-        // Search in all string fields to include the search value, excluding the ids (uuids unknown by user).
-        if (zodType._def.typeName === z.ZodFirstPartyTypeKind.ZodString && !key.includes('id')) {
+        const isString = zodType._def.typeName === z.ZodFirstPartyTypeKind.ZodString;
+        // Todo SRE : ZodEnum
+        // Search in all string to include the search value, excluding the ids (uuids unknown by user).
+        if (isString && !key.includes('id')) {
             return [
                 {
                     [key]: {

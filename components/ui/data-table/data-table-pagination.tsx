@@ -1,5 +1,5 @@
 import { ChevronLeftIcon, ChevronRightIcon, DoubleArrowLeftIcon, DoubleArrowRightIcon } from '@radix-ui/react-icons';
-import { Table } from '@tanstack/react-table';
+import { Table, TableOptions } from '@tanstack/react-table';
 
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -8,13 +8,19 @@ interface DataTablePaginationProps<TData> {
     table: Table<TData>;
 }
 
-export function DataTablePagination<TData>({ table }: DataTablePaginationProps<TData>) {
+export function DataTablePagination<TData>({
+    table,
+    enableRowSelection,
+}: DataTablePaginationProps<TData> & Pick<TableOptions<TData>, 'enableRowSelection'>) {
+    const selectedText = enableRowSelection ? (
+        `${table.getFilteredSelectedRowModel().rows.length} of ${table.getFilteredRowModel().rows.length} row(s)
+    selected.`
+    ) : (
+        <></>
+    );
     return (
         <div className="flex items-center justify-between px-2">
-            <div className="text-muted-foreground flex-1 text-sm">
-                {table.getFilteredSelectedRowModel().rows.length} of {table.getFilteredRowModel().rows.length} row(s)
-                selected.
-            </div>
+            <div className="text-muted-foreground flex-1 text-sm">{selectedText}</div>
             <div className="flex items-center space-x-6 lg:space-x-8">
                 <div className="flex items-center space-x-2">
                     <p className="text-sm font-medium">Rows per page</p>
@@ -37,7 +43,8 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
                     </Select>
                 </div>
                 <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-                    Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+                    Page {table.getPageCount() === 0 ? 0 : table.getState().pagination.pageIndex + 1} of{' '}
+                    {table.getPageCount()}
                 </div>
                 <div className="flex items-center space-x-2">
                     <Button

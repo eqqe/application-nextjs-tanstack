@@ -5,18 +5,9 @@ import { ZodObjectOrWrapped, getBaseSchema, getBaseType, getObjectFormSchema } f
 import { CommonFormTable } from '../ui/auto-common/types';
 import { Type } from '@prisma/client';
 import { getTypeHook } from '@/components/Grid/Table/getTypeHook';
-import { ColumnDef, PaginationState, SortingState } from '@tanstack/react-table';
-import { Dispatch, ReactNode, SetStateAction, useMemo, useState } from 'react';
+import { ColumnDef, TableOptions, TableState } from '@tanstack/react-table';
+import { ReactNode, useMemo } from 'react';
 import { getColumnDef } from '@/components/AutoTable/getColumnDef';
-import { FilterState } from '@/components/ui/data-table/data-table-toolbar';
-
-export type TableStateProps = {
-    count?: number;
-    pagination: PaginationState;
-    setPagination: Dispatch<SetStateAction<PaginationState>>;
-    sorting: SortingState;
-    setSorting: Dispatch<SetStateAction<SortingState>>;
-};
 
 export function AutoTable<SchemaType extends ZodObjectOrWrapped>({
     formSchema,
@@ -24,15 +15,20 @@ export function AutoTable<SchemaType extends ZodObjectOrWrapped>({
     data,
     onlyAdditionalColumns,
     type,
-    tableState,
-    filterState,
+    state,
+    onGlobalFilterChange,
+    onPaginationChange,
+    onSortingChange,
+    onRowSelectionChange,
+    enableRowSelection,
+    enableMultiRowSelection,
+    rowCount,
 }: CommonFormTable<SchemaType> &
-    FilterState & {
-        additionalColumns?: ColumnDef<z.infer<typeof formSchema> & Id, ReactNode>[];
+    Omit<TableOptions<z.infer<SchemaType> & Id>, 'columns' | 'getCoreRowModel'> & {
+        additionalColumns?: ColumnDef<z.infer<SchemaType> & Id, ReactNode>[];
         data: (Partial<z.infer<SchemaType>> & Id)[];
         onlyAdditionalColumns?: boolean;
         type?: Type;
-        tableState?: TableStateProps;
     }) {
     const getRowLink = useMemo(() => (type ? getTypeHook({ type })?.getLink : undefined), [type]);
     const objectFormSchema = getObjectFormSchema(formSchema);
@@ -42,7 +38,7 @@ export function AutoTable<SchemaType extends ZodObjectOrWrapped>({
     function getAccessor(
         objectFormSchema: z.AnyZodObject,
         prefix = ''
-    ): ColumnDef<z.infer<typeof formSchema> & Id, ReactNode>[] {
+    ): ColumnDef<z.infer<SchemaType> & Id, ReactNode>[] {
         const { shape } = getBaseSchema(objectFormSchema) || {};
 
         if (!shape) {
@@ -74,12 +70,18 @@ export function AutoTable<SchemaType extends ZodObjectOrWrapped>({
         : getAccessor(objectFormSchema).concat(additionalColumns ?? []);
 
     return (
-        <DataTable
-            tableState={tableState}
-            filterState={filterState}
+        <DataTable<z.infer<SchemaType> & Id>
+            state={state}
+            onPaginationChange={onPaginationChange}
+            onGlobalFilterChange={onGlobalFilterChange}
+            onSortingChange={onSortingChange}
+            onRowSelectionChange={onRowSelectionChange}
+            enableRowSelection={enableRowSelection}
+            enableMultiRowSelection={enableMultiRowSelection}
             columns={columns}
             data={data}
             getRowLink={getRowLink}
+            rowCount={rowCount}
         />
     );
 }

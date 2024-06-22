@@ -1,55 +1,85 @@
 'use client';
-import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
+import { ColumnDef, TableOptions, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ErrorBoundary } from 'react-error-boundary';
 import { FallbackError } from '../../layout/FallbackError';
 import { useRouter } from 'next/router';
-import { TableStateProps } from '../../AutoTable/AutoTable';
-import { DataTableToolbar, FilterState } from '@/components/ui/data-table/data-table-toolbar';
+import { DataTableToolbar } from '@/components/ui/data-table/data-table-toolbar';
+import { Checkbox } from '@/components/ui/checkbox';
 import { DataTablePagination } from './data-table-pagination';
 
 export type Id = {
     id: string;
 };
 
-interface DataTableProps<TData extends Id, TValue> {
-    columns: ColumnDef<TData, TValue>[];
-    data: TData[];
-    getRowLink?: (id: string) => string;
-    tableState?: TableStateProps;
-}
-
-export function DataTable<TData extends Id, TValue>({
-    columns,
+export function DataTable<TData extends Id>({
+    columns: columnsProps,
     data,
+    state,
+    rowCount,
+    onPaginationChange,
+    onSortingChange,
+    enableRowSelection,
+    onGlobalFilterChange,
+    onRowSelectionChange,
+    enableMultiRowSelection,
     getRowLink,
-    tableState,
-    filterState,
-}: DataTableProps<TData, TValue> & FilterState) {
+}: Omit<TableOptions<TData>, 'getCoreRowModel'> & {
+    getRowLink?: (id: string) => string;
+}) {
+    const selectColumn: ColumnDef<TData> = {
+        id: 'select',
+        header: ({ table }) =>
+            enableMultiRowSelection ? (
+                <Checkbox
+                    checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
+                    onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+                    aria-label="Select all"
+                    className="translate-y-[2px]"
+                />
+            ) : (
+                <></>
+            ),
+        cell: ({ row }) => (
+            <Checkbox
+                checked={row.getIsSelected()}
+                onCheckedChange={(value) => row.toggleSelected(!!value)}
+                aria-label="Select row"
+                className="translate-y-[2px]"
+            />
+        ),
+        enableSorting: false,
+        enableHiding: false,
+    };
+    const columns = enableRowSelection ? [selectColumn, ...columnsProps] : columnsProps;
+
     const table = useReactTable({
         data,
         columns,
         getCoreRowModel: getCoreRowModel(),
         manualSorting: true,
         manualPagination: true,
-        rowCount: tableState?.count,
-        state: {
-            pagination: tableState?.pagination,
-            sorting: tableState?.sorting,
-        },
-        onPaginationChange: tableState?.setPagination,
-        onSortingChange: tableState?.setSorting,
+        manualFiltering: true,
+        rowCount,
+        state,
+        enableRowSelection,
+        enableMultiRowSelection,
+        onPaginationChange,
+        onSortingChange,
+        onGlobalFilterChange,
+        onRowSelectionChange,
+        getRowId: (row) => row.id,
     });
 
     const router = useRouter();
 
     return (
         <div className="space-y-4">
-            <DataTableToolbar table={table} filterState={filterState} />
+            <DataTableToolbar table={table} />
             <div className="rounded-md border">
                 <Table>
                     <ErrorBoundary fallback={<FallbackError />}>
-                        <TableHeader className={'bg-primary-foreground sticky top-0 [&_tr]:border-b'}>
+                        <TableHeader>
                             {table.getHeaderGroups().map((headerGroup) => (
                                 <TableRow key={headerGroup.id}>
                                     {headerGroup.headers.map((header) => {
@@ -93,7 +123,7 @@ export function DataTable<TData extends Id, TValue>({
                     </ErrorBoundary>
                 </Table>
             </div>
-            {tableState?.pagination && <DataTablePagination table={table} />}
+            {state?.pagination && <DataTablePagination table={table} enableRowSelection={enableRowSelection} />}
         </div>
     );
 }
