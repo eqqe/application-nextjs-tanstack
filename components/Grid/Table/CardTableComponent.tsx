@@ -100,7 +100,7 @@ export function CardTableComponent({
 
     type ColumnDefFromSchema = ColumnDef<z.infer<typeof schema.base>, ReactNode>;
     const columnDataTable: ColumnDefFromSchema[] = cols.map((column) =>
-        getColumnDef({ currentPrefix: column, link: typeTableRequest === 'FindMany' })
+        getColumnDef({ currentPrefix: column, link: typeTableRequest === 'FindMany', enableSorting: false })
     );
 
     if (typeTableRequest === 'FindMany') {

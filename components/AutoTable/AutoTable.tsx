@@ -60,7 +60,7 @@ export function AutoTable<SchemaType extends ZodObjectOrWrapped>({
                 return [];
             }
 
-            return [getColumnDef({ currentPrefix, zodBaseType, link: true })];
+            return [getColumnDef({ currentPrefix, zodBaseType, link: true, enableSorting: false })];
         });
     }
 

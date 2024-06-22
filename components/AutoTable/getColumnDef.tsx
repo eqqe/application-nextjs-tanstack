@@ -9,10 +9,12 @@ export function getColumnDef<SchemaType>({
     currentPrefix,
     zodBaseType,
     link,
+    enableSorting,
 }: {
     currentPrefix: string;
     zodBaseType?: string;
     link: boolean;
+    enableSorting: boolean;
 }): ColumnDef<SchemaType & Id, ReactNode> {
     return {
         accessorKey: currentPrefix,
@@ -26,5 +28,6 @@ export function getColumnDef<SchemaType>({
             }
             return getValue();
         },
+        enableSorting,
     };
 }
