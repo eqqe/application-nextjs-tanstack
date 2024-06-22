@@ -22,8 +22,7 @@ export default function AutoFormSearch({
     }
     const { type, enableMultiRowSelection } = search;
     const { setValue } = useFormContext();
-    // TODO SRE : change not only properties !!!
-    const onRowSelection = React.useCallback((id: string) => setValue('propertyId', id), [setValue]);
+    const onRowSelection = React.useCallback((id: string) => setValue(fieldProps.name, id), [fieldProps, setValue]);
     return (
         <FormItem className="flex w-full flex-col justify-start">
             {showLabel && <AutoFormLabel label={fieldConfigItem?.label || label} isRequired={isRequired} />}
