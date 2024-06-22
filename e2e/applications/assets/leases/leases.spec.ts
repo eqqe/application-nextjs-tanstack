@@ -16,4 +16,7 @@ test('Should add lease on property', async ({ page, utils }) => {
 
     await assets.createLeaseFindProperty({ name, startDate: '2050-05-12' });
     await expect(page.getByText(`leases1`)).toBeVisible();
+
+    await assets.createLeaseFindProperty({ name, startDate: '2060-05-12' });
+    await expect(page.getByText(`leases2`)).toBeVisible();
 });
