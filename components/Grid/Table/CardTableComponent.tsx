@@ -43,6 +43,7 @@ export function CardTableComponent({
     enableRowSelection,
     enableMultiRowSelection,
     multiTablesGlobalFilter,
+    where,
 }: CardTableComponentProps & {
     pageSize: number;
     editableItems: boolean;
@@ -50,6 +51,7 @@ export function CardTableComponent({
     enableRowSelection: boolean;
     enableMultiRowSelection: boolean;
     multiTablesGlobalFilter?: boolean;
+    where?: any;
 }) {
     const { useHook, schema, useUpdate, useCount } = getTypeHook({ type });
 
@@ -209,6 +211,10 @@ export function CardTableComponent({
         placeholderData: keepPreviousData,
         enabled: !multiTablesGlobalFilter || !!orFilter.length,
     };
+
+    if (where) {
+        params.where = { ...params.where, ...where };
+    }
     // @ts-expect-error
     rows = useHookTyped(params, options).data;
 

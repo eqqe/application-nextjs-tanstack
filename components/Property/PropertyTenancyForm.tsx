@@ -1,4 +1,4 @@
-import { useCreatePropertyTenancy } from '@/zmodel/lib/hooks';
+import { useCreatePropertyTenancy, useFindManyProperty } from '@/zmodel/lib/hooks';
 import { toast } from 'react-toastify';
 import { z } from 'zod';
 import {
@@ -10,9 +10,14 @@ import {
 } from '@zenstackhq/runtime/zod/models';
 import { PropertyTenancyType } from '@prisma/client';
 import { AutoFormDialogEnumType } from '../Form/AutoFormDialogEnumType';
+import { Prisma } from '@prisma/client';
 
 export function PropertyTenancyForm() {
     const create = useCreatePropertyTenancy();
+
+    const where: Prisma.PropertyWhereInput = {
+        tenancyId: null,
+    };
     return (
         <AutoFormDialogEnumType
             baseSchema={z.object({ properties: z.string(), base: PropertyTenancyCreateScalarSchema })}
@@ -54,6 +59,7 @@ export function PropertyTenancyForm() {
                     search: {
                         type: 'Property',
                         enableMultiRowSelection: true,
+                        where,
                     },
                 },
             }}

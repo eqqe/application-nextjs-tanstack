@@ -20,7 +20,7 @@ export default function AutoFormSearch({
     if (!search) {
         throw 'search should be configured for search autoform';
     }
-    const { type, enableMultiRowSelection } = search;
+    const { type, enableMultiRowSelection, where } = search;
     const { setValue } = useFormContext();
     const onRowSelection = React.useCallback(
         (ids: string[]) => setValue(fieldProps.name, ids.join(',')),
@@ -43,6 +43,7 @@ export default function AutoFormSearch({
                     onRowSelection={onRowSelection}
                     enableRowSelection={true}
                     enableMultiRowSelection={enableMultiRowSelection}
+                    where={where}
                 />
             </FormControl>
             <AutoFormTooltip fieldConfigItem={fieldConfigItem} />
