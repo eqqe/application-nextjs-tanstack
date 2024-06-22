@@ -39,7 +39,7 @@ import { useCurrentSessionUser } from '@/lib/context';
 import { ModeToggle } from './ModeToggle';
 import { SpaceSwitch } from './SpaceSwitch';
 import { useRouter } from 'next/router';
-import { settingsUrl } from '@/lib/urls';
+import { profilesUrl, settingsUrl, userUrl } from '@/lib/urls';
 
 export default function Header() {
     const user = useCurrentSessionUser();
@@ -74,7 +74,7 @@ export default function Header() {
                     <DropdownMenuLabel>My Account</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuGroup>
-                        <DropdownMenuItem onClick={() => router.push('/user')}>
+                        <DropdownMenuItem onClick={() => router.push(userUrl)}>
                             <User className="mr-2 size-4" />
                             <span>User</span>
                             <DropdownMenuShortcut>⇧⌘U</DropdownMenuShortcut>
@@ -97,9 +97,9 @@ export default function Header() {
                     </DropdownMenuGroup>
                     <DropdownMenuSeparator />
                     <DropdownMenuGroup>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => router.push(profilesUrl)}>
                             <Users className="mr-2 size-4" />
-                            <span>Team</span>
+                            <span>Profiles</span>
                         </DropdownMenuItem>
                         <DropdownMenuSub>
                             <DropdownMenuSubTrigger>

@@ -43,7 +43,7 @@ export function getBaseUtils(page: Page) {
 
     async function selectFromCombo<T extends FieldValues>(label: FieldPath<T>, type: string) {
         await page.getByTestId(`${beautifyObjectName(label)}-button-combo`).click();
-        await page.locator(`span:has-text("${type}")`).click();
+        await page.locator(`span:text-is("${type}")`).click();
     }
 
     async function openHomeCreateSpace() {

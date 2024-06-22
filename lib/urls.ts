@@ -13,4 +13,6 @@ export function getPropertyUrl(id: string) {
     return `/property/${id}`;
 }
 
+export const userUrl = '/user';
+export const profilesUrl = '/profiles';
 export const settingsUrl = '/settings';
