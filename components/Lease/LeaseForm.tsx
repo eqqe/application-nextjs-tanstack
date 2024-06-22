@@ -2,7 +2,6 @@ import { useCreateLease } from '@/zmodel/lib/hooks';
 import { toast } from 'react-toastify';
 import { AutoFormDialog } from '@/components/Form/AutoFormDialog';
 import { LeaseCreateScalarSchema, LeaseCreateSchema } from '@zenstackhq/runtime/zod/models';
-import { Prisma } from '@prisma/client';
 import { z } from 'zod';
 
 export function LeaseForm() {
