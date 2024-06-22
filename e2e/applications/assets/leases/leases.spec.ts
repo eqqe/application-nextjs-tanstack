@@ -8,7 +8,7 @@ test('Should add lease on property', async ({ page, utils }) => {
     await assets.enable();
     await utils.assets.openEssentialData();
 
-    const name = faker.word.noun();
+    const name = faker.word.words();
     await utils.assets.createProperty({ property: { name } });
 
     await utils.checkCountInCard({ title: 'Your leases', count: 0 });

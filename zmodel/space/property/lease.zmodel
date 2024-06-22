@@ -12,7 +12,7 @@ enum LeaseType {
     Furnished
     Professional
     Seasonal
-    Other
+    OtherLease
 }
 
 enum LeaseDurationType {
@@ -48,7 +48,7 @@ enum LeasePaymentMode {
     WireTransfer
     DirectDebit
     Card
-    Other
+    OtherPayment
     Cash
 }
 
