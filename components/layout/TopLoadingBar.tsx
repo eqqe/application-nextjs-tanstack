@@ -6,36 +6,36 @@ export function TopLoadingBar() {
     const [progress, setProgress] = React.useState(0);
     const queryClient = useQueryClient();
 
+    const [isLoading, setIsLoading] = React.useState(false);
+
     React.useEffect(() => {
-        const handleFetchStart = () => {
-            setProgress(0);
-        };
-
         const unsubscribe = queryClient.getQueryCache().subscribe((event) => {
-            if (event.query.isActive()) {
-                handleFetchStart();
-            }
+            const updateIsLoading = queryClient.isFetching() > 0 || queryClient.isMutating() > 0;
+            setIsLoading(updateIsLoading);
         });
-
-        const incrementProgress = () => {
-            setProgress((prevProgress) => (prevProgress >= 100 ? 0 : prevProgress + 1));
-        };
-
-        const interval = setInterval(incrementProgress, 50);
-
         return () => {
-            clearInterval(interval);
             unsubscribe();
         };
     }, [queryClient]);
 
+    React.useEffect(() => {
+        let interval: ReturnType<typeof setInterval>;
+        if (isLoading) {
+            setProgress(0);
+
+            const incrementProgress = () => {
+                setProgress((prevProgress) => (prevProgress >= 100 ? 0 : prevProgress + 1));
+            };
+            interval = setInterval(incrementProgress, 50);
+        }
+        return () => {
+            clearInterval(interval);
+        };
+    }, [isLoading]);
+
     return (
         <div className="fixed left-0 top-0 z-50 w-full">
-            {queryClient.isFetching() || queryClient.isMutating() ? (
-                <Progress value={progress} className="h-1 w-full" />
-            ) : (
-                ''
-            )}
+            {isLoading ? <Progress value={progress} className="h-1 w-full" /> : ''}
         </div>
     );
 }
