@@ -76,10 +76,10 @@ export function DataTable<TData extends Id>({
     return (
         <div className="space-y-4">
             <DataTableToolbar table={table} />
-            <div className="rounded-md border">
-                <Table>
+            <div className="overflow-x-auto rounded-md border">
+                <Table className="@apply w-full ">
                     <ErrorBoundary fallback={<FallbackError />}>
-                        <TableHeader>
+                        <TableHeader className={'bg-primary-foreground sticky top-0 [&_tr]:border-b'}>
                             {table.getHeaderGroups().map((headerGroup) => (
                                 <TableRow key={headerGroup.id}>
                                     {headerGroup.headers.map((header) => {

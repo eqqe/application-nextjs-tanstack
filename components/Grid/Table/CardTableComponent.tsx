@@ -93,7 +93,6 @@ export function CardTableComponent({
             return [];
         });
     }, [globalFilter, schema.base]);
-
     const params = useMemo(() => {
         function reducer(list: string[]) {
             return list.reduce<Record<string, boolean>>((previousValue, currentValue) => {
