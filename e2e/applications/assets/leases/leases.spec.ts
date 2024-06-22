@@ -1,4 +1,3 @@
-import { expect } from '@playwright/test';
 import { test } from '@/e2e/utils';
 import { faker } from '@faker-js/faker';
 
