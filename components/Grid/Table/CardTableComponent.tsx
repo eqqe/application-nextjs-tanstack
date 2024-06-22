@@ -193,15 +193,18 @@ export function CardTableComponent({
 
     let rows: any[] | undefined;
 
-    const paramLagged = { placeholderData: keepPreviousData };
+    const options = {
+        placeholderData: keepPreviousData,
+        enabled: !multiTablesGlobalFilter || !!orFilter.length,
+    };
     // @ts-expect-error
-    rows = useHookTyped(params, paramLagged).data;
+    rows = useHookTyped(params, options).data;
 
     let rowCount: number | undefined;
     // @ts-expect-error
-    rowCount = useCount({ where: params.where ?? {} }).data;
+    rowCount = useCount({ where: params.where ?? {} }, options).data;
 
-    if (multiTablesGlobalFilter && (!orFilter.length || !rowCount)) {
+    if (!options.enabled || (multiTablesGlobalFilter && !rowCount)) {
         return null;
     }
 
