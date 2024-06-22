@@ -34,7 +34,9 @@ export function PropertyTenancyForm() {
                             },
                         }),
                         ...(data.base.type === 'Joint' && {
-                            jointTenancy: {},
+                            jointTenancy: {
+                                create: {},
+                            },
                         }),
                         ...(data.base.type === 'ByEntirety' && {
                             tenancyByEntirety: {
