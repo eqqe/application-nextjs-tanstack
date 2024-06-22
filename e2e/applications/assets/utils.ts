@@ -43,7 +43,7 @@ export function getAssetsUtils(base: ReturnType<typeof getBaseUtils>, page: Page
         await createFillScalarLeaseFields({ startDate });
 
         await page.getByText('Select Property...').click();
-        await page.getByText(name).click();
+        await page.getByText(name, { exact: true }).click();
         await base.clickSaveChanges();
     }
 

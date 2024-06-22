@@ -1,24 +1,21 @@
 import { z } from 'zod';
-import { DataTable, Id } from '@/components/ui/data-table';
+import { DataTable, Id } from '@/components/ui/data-table/data-table';
 import { handleIfZodNumber } from '@/components/ui/auto-form/fields/object';
-import {
-    ZodObjectOrWrapped,
-    beautifyObjectName,
-    getBaseSchema,
-    getBaseType,
-    getObjectFormSchema,
-} from '@/components/ui/auto-form/utils';
+import { ZodObjectOrWrapped, getBaseSchema, getBaseType, getObjectFormSchema } from '@/components/ui/auto-form/utils';
 import { CommonFormTable } from '../ui/auto-common/types';
 import { Type } from '@prisma/client';
 import { getTypeHook } from '@/components/Grid/Table/getTypeHook';
-import { ColumnDef, PaginationState } from '@tanstack/react-table';
+import { ColumnDef, PaginationState, SortingState } from '@tanstack/react-table';
 import { Dispatch, ReactNode, SetStateAction, useMemo, useState } from 'react';
-import { dateFormat } from '@/lib/utils';
+import { getColumnDef } from '@/components/AutoTable/getColumnDef';
+import { FilterState } from '@/components/ui/data-table/data-table-toolbar';
 
-export type PaginationProps = {
+export type TableStateProps = {
     count?: number;
     pagination: PaginationState;
     setPagination: Dispatch<SetStateAction<PaginationState>>;
+    sorting: SortingState;
+    setSorting: Dispatch<SetStateAction<SortingState>>;
 };
 
 export function AutoTable<SchemaType extends ZodObjectOrWrapped>({
@@ -27,14 +24,16 @@ export function AutoTable<SchemaType extends ZodObjectOrWrapped>({
     data,
     onlyAdditionalColumns,
     type,
-    pagination,
-}: CommonFormTable<SchemaType> & {
-    additionalColumns?: ColumnDef<z.infer<typeof formSchema> & Id, ReactNode>[];
-    data: (Partial<z.infer<SchemaType>> & Id)[];
-    onlyAdditionalColumns?: boolean;
-    type?: Type;
-    pagination?: PaginationProps;
-}) {
+    tableState,
+    filterState,
+}: CommonFormTable<SchemaType> &
+    FilterState & {
+        additionalColumns?: ColumnDef<z.infer<typeof formSchema> & Id, ReactNode>[];
+        data: (Partial<z.infer<SchemaType>> & Id)[];
+        onlyAdditionalColumns?: boolean;
+        type?: Type;
+        tableState?: TableStateProps;
+    }) {
     const getRowLink = useMemo(() => (type ? getTypeHook({ type })?.getLink : undefined), [type]);
     const objectFormSchema = getObjectFormSchema(formSchema);
     if (!objectFormSchema) {
@@ -66,21 +65,7 @@ export function AutoTable<SchemaType extends ZodObjectOrWrapped>({
                 return [];
             }
 
-            return [
-                {
-                    accessorKey: currentPrefix,
-                    header: beautifyObjectName(currentPrefix),
-                    meta: {
-                        link: true,
-                    },
-                    cell: ({ getValue }) => {
-                        if (zodBaseType === 'ZodDate') {
-                            return dateFormat(new Date(getValue() as string));
-                        }
-                        return getValue();
-                    },
-                },
-            ];
+            return [getColumnDef({ currentPrefix, zodBaseType, link: true, enableSorting: false })];
         });
     }
 
@@ -88,5 +73,13 @@ export function AutoTable<SchemaType extends ZodObjectOrWrapped>({
         ? additionalColumns ?? []
         : getAccessor(objectFormSchema).concat(additionalColumns ?? []);
 
-    return <DataTable pagination={pagination} columns={columns} data={data} getRowLink={getRowLink} />;
+    return (
+        <DataTable
+            tableState={tableState}
+            filterState={filterState}
+            columns={columns}
+            data={data}
+            getRowLink={getRowLink}
+        />
+    );
 }

@@ -3,7 +3,8 @@
     "version": "1.0.0",
     "private": true,
     "scripts": {
-        "dev": "concurrently --raw \"npx tsc -w\" \"next dev\"",
+        "dev": "next dev",
+        "dev:tsc": "concurrently --raw \"npx tsc -w\" \"next dev\"",
         "build": "npm run generate && next build",
         "start": "next start",
         "seed": "npx prisma db seed",

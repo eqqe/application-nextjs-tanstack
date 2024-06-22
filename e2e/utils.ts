@@ -1,12 +1,8 @@
 import { FieldPath, FieldValues } from 'react-hook-form';
 import { beautifyObjectName } from '@/components/ui/auto-form/utils';
 import { faker } from '@faker-js/faker';
-import { Lease, Person, PropertyTenancy, PropertyTenancyInCommon, Space } from '@prisma/client';
+import { Space } from '@prisma/client';
 import { expect, Page, test as base } from '@playwright/test';
-import { Property } from '@prisma/client';
-import { fakeProperty, fakeTenancyInCommon } from '@/lib/demo/fake';
-import { PropertyTenancyCreateScalarSchema } from '@zenstackhq/runtime/zod/models';
-import { z } from 'zod';
 import { getAssetsUtils } from '@/e2e/applications/assets/utils';
 
 export const test = base.extend<{

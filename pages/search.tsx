@@ -6,10 +6,15 @@ import { getTypeHook } from '@/components/Grid/Table/getTypeHook';
 import { AutoTable } from '@/components/AutoTable/AutoTable';
 import { beautifyObjectName } from '@/components/ui/auto-form/utils';
 import { useSearchParams } from 'next/navigation';
+import { getOrFilter } from '@/lib/getOrFilter';
 
 export const Search: NextPage = () => {
     const searchParams = useSearchParams();
-    const query = searchParams.get('q');
+    const queryParam = searchParams.get('q');
+    if (!queryParam) {
+        return 'Should enter a param in q query';
+    }
+    const query = queryParam;
 
     function SearchType({ type }: { type: Type }) {
         const typeHook = getTypeHook({ type });
@@ -19,21 +24,9 @@ export const Search: NextPage = () => {
         const useFindMany = typeHook.useHook.FindMany;
 
         const formSchema = typeHook.schema.base;
-        const orFilter = Object.entries(formSchema.shape).flatMap(([key, zodType]) => {
-            // Search in all string fields to include the search value, excluding the ids (uuids unknown by user).
-            if (zodType._def.typeName === z.ZodFirstPartyTypeKind.ZodString && !key.includes('id')) {
-                return [
-                    {
-                        [key]: {
-                            contains: query,
-                            mode: 'insensitive',
-                        },
-                    },
-                ];
-            }
-            return [];
-        });
+        const orFilter = getOrFilter({ formSchema, query });
         if (orFilter.length) {
+            // Do not launch search if table has no string column to filter
             // @ts-expect-error
             // eslint-disable-next-line react-hooks/rules-of-hooks
             const { data } = useFindMany({
