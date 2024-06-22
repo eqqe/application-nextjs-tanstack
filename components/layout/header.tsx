@@ -38,8 +38,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useCurrentSessionUser } from '@/lib/context';
 import { ModeToggle } from './ModeToggle';
 import { SpaceSwitch } from './SpaceSwitch';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { settingsUrl } from '@/lib/urls';
 
 export default function Header() {
     const user = useCurrentSessionUser();
@@ -74,19 +74,19 @@ export default function Header() {
                     <DropdownMenuLabel>My Account</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuGroup>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => router.push('/user')}>
                             <User className="mr-2 size-4" />
-                            <span>Profile</span>
-                            <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+                            <span>User</span>
+                            <DropdownMenuShortcut>⇧⌘U</DropdownMenuShortcut>
                         </DropdownMenuItem>
                         <DropdownMenuItem>
                             <CreditCard className="mr-2 size-4" />
                             <span>Billing</span>
                             <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => router.push(settingsUrl)}>
                             <Settings className="mr-2 size-4" />
-                            <Link href="/settings">Settings</Link>
+                            <span>Settings</span>
                             <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
                         </DropdownMenuItem>
                         <DropdownMenuItem>

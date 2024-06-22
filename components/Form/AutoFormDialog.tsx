@@ -34,8 +34,8 @@ export function AutoFormDialog<SchemaType extends ZodObjectOrWrapped>({
     const onSubmit = async (data: z.infer<SchemaType>) => {
         toast.dismiss();
         try {
-            setOpen(false);
             await onSubmitData(data);
+            setOpen(false);
         } catch (err) {
             toast.error('Failed to create');
         }

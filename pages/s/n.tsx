@@ -1,5 +1,6 @@
 import { AutoFormDialog } from '@/components/Form/AutoFormDialog';
 import { WithNavBar } from '@/components/layout/WithNavBar';
+import AutoForm from '@/components/ui/auto-form';
 import { useCurrentSessionUser, useSelectedSpaces } from '@/lib/context';
 import { getNewSpace } from '@/lib/getNewSpace';
 import { useCreateSpace } from '@/zmodel/lib/hooks';
@@ -16,9 +17,9 @@ export const Home: NextPage = () => {
     }
     return (
         <WithNavBar>
-            <AutoFormDialog
+            <AutoForm
                 formSchema={SpaceCreateScalarSchema}
-                onSubmitData={async (data) => {
+                onSubmit={async (data) => {
                     const space = await createSpace.mutateAsync(getNewSpace({ user, name: data.name }));
                     if (space) {
                         toast.success(`${data.name} created successfully!`);
@@ -27,7 +28,6 @@ export const Home: NextPage = () => {
                         toast('Cannot create space');
                     }
                 }}
-                title={'Create space'}
             />
         </WithNavBar>
     );

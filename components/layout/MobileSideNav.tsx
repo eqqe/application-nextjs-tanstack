@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { LineChart, Package, PanelLeft } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { settingsUrl } from '@/lib/urls';
 
 export const MobileSideNav = () => {
     const items = useNavItems();
@@ -28,7 +29,7 @@ export const MobileSideNav = () => {
                         </Link>
                     ))}
                     <Link
-                        href="/settings"
+                        href={settingsUrl}
                         className="text-muted-foreground hover:text-foreground flex items-center gap-4 px-2.5"
                     >
                         <LineChart />

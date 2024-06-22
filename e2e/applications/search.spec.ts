@@ -2,7 +2,7 @@ import { fakeProperty } from '@/lib/demo/fake';
 import { test } from '@/e2e/utils';
 import { expect } from '@playwright/test';
 
-test('Should enable assets application, see essential data, create a property tenancy', async ({ page, utils }) => {
+test('Search for created property and tenancy, vs no result', async ({ page, utils }) => {
     await utils.openHomeCreateSpace();
     await utils.assets.enable();
     await utils.assets.openEssentialData();

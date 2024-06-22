@@ -12,3 +12,5 @@ export function getGridUrl(id: string) {
 export function getPropertyUrl(id: string) {
     return `/property/${id}`;
 }
+
+export const settingsUrl = '/settings';

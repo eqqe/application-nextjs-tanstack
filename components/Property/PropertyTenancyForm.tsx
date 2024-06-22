@@ -13,7 +13,6 @@ import { AutoFormDialogEnumType } from '../Form/AutoFormDialogEnumType';
 
 export function PropertyTenancyForm() {
     const create = useCreatePropertyTenancy();
-
     return (
         <AutoFormDialogEnumType
             baseSchema={PropertyTenancyCreateScalarSchema}
