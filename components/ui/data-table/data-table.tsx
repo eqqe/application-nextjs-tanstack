@@ -21,6 +21,8 @@ export function DataTable<TData extends Id>({
     onSortingChange,
     enableRowSelection,
     onGlobalFilterChange,
+    onRowSelectionChange,
+    enableMultiRowSelection,
     getRowLink,
 }: Omit<TableOptions<TData>, 'getCoreRowModel'> & {
     getRowLink?: (id: string) => string;
@@ -58,9 +60,11 @@ export function DataTable<TData extends Id>({
         rowCount,
         state,
         enableRowSelection,
+        enableMultiRowSelection,
         onPaginationChange,
         onSortingChange,
         onGlobalFilterChange,
+        onRowSelectionChange,
     });
 
     const router = useRouter();

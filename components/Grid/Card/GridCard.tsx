@@ -52,6 +52,7 @@ export function GridCard({ card }: { card: Prisma.GridCardGetPayload<typeof Grid
                             editableItems={true}
                             pageSize={50}
                             enableRowSelection={false}
+                            enableMultiRowSelection={false}
                         />
                     )}
                 </ErrorBoundary>

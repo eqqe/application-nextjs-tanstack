@@ -21,6 +21,7 @@ export function AutoTable<SchemaType extends ZodObjectOrWrapped>({
     onSortingChange,
     onRowSelectionChange,
     enableRowSelection,
+    enableMultiRowSelection,
     rowCount,
 }: CommonFormTable<SchemaType> &
     Omit<TableOptions<z.infer<SchemaType> & Id>, 'columns' | 'getCoreRowModel'> & {
@@ -76,6 +77,7 @@ export function AutoTable<SchemaType extends ZodObjectOrWrapped>({
             onSortingChange={onSortingChange}
             onRowSelectionChange={onRowSelectionChange}
             enableRowSelection={enableRowSelection}
+            enableMultiRowSelection={enableMultiRowSelection}
             columns={columns}
             data={data}
             getRowLink={getRowLink}

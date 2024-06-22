@@ -21,6 +21,7 @@ export function LeaseForm() {
                     fieldType: 'search',
                     search: {
                         type: 'Property',
+                        enableMultiRowSelection: false,
                     },
                 },
             }}

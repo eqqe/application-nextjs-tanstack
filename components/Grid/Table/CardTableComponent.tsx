@@ -39,14 +39,17 @@ export function CardTableComponent({
     pageSize,
     editableItems,
     enableRowSelection,
+    enableMultiRowSelection,
 }: CardTableComponentProps & {
     pageSize: number;
     editableItems: boolean;
     enableRowSelection: boolean;
+    enableMultiRowSelection: boolean;
 }) {
     const { useHook, schema, useUpdate, useCount } = getTypeHook({ type });
 
     const [rowSelection, onRowSelectionChange] = useState({});
+    console.log(rowSelection);
     const [pagination, onPaginationChange] = useState<PaginationState>({
         pageIndex: 0,
         pageSize: pageSize,
@@ -183,6 +186,7 @@ export function CardTableComponent({
                         onGlobalFilterChange={findMany ? onGlobalFilterChange : void 0}
                         onRowSelectionChange={enableRowSelection ? onRowSelectionChange : void 0}
                         enableRowSelection={enableRowSelection}
+                        enableMultiRowSelection={enableMultiRowSelection}
                     />
                 )}
             </ErrorBoundary>

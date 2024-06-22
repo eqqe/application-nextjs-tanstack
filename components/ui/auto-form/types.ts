@@ -12,6 +12,7 @@ export type FieldConfigItem = {
     fieldType?: keyof typeof INPUT_COMPONENTS | React.FC<AutoFormInputComponentProps>;
     search?: {
         type: Type;
+        enableMultiRowSelection: boolean;
     };
 
     renderParent?: (props: { children: React.ReactNode }) => React.ReactElement | null;
