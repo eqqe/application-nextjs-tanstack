@@ -107,7 +107,6 @@ export function getAssetsUtils(base: ReturnType<typeof getBaseUtils>, page: Page
 
         await base.checkToastCreated(propertyTenancy.name);
     }
-
     return {
         enable,
         openEssentialData,

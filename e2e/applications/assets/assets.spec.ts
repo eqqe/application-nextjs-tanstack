@@ -48,29 +48,34 @@ test('Should enable assets application, see essential data, create a property te
     await utils.openHomeCreateSpace();
     await utils.assets.enable();
     await utils.assets.openEssentialData();
+    const title = 'Your property tenancies';
+    await utils.checkCountInCard({ title, count: 0 });
     await utils.assets.createPropertyTenancy({
         propertyTenancy: {
             type: 'InCommon',
             name: 'SCI Simon',
         },
     });
+    await utils.checkCountInCard({ title, count: 1 });
     await utils.assets.createPropertyTenancy({
         propertyTenancy: {
             type: 'ByEntirety',
             name: 'Simon',
         },
     });
+    await utils.checkCountInCard({ title, count: 2 });
     await utils.assets.createPropertyTenancy({
         propertyTenancy: {
             type: 'Joint',
             name: 'Simons',
         },
     });
+    await utils.checkCountInCard({ title, count: 3 });
     await utils.assets.createPropertyTenancy({
         propertyTenancy: {
             type: 'InCommon',
             name: 'other SCI Simon',
         },
     });
-    await expect(page.getByText('property tenants4')).toBeVisible();
+    await utils.checkCountInCard({ title, count: 4 });
 });

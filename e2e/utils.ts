@@ -68,6 +68,10 @@ export function getBaseUtils(page: Page) {
         await page.keyboard.press('Enter');
     }
 
+    async function checkCountInCard({ title, count }: { title: string; count: number }) {
+        await expect(page.getByText(title).locator('..').getByText(count.toString())).toBeVisible();
+    }
+
     return {
         openSettings,
         generateDemonstration,
@@ -78,5 +82,6 @@ export function getBaseUtils(page: Page) {
         openHomeCreateSpace,
         checkToastCreated,
         search,
+        checkCountInCard,
     };
 }
