@@ -25,7 +25,7 @@ export const Grid = () => {
     }
 
     return (
-        <div className={`grid ${gridCols[grid.columns]} gap-4`}>
+        <div className={`grid sm:grid-cols-2  ${gridCols[grid.columns]} gap-4`}>
             {grid.elements.map((element) => {
                 function getComponentRender() {
                     switch (element.type) {
@@ -56,7 +56,7 @@ export const Grid = () => {
                 );
             })}
 
-            <div className="col-start-5 col-end-7 row-start-1 row-end-4">
+            <div className="sm:col-span-4 lg:col-start-5 lg:col-end-7 lg:row-start-1 lg:row-end-4">
                 <Card className="overflow-hidden">
                     <CardHeader className="bg-muted/50 flex flex-row items-start">
                         <div className="grid gap-0.5">
