@@ -1,11 +1,11 @@
 import { assert, expect, it } from 'vitest';
 import { fakeLease, fakeProperty } from '@/lib/demo/fake';
 import { getEnhancedPrisma } from '@/tests/mock/enhanced-prisma';
-import { findManyPropertyArgs } from '../utils/findManyPropertyArgs';
+import { orderByCreatedAt } from '@/lib/utils';
 
 it('Should create / list properties', async () => {
     const { user1, user2, user3 } = await getEnhancedPrisma();
-    let properties = await user2.prisma.property.findMany(findManyPropertyArgs);
+    let properties = await user2.prisma.property.findMany(orderByCreatedAt);
     assert.notOk(properties.length);
     const property = fakeProperty();
     const newProperty = await user2.prisma.property.create({ data: property });
@@ -13,21 +13,21 @@ it('Should create / list properties', async () => {
     assert.equal(newProperty.surface, property.surface);
 
     /* Properties of user2 are seen by user3 member of the space */
-    properties = await user2.prisma.property.findMany(findManyPropertyArgs);
+    properties = await user2.prisma.property.findMany(orderByCreatedAt);
     assert.equal(properties.length, 1);
     assert.equal(properties[0].streetAddress, property.streetAddress);
     assert.equal(properties[0].postalCode, property.postalCode);
     assert.equal(properties[0].name, property.name);
     assert.equal(properties[0].id, newProperty.id);
 
-    properties = await user3.prisma.property.findMany(findManyPropertyArgs);
+    properties = await user3.prisma.property.findMany(orderByCreatedAt);
     assert.equal(properties.length, 1);
 
     assert.equal(properties[0].streetAddress, property.streetAddress);
     assert.equal(properties[0].postalCode, property.postalCode);
     assert.equal(properties[0].id, newProperty.id);
 
-    properties = await user1.prisma.property.findMany(findManyPropertyArgs);
+    properties = await user1.prisma.property.findMany(orderByCreatedAt);
     assert.equal(properties.length, 0);
 
     /* Private property */
@@ -40,20 +40,20 @@ it('Should create / list properties', async () => {
         },
     });
 
-    properties = await user2.prisma.property.findMany(findManyPropertyArgs);
+    properties = await user2.prisma.property.findMany(orderByCreatedAt);
     assert.equal(properties.length, 2);
     assert.equal(properties[1].streetAddress, property.streetAddress);
     assert.equal(properties[1].postalCode, property.postalCode);
     assert.equal(properties[1].id, newProperty.id);
     assert.equal(properties[0].id, privateProperty.id);
 
-    properties = await user3.prisma.property.findMany(findManyPropertyArgs);
+    properties = await user3.prisma.property.findMany(orderByCreatedAt);
     assert.equal(properties.length, 1);
     assert.equal(properties[0].streetAddress, property.streetAddress);
     assert.equal(properties[0].postalCode, property.postalCode);
     assert.equal(properties[0].id, newProperty.id);
 
-    properties = await user1.prisma.property.findMany(findManyPropertyArgs);
+    properties = await user1.prisma.property.findMany(orderByCreatedAt);
     assert.equal(properties.length, 0);
 
     /* Check that the user can create lease on a private property */

@@ -13,7 +13,7 @@ export type FieldConfigItem = {
     search?: {
         type: Type;
         enableMultiRowSelection: boolean;
-        where: any;
+        where?: any;
     };
 
     renderParent?: (props: { children: React.ReactNode }) => React.ReactElement | null;
