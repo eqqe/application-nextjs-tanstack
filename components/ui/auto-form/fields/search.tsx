@@ -32,12 +32,7 @@ export default function AutoFormSearch({
                         type,
                         groupBy: null,
                         chart: null,
-                        columns: [
-                            PropertyColumns.name,
-                            PropertyColumns.city,
-                            PropertyColumns.postalCode,
-                            PropertyColumns.surface,
-                        ],
+                        columns: [],
                         typeTableRequest: 'FindMany',
                     }}
                     pageSize={5}

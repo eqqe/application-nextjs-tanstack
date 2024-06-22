@@ -1,4 +1,5 @@
 import { LeaseForm } from '@/components/Lease/LeaseForm';
+import { LeaseTenantForm } from '@/components/Lease/LeaseTenantForm';
 import { PropertyTenancyForm } from '@/components/Property/PropertyTenancyForm';
 import { getGridUrl, getSubTabFolderUrl } from '@/lib/urls';
 import {
@@ -261,6 +262,7 @@ export function getTypeHook({ type }: { type: Type }) {
                     single: useCreateLeaseTenant,
                     many: useCreateManyLeaseTenant,
                 },
+                form: LeaseTenantForm,
             };
         case 'Lease':
             return {
