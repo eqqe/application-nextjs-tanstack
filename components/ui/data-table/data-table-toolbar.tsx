@@ -25,10 +25,10 @@ export function DataTableToolbar<TData>({
                 {tableState && (
                     <Input
                         placeholder="Filter..."
-                        value={tableState.filter}
+                        value={tableState.globalFilter}
                         onChange={(event) => {
                             table.setPageIndex(0);
-                            tableState.setFilter(event.target.value);
+                            table.setGlobalFilter(event.target.value);
                         }}
                         className="h-8 w-[150px] lg:w-[250px]"
                     />

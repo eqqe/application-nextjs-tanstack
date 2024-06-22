@@ -50,7 +50,7 @@ export function CardTableComponent({
     });
 
     const [sorting, setSorting] = useState<SortingState>([{ id: 'updatedAt', desc: true }]);
-    const [filter, setFilter] = useState('');
+    const [globalFilter, setGlobalFilter] = useState('');
     const update = useUpdate.single();
 
     const params = useMemo(() => {
@@ -64,7 +64,7 @@ export function CardTableComponent({
             case 'Aggregate':
                 return {};
             case 'FindMany': {
-                const orFilter = getOrFilter({ formSchema: schema.base, query: filter });
+                const orFilter = getOrFilter({ formSchema: schema.base, query: globalFilter });
                 return {
                     orderBy: sorting.reduce((accumulator, currentValue) => {
                         accumulator[currentValue.id] = currentValue.desc ? Prisma.SortOrder.desc : Prisma.SortOrder.asc;
@@ -98,7 +98,7 @@ export function CardTableComponent({
                 });
                 return res;
         }
-    }, [filter, groupBy, pagination.pageIndex, pagination.pageSize, schema.base, sorting, typeTableRequest]);
+    }, [globalFilter, groupBy, pagination.pageIndex, pagination.pageSize, schema.base, sorting, typeTableRequest]);
     type ColumnDefFromSchema = ColumnDef<z.infer<typeof schema.base>, ReactNode>;
     const findMany = typeTableRequest === 'FindMany';
 
@@ -181,8 +181,8 @@ export function CardTableComponent({
                                       count,
                                       sorting,
                                       setSorting,
-                                      filter,
-                                      setFilter,
+                                      globalFilter,
+                                      setGlobalFilter,
                                   }
                                 : void 0
                         }

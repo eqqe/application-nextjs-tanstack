@@ -31,13 +31,16 @@ export function DataTable<TData extends Id, TValue>({
         getCoreRowModel: getCoreRowModel(),
         manualSorting: true,
         manualPagination: true,
+        manualFiltering: true,
         rowCount: tableState?.count,
         state: {
             pagination: tableState?.pagination,
             sorting: tableState?.sorting,
+            globalFilter: tableState?.globalFilter,
         },
         onPaginationChange: tableState?.setPagination,
         onSortingChange: tableState?.setSorting,
+        onGlobalFilterChange: tableState?.setGlobalFilter,
     });
 
     const router = useRouter();

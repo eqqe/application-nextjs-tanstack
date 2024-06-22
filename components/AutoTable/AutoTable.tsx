@@ -15,8 +15,8 @@ export type TableStateProps = {
     setPagination: Dispatch<SetStateAction<PaginationState>>;
     sorting: SortingState;
     setSorting: Dispatch<SetStateAction<SortingState>>;
-    filter: string;
-    setFilter: Dispatch<SetStateAction<string>>;
+    globalFilter: string;
+    setGlobalFilter: Dispatch<SetStateAction<string>>;
 };
 
 export function AutoTable<SchemaType extends ZodObjectOrWrapped>({
