@@ -46,7 +46,7 @@ export function PropertyTenancyForm() {
                         }),
                     },
                 });
-                toast.success(`${data.name} created successfully!`);
+                toast.success(`${data.base.name} created successfully!`);
             }}
             fieldConfig={{
                 properties: {
