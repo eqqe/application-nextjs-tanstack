@@ -10,6 +10,8 @@ import { ReactNode, useState, useMemo } from 'react';
 import { Chart } from '@/components/Grid/Card/Chart';
 import { getColumnDef } from '@/components/AutoTable/getColumnDef';
 import { getOrFilter } from '@/lib/getOrFilter';
+import { useFindManyProperty } from '@/zmodel/lib/hooks';
+import { keepPreviousData } from '@tanstack/react-query';
 
 export const GridCardTableInclude = {
     include: {
@@ -144,8 +146,10 @@ export function CardTableComponent({
     const useHookTyped = useHook[typeTableRequest];
 
     let rows: any[] | undefined;
+
+    const paramLagged = { placeholderData: keepPreviousData };
     // @ts-expect-error
-    rows = useHookTyped(params).data;
+    rows = useHookTyped(params, paramLagged).data;
 
     return (
         <div className="container mx-auto py-5">
