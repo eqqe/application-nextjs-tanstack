@@ -1,4 +1,4 @@
-import { useFindManySpace, useFindManySubTabFolder, useFindUniqueSpace } from '@/zmodel/lib/hooks';
+import { useFindManySpace, useFindManySubTabFolder, useFindUniqueSpace, useFindUniqueUser } from '@/zmodel/lib/hooks';
 import { useSession } from 'next-auth/react';
 import { getCookie, setCookie } from 'cookies-next';
 import { useRouter } from 'next/router';
@@ -97,7 +97,8 @@ export const SelectedSpacesProvider: React.FC<{ children: ReactNode }> = ({ chil
 
 export function useCurrentUser() {
     const { data: session } = useSession();
-    return session?.user;
+    const { data: user } = useFindUniqueUser({ where: { id: session?.user.id } }, { enabled: !!session?.user.id });
+    return user;
 }
 
 export function useComponentIdRouter() {

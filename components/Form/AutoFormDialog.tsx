@@ -58,13 +58,7 @@ export function AutoFormDialog<SchemaType extends ZodObjectOrWrapped>({
                             values={values}
                             onSubmit={onSubmit}
                             onValuesChange={onValuesChange}
-                        >
-                            <div className="modal-action">
-                                <DialogFooter>
-                                    <Button type="submit">Save changes</Button>
-                                </DialogFooter>
-                            </div>
-                        </AutoForm>
+                        />
                     </ErrorBoundary>
                 </ScrollArea>
             </DialogContent>
