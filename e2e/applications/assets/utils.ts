@@ -41,8 +41,7 @@ export function getAssetsUtils(base: ReturnType<typeof getBaseUtils>, page: Page
 
     async function createLeaseFindProperty({ name, startDate }: { name: string; startDate: string }) {
         await createFillScalarLeaseFields({ startDate });
-
-        await page.getByText(name, { exact: true }).locator('..').getByRole('checkbox').click();
+        await base.selectLine({ name });
         await base.clickSaveChanges();
     }
 
@@ -70,10 +69,15 @@ export function getAssetsUtils(base: ReturnType<typeof getBaseUtils>, page: Page
 
     async function createPropertyTenancy({
         propertyTenancy,
+        surface,
     }: {
         propertyTenancy: z.infer<typeof PropertyTenancyCreateScalarSchema>;
+        // Surface to identify property line in test
+        surface: number;
     }) {
         await base.clickButton('Create Property Tenancy');
+
+        await base.selectLine({ name: surface.toString() });
 
         await base.selectFromCombo<PropertyTenancy>('type', propertyTenancy.type);
         await base.getByLabel<PropertyTenancy>('name').fill(propertyTenancy.name);

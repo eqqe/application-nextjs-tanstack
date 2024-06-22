@@ -29,14 +29,14 @@ export function AutoFormDialogEnumType<
             onSubmitData={onSubmitData}
             fieldConfig={fieldConfig}
             onValuesChange={(values) => {
-                if (currentType === values.type) {
+                if (currentType === values.base?.type) {
                     return;
-                } else if (!values.type) {
+                } else if (!values.base?.type) {
                     setFormSchema(baseSchema);
                     return;
                 }
-                setCurrentType(values.type);
-                const picked = allFormsSchema.pick({ [values.type]: true });
+                setCurrentType(values.base?.type);
+                const picked = allFormsSchema.pick({ [values.base?.type]: true });
                 const extended = baseSchema.extend(picked.shape);
                 // @ts-ignore
                 setFormSchema(extended);

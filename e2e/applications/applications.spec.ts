@@ -12,8 +12,8 @@ test('Should enable assets application, rollback, and update', async ({ page, ut
     await expect(page.getByText('This Week')).toBeVisible();
     await expect(page.getByText('Your properties')).toBeVisible();
     await expect(page.getByText('Listed here')).toBeVisible();
-    await page.getByRole('tab', { name: 'Month' }).click();
-    await expect(page.getByRole('cell', { name: 'Address' })).toBeVisible();
+    await page.getByRole('tab', { name: 'All' }).click();
+    await expect(page.getByRole('cell', { name: 'Street Address' })).toBeVisible();
     await expect(page.getByText('City')).toBeVisible();
     await expect(page.getByText('Postal Code')).toBeVisible();
     await expect(page.getByText('No results.')).toBeVisible();

@@ -15,7 +15,7 @@ export function PropertyTenancyForm() {
     const create = useCreatePropertyTenancy();
     return (
         <AutoFormDialogEnumType
-            baseSchema={z.object({ properties: z.string() }).extend(PropertyTenancyCreateScalarSchema.shape)}
+            baseSchema={z.object({ properties: z.string(), base: PropertyTenancyCreateScalarSchema })}
             typedSchemas={z.object({
                 [PropertyTenancyType.ByEntirety]: PropertyTenancyByEntiretyCreateScalarSchema.extend({
                     person: PersonCreateScalarSchema,
@@ -26,20 +26,20 @@ export function PropertyTenancyForm() {
             onSubmitData={async (data) => {
                 await create.mutateAsync({
                     data: {
-                        ...data,
+                        ...data.base,
                         // A bit dirty I stored the selected list separated by commas
                         properties: { connect: data.properties.split(',').map((id) => ({ id })) },
-                        ...(data.type === 'InCommon' && {
+                        ...(data.base.type === 'InCommon' && {
                             tenancyInCommon: {
                                 create: data.InCommon,
                             },
                         }),
-                        ...(data.type === 'Joint' && {
+                        ...(data.base.type === 'Joint' && {
                             jointTenancy: {
                                 create: {},
                             },
                         }),
-                        ...(data.type === 'ByEntirety' && {
+                        ...(data.base.type === 'ByEntirety' && {
                             tenancyByEntirety: {
                                 create: { ...data.ByEntirety, person: { create: data.ByEntirety?.person } },
                             },

@@ -19,7 +19,7 @@ export const test = base.extend<{
 export function getBaseUtils(page: Page) {
     async function openSettings() {
         await page.getByRole('link', { name: 'Settings' }).click();
-        await expect(page.getByText(`Manage members`)).toBeVisible();
+        await expect(page.getByText(`Generate Demonstration`)).toBeVisible();
     }
 
     async function generateDemonstration() {
@@ -66,6 +66,10 @@ export function getBaseUtils(page: Page) {
         await expect(page.getByText(title).locator('..').getByText(count.toString())).toBeVisible();
     }
 
+    async function selectLine({ name }: { name: string }) {
+        await page.getByText(name, { exact: true }).locator('..').getByRole('checkbox').click();
+    }
+
     return {
         openSettings,
         generateDemonstration,
@@ -75,6 +79,7 @@ export function getBaseUtils(page: Page) {
         selectFromCombo,
         openHomeCreateSpace,
         checkToastCreated,
+        selectLine,
         search,
         checkCountInCard,
     };
