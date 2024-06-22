@@ -26,26 +26,27 @@ export function PropertyTenancyForm() {
             onSubmitData={async (data) => {
                 await create.mutateAsync({
                     data: {
-                        ...data.base,
-                        //properties: [data.properties.map((id) => ({ connect: { id } }))],
-                        ...(data.base.type === 'InCommon' && {
+                        ...data,
+                        // A bit dirty I stored the selected list separated by commas
+                        properties: { connect: data.properties.split(',').map((id) => ({ id })) },
+                        ...(data.type === 'InCommon' && {
                             tenancyInCommon: {
                                 create: data.InCommon,
                             },
                         }),
-                        ...(data.base.type === 'Joint' && {
+                        ...(data.type === 'Joint' && {
                             jointTenancy: {
                                 create: {},
                             },
                         }),
-                        ...(data.base.type === 'ByEntirety' && {
+                        ...(data.type === 'ByEntirety' && {
                             tenancyByEntirety: {
                                 create: { ...data.ByEntirety, person: { create: data.ByEntirety?.person } },
                             },
                         }),
                     },
                 });
-                toast.success(`${data.base.name} created successfully!`);
+                toast.success(`${data.name} created successfully!`);
             }}
             fieldConfig={{
                 properties: {

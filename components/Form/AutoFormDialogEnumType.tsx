@@ -15,12 +15,11 @@ export function AutoFormDialogEnumType<
 }: {
     baseSchema: BaseSchema;
     typedSchemas: TypedSchema;
-    onSubmitData: (data: { base: z.infer<BaseSchema> } & z.infer<TypedSchema>) => Promise<void>;
+    onSubmitData: (data: z.infer<BaseSchema> & z.infer<TypedSchema>) => Promise<void>;
     title: string;
 } & AutoFormProps<BaseSchema>) {
-    const baseZodSchema = z.object({ base: baseSchema });
-    const allFormsSchema = baseZodSchema.extend(typedSchemas.shape);
-    const [formSchema, setFormSchema] = useState(baseZodSchema);
+    const allFormsSchema = baseSchema.extend(typedSchemas.shape);
+    const [formSchema, setFormSchema] = useState(baseSchema);
     const [currentType, setCurrentType] = useState<any>();
     return (
         <AutoFormDialog
@@ -30,15 +29,17 @@ export function AutoFormDialogEnumType<
             onSubmitData={onSubmitData}
             fieldConfig={fieldConfig}
             onValuesChange={(values) => {
-                if (currentType === values.base?.type) {
+                if (currentType === values.type) {
                     return;
-                } else if (!values.base?.type) {
-                    setFormSchema(baseZodSchema);
+                } else if (!values.type) {
+                    setFormSchema(baseSchema);
                     return;
                 }
-                setCurrentType(values.base?.type);
+                setCurrentType(values.type);
+                const picked = allFormsSchema.pick({ [values.type]: true });
+                const extended = baseSchema.extend(picked.shape);
                 // @ts-ignore
-                setFormSchema(allFormsSchema.pick({ base: true, [values.base.type]: true }));
+                setFormSchema(extended);
             }}
             title={title}
         />

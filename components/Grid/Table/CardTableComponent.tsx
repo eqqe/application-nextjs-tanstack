@@ -46,7 +46,7 @@ export function CardTableComponent({
 }: CardTableComponentProps & {
     pageSize: number;
     editableItems: boolean;
-    onRowSelection?: (ids: { id: string }[]) => void;
+    onRowSelection?: (ids: string[]) => void;
     enableRowSelection: boolean;
     enableMultiRowSelection: boolean;
     multiTablesGlobalFilter?: boolean;

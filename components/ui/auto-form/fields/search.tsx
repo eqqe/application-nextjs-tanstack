@@ -23,7 +23,7 @@ export default function AutoFormSearch({
     const { type, enableMultiRowSelection } = search;
     const { setValue } = useFormContext();
     const onRowSelection = React.useCallback(
-        (ids: { id: string }[]) => setValue(fieldProps.name, ids.join(',')),
+        (ids: string[]) => setValue(fieldProps.name, ids.join(',')),
         [fieldProps, setValue]
     );
     return (
