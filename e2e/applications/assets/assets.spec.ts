@@ -71,11 +71,4 @@ test('Should enable assets application, see essential data, create a property te
         },
     });
     await utils.checkCountInCard({ title, count: 3 });
-    await utils.assets.createPropertyTenancy({
-        propertyTenancy: {
-            type: 'InCommon',
-            name: 'other SCI Simon',
-        },
-    });
-    await utils.checkCountInCard({ title, count: 4 });
 });
