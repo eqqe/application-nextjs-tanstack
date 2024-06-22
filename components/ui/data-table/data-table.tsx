@@ -13,7 +13,7 @@ export type Id = {
 };
 
 export function DataTable<TData extends Id>({
-    columns,
+    columns: columnsProps,
     data,
     state,
     rowCount,
@@ -46,10 +46,11 @@ export function DataTable<TData extends Id>({
         enableSorting: false,
         enableHiding: false,
     };
+    const columns = enableRowSelection ? [selectColumn, ...columnsProps] : columnsProps;
 
     const table = useReactTable({
         data,
-        columns: enableRowSelection ? [selectColumn, ...columns] : columns,
+        columns,
         getCoreRowModel: getCoreRowModel(),
         manualSorting: true,
         manualPagination: true,
