@@ -6,7 +6,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { ColumnDef, PaginationState, RowData, SortingState } from '@tanstack/react-table';
 import { z } from 'zod';
 import { AutoTable } from '@/components/AutoTable/AutoTable';
-import { ReactNode, useState } from 'react';
+import { ReactNode, useState, useMemo } from 'react';
 import { Chart } from '@/components/Grid/Card/Chart';
 import { getColumnDef } from '@/components/AutoTable/getColumnDef';
 import { getOrFilter } from '@/lib/getOrFilter';
@@ -43,8 +43,9 @@ export function CardTableComponent({
 
     const [sorting, setSorting] = useState<SortingState>([{ id: 'updatedAt', desc: true }]);
     const [filter, setFilter] = useState('');
+    const update = useUpdate.single();
 
-    function getParams() {
+    const params = useMemo(() => {
         function reducer(list: string[]) {
             return list.reduce<Record<string, boolean>>((previousValue, currentValue) => {
                 previousValue[currentValue] = true;
@@ -53,36 +54,27 @@ export function CardTableComponent({
         }
         switch (typeTableRequest) {
             case 'Aggregate':
-                return {
-                    params: {},
-                    columns,
-                };
+                return {};
             case 'FindMany': {
                 const orFilter = getOrFilter({ formSchema: schema.base, query: filter });
                 return {
-                    params: {
-                        orderBy: sorting.reduce((accumulator, currentValue) => {
-                            accumulator[currentValue.id] = currentValue.desc
-                                ? Prisma.SortOrder.desc
-                                : Prisma.SortOrder.asc;
-                            return accumulator;
-                        }, {} as Record<string, Prisma.SortOrder>),
-                        ...(orFilter.length && {
-                            where: {
-                                OR: orFilter,
-                            },
-                        }),
-                        take: pagination.pageSize,
-                        skip: pagination.pageSize * pagination.pageIndex,
-                    },
-                    columns,
+                    orderBy: sorting.reduce((accumulator, currentValue) => {
+                        accumulator[currentValue.id] = currentValue.desc ? Prisma.SortOrder.desc : Prisma.SortOrder.asc;
+                        return accumulator;
+                    }, {} as Record<string, Prisma.SortOrder>),
+                    ...(orFilter.length && {
+                        where: {
+                            OR: orFilter,
+                        },
+                    }),
+                    take: pagination.pageSize,
+                    skip: pagination.pageSize * pagination.pageIndex,
                 };
             }
             case 'GroupBy':
                 if (!groupBy) {
                     throw '! table.groupBy';
                 }
-                let cols = groupBy.fields;
                 const res: any = {
                     by: groupBy.fields,
                 };
@@ -94,51 +86,66 @@ export function CardTableComponent({
                     if (list.length) {
                         const property = `_${name}`;
                         res[property] = reducer(list);
-                        cols = cols.concat(list.map((column) => `${property}.${column}`));
                     }
                 });
-                return { params: res, columns: cols };
+                return res;
         }
-    }
+    }, [filter, groupBy, pagination.pageIndex, pagination.pageSize, schema.base, sorting, typeTableRequest]);
+    type ColumnDefFromSchema = ColumnDef<z.infer<typeof schema.base>, ReactNode>;
+    const findMany = typeTableRequest === 'FindMany';
 
-    const update = useUpdate.single();
-    const { params, columns: cols } = getParams();
+    const columnDataTable = useMemo(() => {
+        let cols = columns;
+        if (typeTableRequest === 'GroupBy') {
+            if (!groupBy) {
+                throw '! table.groupBy';
+            }
+            cols = groupBy.fields;
+            groupByTypes.forEach((name) => {
+                if (!groupBy) {
+                    throw '! groupBy';
+                }
+                const list = groupBy[name];
+                if (list.length) {
+                    const property = `_${name}`;
+                    cols = cols.concat(list.map((column) => `${property}.${column}`));
+                }
+            });
+        }
+
+        let colsRes: ColumnDefFromSchema[] = cols.map((column) =>
+            getColumnDef({ currentPrefix: column, link: findMany, enableSorting: findMany })
+        );
+        if (findMany) {
+            colsRes.push({
+                accessorKey: 'edit',
+                header: 'Edit',
+                cell: ({ row }) => (
+                    <AutoFormDialog
+                        formSchema={schema.update}
+                        values={row.original}
+                        onSubmitData={async (data) => {
+                            // @ts-expect-error
+                            await update.mutateAsync({
+                                data,
+                                where: {
+                                    id: data.id,
+                                },
+                            });
+                        }}
+                        title={`Edit ${type}`}
+                    />
+                ),
+            });
+        }
+        return colsRes;
+    }, [columns, findMany, groupBy, schema.update, type, typeTableRequest, update]);
 
     const useHookTyped = useHook[typeTableRequest];
 
     let rows: any[] | undefined;
     // @ts-expect-error
     rows = useHookTyped(params).data;
-
-    type ColumnDefFromSchema = ColumnDef<z.infer<typeof schema.base>, ReactNode>;
-
-    const findMany = typeTableRequest === 'FindMany';
-    const columnDataTable: ColumnDefFromSchema[] = cols.map((column) =>
-        getColumnDef({ currentPrefix: column, link: findMany, enableSorting: findMany })
-    );
-
-    if (findMany) {
-        columnDataTable.push({
-            accessorKey: 'edit',
-            header: 'Edit',
-            cell: ({ row }) => (
-                <AutoFormDialog
-                    formSchema={schema.update}
-                    values={row.original}
-                    onSubmitData={async (data) => {
-                        // @ts-expect-error
-                        await update.mutateAsync({
-                            data,
-                            where: {
-                                id: data.id,
-                            },
-                        });
-                    }}
-                    title={`Edit ${type}`}
-                />
-            ),
-        });
-    }
 
     return (
         <div className="container mx-auto py-5">
