@@ -23,7 +23,7 @@ import {
     PropertyJointTenancyTenantCreateScalarSchema,
 } from '@zenstackhq/runtime/zod/models';
 
-export const cityPlaywrightTest = 'City to find in Playwright test';
+export const cityPlaywrightTest = 'Lyon';
 const cities = Array.from({ length: 10 }).map(() => faker.location.city());
 export const fakeProperty = (): z.infer<typeof PropertyCreateScalarSchema> => ({
     ...fakeAddress(),

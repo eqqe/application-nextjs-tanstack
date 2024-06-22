@@ -11,6 +11,8 @@ import { Chart } from '@/components/Grid/Card/Chart';
 import { getColumnDef } from '@/components/AutoTable/getColumnDef';
 import { getOrFilter } from '@/lib/getOrFilter';
 import { keepPreviousData } from '@tanstack/react-query';
+import { beautifyObjectName } from '@/components/ui/auto-form/utils';
+import { useSearchParams } from 'next/navigation';
 
 export const GridCardTableInclude = {
     include: {
@@ -41,12 +43,14 @@ export function CardTableComponent({
     onRowSelection,
     enableRowSelection,
     enableMultiRowSelection,
+    multiTablesGlobalFilter,
 }: CardTableComponentProps & {
     pageSize: number;
     editableItems: boolean;
     onRowSelection?: (id: string) => void;
     enableRowSelection: boolean;
     enableMultiRowSelection: boolean;
+    multiTablesGlobalFilter?: boolean;
 }) {
     const { useHook, schema, useUpdate, useCount } = getTypeHook({ type });
 
@@ -58,8 +62,21 @@ export function CardTableComponent({
     });
 
     const [sorting, onSortingChange] = useState<SortingState>([{ id: 'updatedAt', desc: true }]);
+    const searchParams = useSearchParams();
     const [globalFilter, onGlobalFilterChange] = useState('');
+
+    useEffect(() => {
+        const queryParam = searchParams.get('q');
+        if (queryParam) {
+            onGlobalFilterChange(queryParam);
+        }
+    }, [searchParams]);
     const update = useUpdate.single();
+
+    const orFilter = useMemo(
+        () => getOrFilter({ formSchema: schema.base, query: globalFilter }),
+        [globalFilter, schema.base]
+    );
 
     const params = useMemo(() => {
         function reducer(list: string[]) {
@@ -72,7 +89,6 @@ export function CardTableComponent({
             case 'Aggregate':
                 return {};
             case 'FindMany': {
-                const orFilter = getOrFilter({ formSchema: schema.base, query: globalFilter });
                 return {
                     orderBy: sorting.reduce((accumulator, currentValue) => {
                         accumulator[currentValue.id] = currentValue.desc ? Prisma.SortOrder.desc : Prisma.SortOrder.asc;
@@ -106,7 +122,7 @@ export function CardTableComponent({
                 });
                 return res;
         }
-    }, [globalFilter, groupBy, pagination.pageIndex, pagination.pageSize, schema.base, sorting, typeTableRequest]);
+    }, [groupBy, orFilter, pagination.pageIndex, pagination.pageSize, sorting, typeTableRequest]);
     type ColumnDefFromSchema = ColumnDef<z.infer<typeof schema.base>, ReactNode>;
     const findMany = typeTableRequest === 'FindMany';
 
@@ -169,8 +185,13 @@ export function CardTableComponent({
     // @ts-expect-error
     rowCount = useCount({ where: params.where ?? {} }).data;
 
+    if (multiTablesGlobalFilter && (!orFilter.length || !rowCount)) {
+        return null;
+    }
+
     return (
         <div className="container mx-auto py-5">
+            {multiTablesGlobalFilter && <div className="p-1">{beautifyObjectName(type)}</div>}
             <ErrorBoundary fallback={<FallbackError />}>
                 {chart && groupBy ? (
                     <Chart data={rows ?? []} chart={chart} groupBy={groupBy} />
@@ -181,11 +202,20 @@ export function CardTableComponent({
                         additionalColumns={columnDataTable}
                         onlyAdditionalColumns={(!!columns.length && findMany) || !findMany}
                         data={rows ?? []}
-                        state={findMany ? { pagination, sorting, globalFilter, rowSelection } : {}}
+                        state={
+                            findMany
+                                ? {
+                                      pagination,
+                                      sorting,
+                                      ...(!multiTablesGlobalFilter && { globalFilter }),
+                                      rowSelection,
+                                  }
+                                : {}
+                        }
                         rowCount={rowCount}
                         onPaginationChange={findMany ? onPaginationChange : void 0}
                         onSortingChange={findMany ? onSortingChange : void 0}
-                        onGlobalFilterChange={findMany ? onGlobalFilterChange : void 0}
+                        onGlobalFilterChange={findMany && !multiTablesGlobalFilter ? onGlobalFilterChange : void 0}
                         onRowSelectionChange={
                             enableRowSelection
                                 ? (newRowSelection) => {
