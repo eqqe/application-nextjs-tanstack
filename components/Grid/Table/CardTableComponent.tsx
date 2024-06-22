@@ -52,16 +52,6 @@ export function CardTableComponent({
 
     const [rowSelection, setRowSelection] = useState({});
 
-    const onRowSelectionChange = useCallback(
-        (newRowSelection: RowSelectionState) => {
-            if (onRowSelection) {
-                onRowSelection(Object.keys(newRowSelection())[0] ?? '');
-            }
-            setRowSelection(newRowSelection);
-        },
-        [onRowSelection]
-    );
-
     const [pagination, onPaginationChange] = useState<PaginationState>({
         pageIndex: 0,
         pageSize: pageSize,
@@ -196,7 +186,20 @@ export function CardTableComponent({
                         onPaginationChange={findMany ? onPaginationChange : void 0}
                         onSortingChange={findMany ? onSortingChange : void 0}
                         onGlobalFilterChange={findMany ? onGlobalFilterChange : void 0}
-                        onRowSelectionChange={enableRowSelection ? onRowSelectionChange : void 0}
+                        onRowSelectionChange={
+                            enableRowSelection
+                                ? (newRowSelection) => {
+                                      const newValue =
+                                          typeof newRowSelection === 'function'
+                                              ? newRowSelection(rowSelection)
+                                              : newRowSelection;
+                                      if (onRowSelection) {
+                                          onRowSelection(Object.keys(newValue)[0] ?? '');
+                                      }
+                                      setRowSelection(newValue);
+                                  }
+                                : void 0
+                        }
                         enableRowSelection={enableRowSelection}
                         enableMultiRowSelection={enableMultiRowSelection}
                     />
