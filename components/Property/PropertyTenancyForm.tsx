@@ -10,6 +10,7 @@ import {
 } from '@zenstackhq/runtime/zod/models';
 import { PropertyTenancyType } from '@prisma/client';
 import { AutoFormDialogEnumType } from '../Form/AutoFormDialogEnumType';
+import { fakeJointTenancyTenant, fakePerson } from '@/lib/demo/fake';
 
 export function PropertyTenancyForm() {
     const create = useCreatePropertyTenancy();
@@ -33,9 +34,7 @@ export function PropertyTenancyForm() {
                             },
                         }),
                         ...(data.base.type === 'Joint' && {
-                            jointTenancy: {
-                                create: data.Joint,
-                            },
+                            jointTenancy: {},
                         }),
                         ...(data.base.type === 'ByEntirety' && {
                             tenancyByEntirety: {

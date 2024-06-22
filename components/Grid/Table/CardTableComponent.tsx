@@ -161,9 +161,17 @@ export function CardTableComponent({
             });
         }
 
-        let colsRes: ColumnDefFromSchema[] = cols.map((column) =>
-            getColumnDef({ currentPrefix: column, link: findMany, enableSorting: findMany })
-        );
+        let colsRes: ColumnDefFromSchema[] = cols.map((column) => {
+            // @ts-expect-error try to restore zod type from column name
+            const zodBaseType = schema.base.shape[column]._def.typeName;
+
+            return getColumnDef({
+                currentPrefix: column,
+                link: findMany,
+                enableSorting: findMany,
+                zodBaseType,
+            });
+        });
         if (findMany && editableItems) {
             colsRes.push({
                 accessorKey: 'edit',
@@ -187,7 +195,7 @@ export function CardTableComponent({
             });
         }
         return colsRes;
-    }, [columns, editableItems, findMany, groupBy, schema.update, type, typeTableRequest, update]);
+    }, [columns, editableItems, findMany, groupBy, schema.base.shape, schema.update, type, typeTableRequest, update]);
 
     const useHookTyped = useHook[typeTableRequest];
 

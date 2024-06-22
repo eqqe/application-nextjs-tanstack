@@ -12,7 +12,7 @@ export function getColumnDef<SchemaType>({
     enableSorting,
 }: {
     currentPrefix: string;
-    zodBaseType?: string;
+    zodBaseType: string;
     link: boolean;
     enableSorting: boolean;
 }): ColumnDef<SchemaType & Id, ReactNode> {
