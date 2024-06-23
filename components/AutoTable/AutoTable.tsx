@@ -1,12 +1,12 @@
 import { z } from 'zod';
 import { DataTable, Id } from '@/components/ui/data-table/data-table';
-import { handleIfZodNumber } from '@/components/ui/auto-form/fields/object';
 import { ZodObjectOrWrapped, getBaseSchema, getBaseType, getObjectFormSchema } from '@/components/ui/auto-form/utils';
 import { CommonFormTable } from '../ui/auto-common/types';
 import { Type } from '@prisma/client';
 import { ColumnDef, TableOptions, TableState } from '@tanstack/react-table';
 import { ReactNode } from 'react';
 import { getColumnDef } from '@/components/AutoTable/getColumnDef';
+import { handleIfZodNumber } from '../ui/auto-form/common/object-field';
 
 export function AutoTable<SchemaType extends ZodObjectOrWrapped>({
     formSchema,

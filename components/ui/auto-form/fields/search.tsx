@@ -5,13 +5,9 @@ import AutoFormTooltip from '../common/tooltip';
 import { AutoFormInputComponentProps } from '../types';
 import { CardTableComponent } from '@/components/Grid/Table/CardTableComponent';
 import { useFormContext } from 'react-hook-form';
+import { TypeTableRequest } from '@prisma/client';
 
-export default function AutoFormSearch({
-    label,
-    isRequired,
-    fieldConfigItem,
-    fieldProps,
-}: AutoFormInputComponentProps) {
+function AutoFormSearch({ label, isRequired, fieldConfigItem, fieldProps }: AutoFormInputComponentProps) {
     const { showLabel: _showLabel } = fieldProps;
     const showLabel = _showLabel === undefined ? true : _showLabel;
 
@@ -21,24 +17,25 @@ export default function AutoFormSearch({
     }
     const { type, enableMultiRowSelection, where } = search;
     const { setValue } = useFormContext();
+    const name = fieldProps.name;
+    const onRowSelection = React.useCallback((ids: string[]) => setValue(name, ids.join(',')), [name, setValue]);
 
-    // WARNING FIELD PROPS CHANGE ALL THE TIME
-    const onRowSelection = React.useCallback(
-        (ids: string[]) => setValue(fieldProps.name, ids.join(',')),
-        [fieldProps, setValue]
+    const table = React.useMemo(
+        () => ({
+            type,
+            groupBy: null,
+            chart: null,
+            columns: [],
+            typeTableRequest: TypeTableRequest.FindMany,
+        }),
+        [type]
     );
     return (
         <FormItem className="flex w-full flex-col justify-start">
             {showLabel && <AutoFormLabel label={fieldConfigItem?.label || label} isRequired={isRequired} />}
             <FormControl>
                 <CardTableComponent
-                    table={{
-                        type,
-                        groupBy: null,
-                        chart: null,
-                        columns: [],
-                        typeTableRequest: 'FindMany',
-                    }}
+                    table={table}
                     pageSize={5}
                     editableItems={false}
                     onRowSelection={onRowSelection}
@@ -52,3 +49,5 @@ export default function AutoFormSearch({
         </FormItem>
     );
 }
+
+export default React.memo(AutoFormSearch);

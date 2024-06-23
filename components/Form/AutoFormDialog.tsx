@@ -22,7 +22,6 @@ export function AutoFormDialog<SchemaType extends ZodObjectOrWrapped>({
     onSubmitData,
     formSchema,
     fieldConfig,
-    onValuesChange,
     values,
     title,
 }: {
@@ -57,7 +56,6 @@ export function AutoFormDialog<SchemaType extends ZodObjectOrWrapped>({
                             fieldConfig={fieldConfig}
                             values={values}
                             onSubmit={onSubmit}
-                            onValuesChange={onValuesChange}
                         />
                     </ErrorBoundary>
                 </ScrollArea>

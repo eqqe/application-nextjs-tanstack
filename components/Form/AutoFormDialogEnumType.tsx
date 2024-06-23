@@ -1,5 +1,5 @@
 import { AutoFormProps } from '@/components/ui/auto-form';
-import { ZodRawShape, z } from 'zod';
+import { AnyZodObject, ZodRawShape, z } from 'zod';
 import { useEffect, useState } from 'react';
 import { AutoFormDialog } from './AutoFormDialog';
 
@@ -28,7 +28,8 @@ export function AutoFormDialogEnumType<
             // @ts-ignore
             onSubmitData={onSubmitData}
             fieldConfig={fieldConfig}
-            onValuesChange={(values) => {
+            // @ts-ignore
+            onValuesChange={(values): undefined => {
                 if (currentType === values.base?.type) {
                     return;
                 } else if (!values.base?.type) {

@@ -18,7 +18,7 @@ export function GridCardFooterButton({
         <AutoFormDialog
             formSchema={typeHook.form.formConfig}
             fieldConfig={typeHook.form.fieldConfig}
-            onSubmitData={async (data) => {
+            onSubmitData={async (data: Record<string, any>) => {
                 Object.entries(typeHook.form.fieldConfig).forEach(([key, config]) => {
                     if (typeof data[key] === 'string' && config.search?.enableMultiRowSelection) {
                         data[key] = {
