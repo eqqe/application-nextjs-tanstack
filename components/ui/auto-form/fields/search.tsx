@@ -18,7 +18,10 @@ function AutoFormSearch({ label, isRequired, fieldConfigItem, fieldProps }: Auto
     const { type, enableMultiRowSelection, where } = search;
     const { setValue } = useFormContext();
     const name = fieldProps.name;
-    const onRowSelection = React.useCallback((ids: string[]) => setValue(name, ids.join(',')), [name, setValue]);
+    const onRowSelection = React.useCallback(
+        (ids: string[]) => setValue(name, ids.length ? ids.join(',') : void 0),
+        [name, setValue]
+    );
 
     const table = React.useMemo(
         () => ({
