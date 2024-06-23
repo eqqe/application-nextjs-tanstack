@@ -1,5 +1,5 @@
 import { GridElementType } from '@prisma/client';
-import { Type, Prisma, TypeTableRequest } from '@prisma/client';
+import { Type, type Prisma, TypeTableRequest } from '@prisma/client';
 import { PropertyColumns, LeaseColumns, PropertyTenancyInCommonScalarSchemaColumns } from '../columns';
 
 export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput = {
@@ -9,20 +9,25 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
         create: [
             {
                 path: '/properties',
+                index: 0,
                 tabs: {
                     create: {
+                        index: 0,
                         subTabs: {
                             create: {
+                                index: 0,
                                 name: 'Properties',
                                 grids: {
                                     create: [
                                         {
+                                            index: 0,
                                             name: 'Properties',
                                             columns: 6,
                                             icon: 'Home',
                                             elements: {
                                                 create: [
                                                     {
+                                                        index: 0,
                                                         type: GridElementType.Card,
                                                         colSpan: 2,
                                                         card: {
@@ -44,6 +49,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                         },
                                                     },
                                                     {
+                                                        index: 1,
                                                         type: GridElementType.Card,
                                                         card: {
                                                             create: {
@@ -66,6 +72,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                         },
                                                     },
                                                     {
+                                                        index: 2,
                                                         type: GridElementType.Card,
                                                         card: {
                                                             create: {
@@ -88,6 +95,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                         },
                                                     },
                                                     {
+                                                        index: 3,
                                                         type: GridElementType.Tabs,
                                                         colSpan: 4,
                                                         tabs: {
@@ -95,9 +103,11 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                 tabsContent: {
                                                                     create: [
                                                                         {
+                                                                            index: 0,
                                                                             name: 'All',
                                                                             elements: {
                                                                                 create: {
+                                                                                    index: 0,
                                                                                     type: GridElementType.Card,
                                                                                     card: {
                                                                                         create: {
@@ -124,9 +134,11 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                             },
                                                                         },
                                                                         {
+                                                                            index: 1,
                                                                             name: 'Surface / city',
                                                                             elements: {
                                                                                 create: {
+                                                                                    index: 0,
                                                                                     type: GridElementType.Card,
                                                                                     card: {
                                                                                         create: {
@@ -158,9 +170,11 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                             },
                                                                         },
                                                                         {
+                                                                            index: 2,
                                                                             name: 'Type',
                                                                             elements: {
                                                                                 create: {
+                                                                                    index: 0,
                                                                                     type: GridElementType.Card,
                                                                                     card: {
                                                                                         create: {
@@ -205,12 +219,14 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                             },
                                         },
                                         {
+                                            index: 1,
                                             name: 'Property Tenancies',
                                             columns: 8,
                                             icon: 'SquareUser',
                                             elements: {
                                                 create: [
                                                     {
+                                                        index: 0,
                                                         type: GridElementType.Card,
                                                         colSpan: 2,
                                                         card: {
@@ -231,8 +247,8 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                             },
                                                         },
                                                     },
-
                                                     {
+                                                        index: 1,
                                                         type: GridElementType.Card,
                                                         colSpan: 2,
                                                         card: {
@@ -245,6 +261,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                         },
                                                     },
                                                     {
+                                                        index: 2,
                                                         type: GridElementType.Card,
                                                         colSpan: 2,
                                                         card: {
@@ -257,6 +274,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                         },
                                                     },
                                                     {
+                                                        index: 3,
                                                         type: GridElementType.Card,
                                                         colSpan: 2,
                                                         card: {
@@ -269,6 +287,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                         },
                                                     },
                                                     {
+                                                        index: 4,
                                                         type: GridElementType.Tabs,
                                                         colSpan: 8,
                                                         tabs: {
@@ -276,9 +295,11 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                 tabsContent: {
                                                                     create: [
                                                                         {
+                                                                            index: 0,
                                                                             name: 'Common',
                                                                             elements: {
                                                                                 create: {
+                                                                                    index: 0,
                                                                                     type: GridElementType.Card,
                                                                                     colSpan: 4,
                                                                                     card: {
@@ -306,9 +327,11 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                             },
                                                                         },
                                                                         {
+                                                                            index: 1,
                                                                             name: 'Joint',
                                                                             elements: {
                                                                                 create: {
+                                                                                    index: 0,
                                                                                     type: GridElementType.Card,
                                                                                     colSpan: 4,
                                                                                     card: {
@@ -330,9 +353,11 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                             },
                                                                         },
                                                                         {
+                                                                            index: 2,
                                                                             name: 'By entirety',
                                                                             elements: {
                                                                                 create: {
+                                                                                    index: 0,
                                                                                     type: GridElementType.Card,
                                                                                     colSpan: 4,
                                                                                     card: {
@@ -354,9 +379,11 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                             },
                                                                         },
                                                                         {
+                                                                            index: 3,
                                                                             name: 'Tenants In Common',
                                                                             elements: {
                                                                                 create: {
+                                                                                    index: 0,
                                                                                     type: GridElementType.Card,
                                                                                     colSpan: 4,
                                                                                     card: {
@@ -378,9 +405,11 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                             },
                                                                         },
                                                                         {
+                                                                            index: 4,
                                                                             name: 'All',
                                                                             elements: {
                                                                                 create: {
+                                                                                    index: 0,
                                                                                     type: GridElementType.Card,
                                                                                     colSpan: 4,
                                                                                     card: {
@@ -410,12 +439,14 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                             },
                                         },
                                         {
+                                            index: 2,
                                             name: 'Leases',
                                             columns: 4,
                                             icon: 'FolderKey',
                                             elements: {
                                                 create: [
                                                     {
+                                                        index: 0,
                                                         type: GridElementType.Card,
                                                         colSpan: 1,
                                                         card: {
@@ -437,8 +468,8 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                             },
                                                         },
                                                     },
-
                                                     {
+                                                        index: 1,
                                                         type: GridElementType.Card,
                                                         colSpan: 1,
                                                         card: {
@@ -461,6 +492,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                         },
                                                     },
                                                     {
+                                                        index: 2,
                                                         type: GridElementType.Tabs,
                                                         colSpan: 4,
                                                         tabs: {
@@ -468,9 +500,11 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                 tabsContent: {
                                                                     create: [
                                                                         {
+                                                                            index: 0,
                                                                             name: 'Leases',
                                                                             elements: {
                                                                                 create: {
+                                                                                    index: 0,
                                                                                     type: GridElementType.Card,
                                                                                     colSpan: 4,
                                                                                     card: {
@@ -493,9 +527,11 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                             },
                                                                         },
                                                                         {
+                                                                            index: 1,
                                                                             name: 'Tenants',
                                                                             elements: {
                                                                                 create: {
+                                                                                    index: 0,
                                                                                     type: GridElementType.Card,
                                                                                     colSpan: 4,
                                                                                     card: {
@@ -524,14 +560,15 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                 ],
                                             },
                                         },
-
                                         {
+                                            index: 3,
                                             name: 'Your essential data',
                                             columns: 4,
                                             icon: 'Gauge',
                                             elements: {
                                                 create: [
                                                     {
+                                                        index: 0,
                                                         type: GridElementType.Card,
                                                         colSpan: 2,
                                                         card: {
@@ -555,6 +592,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                         },
                                                     },
                                                     {
+                                                        index: 1,
                                                         type: GridElementType.Card,
                                                         colSpan: 2,
                                                         card: {
@@ -578,6 +616,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                         },
                                                     },
                                                     {
+                                                        index: 2,
                                                         type: GridElementType.Card,
                                                         colSpan: 2,
                                                         card: {
@@ -601,6 +640,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                         },
                                                     },
                                                     {
+                                                        index: 3,
                                                         type: GridElementType.Card,
                                                         colSpan: 2,
                                                         card: {
@@ -624,6 +664,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                         },
                                                     },
                                                     {
+                                                        index: 4,
                                                         type: GridElementType.Card,
                                                         colSpan: 2,
                                                         card: {
@@ -652,6 +693,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                         },
                                                     },
                                                     {
+                                                        index: 5,
                                                         type: GridElementType.Card,
                                                         colSpan: 2,
                                                         card: {

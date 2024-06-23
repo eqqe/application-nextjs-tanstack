@@ -16,7 +16,6 @@ import { useRouter } from 'next/navigation';
 import { useSelectedSpaces } from '@/lib/context';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Prisma } from '@prisma/client';
 import { orderByCreatedAt } from '@/lib/utils';
 
 export function SpaceSwitch() {

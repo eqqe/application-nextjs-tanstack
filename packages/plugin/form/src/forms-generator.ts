@@ -34,7 +34,8 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
         const sf = project.createSourceFile(path.join(outDir, `${fileName}.ts`), undefined, { overwrite: true });
 
         const fieldsConfigs: string[] = [];
-        const extendedSchema: string[] = [];
+        const foreignKeys: string[] = [];
+        const foreignArrays: string[] = [];
         dataModel.fields.forEach((field) => {
             if (field.name === 'owner' || field.name === 'space') {
                 return;
@@ -51,8 +52,13 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
                     },
                 }`
                 );
+
                 const zodType = field.type.array || field.type.optional ? 'z.string().optional()' : 'z.string()';
-                extendedSchema.push(`${field.name}: ${zodType}`);
+                if (field.type.array) {
+                    foreignArrays.push(`${field.name}: ${zodType}`);
+                } else {
+                    foreignKeys.push(`${field.name}: ${zodType}`);
+                }
             }
             return;
         });
@@ -68,7 +74,9 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
             declarations: [
                 {
                     name: `${dataModel.name}FormConfig`,
-                    initializer: `z.object({ ${extendedSchema.join(',')} }).extend(${scalarSchemaName}.shape)`,
+                    initializer: `z.object({ ${foreignKeys.join(
+                        ','
+                    )} }).extend(${scalarSchemaName}.shape).extend({ ${foreignArrays.join(',')} })`,
                 },
             ],
         });

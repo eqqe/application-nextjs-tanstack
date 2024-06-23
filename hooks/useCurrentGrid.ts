@@ -2,7 +2,7 @@ import { useFindUniqueGrid } from '@/zmodel/lib/hooks';
 import { GridCardInclude } from '@/components/Grid/Card/GridCard';
 import { GridTabsInclude } from '@/components/Grid/Tabs/GridTabs';
 import { useRouter } from 'next/router';
-import { orderByCreatedAt } from '@/lib/utils';
+import { orderByIndex } from '@/lib/utils';
 
 export const GridInclude = {
     elements: {
@@ -10,7 +10,7 @@ export const GridInclude = {
             card: GridCardInclude,
             tabs: GridTabsInclude,
         },
-        ...orderByCreatedAt,
+        ...orderByIndex,
     },
     subTab: true,
 };

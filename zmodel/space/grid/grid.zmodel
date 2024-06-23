@@ -13,7 +13,7 @@ abstract model OptionalIcon {
 }
 
 
-model Grid extends BaseGrid, OptionalIcon {
+model Grid extends BaseGrid, OptionalIcon, Indexed {
     subTab   SubTabFolder @relation(fields: [parentId], references: [id], onDelete: Cascade)
     parentId String
 
@@ -28,13 +28,18 @@ enum GridElementType {
     Tabs
 }
 
-model GridElement extends IdCreatedUpdatedAuth {
+abstract model Indexed {
+    index Int
+}
+
+model GridElement extends Indexed, IdCreatedUpdatedAuth {
 
     grid             Grid?           @relation(fields: [parentId], references: [id], onDelete: Cascade)
     parentId         String?
 
     gridTabContent   GridTabContent? @relation(fields: [gridTabContentId], references: [id], onDelete: Cascade)
     gridTabContentId String?
+
 
     type             GridElementType
 
@@ -88,7 +93,7 @@ model GridTabs extends IdCreatedUpdatedAuth {
 }
 
 
-model GridTabContent extends BaseGrid {
+model GridTabContent extends BaseGrid, Indexed {
     tabs     GridTabs @relation(fields: [parentId], references: [id], onDelete: Cascade)
     parentId String
 

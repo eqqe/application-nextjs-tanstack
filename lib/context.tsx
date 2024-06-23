@@ -5,8 +5,7 @@ import { useRouter } from 'next/router';
 import { createContext, useState, useContext, ReactNode, useEffect, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Space } from '@prisma/client';
-import { Prisma } from '@prisma/client';
-import { orderByCreatedAt } from './utils';
+import { orderByCreatedAt, orderByIndex } from '@/lib/utils';
 
 export type SelectedSpaces = string[];
 
@@ -43,7 +42,7 @@ export const useSubTabs = () => {
     const { data: subTabs } = useFindManySubTabFolder(
         {
             include: {
-                grids: orderByCreatedAt,
+                grids: orderByIndex,
             },
             ...orderByCreatedAt,
         },

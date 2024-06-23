@@ -2,7 +2,7 @@ import { TabsContent } from '@/components/ui/tabs';
 import { GridCard, GridCardInclude } from '../Card/GridCard';
 
 import { Prisma } from '@prisma/client';
-import { orderByCreatedAt } from '@/lib/utils';
+import { orderByIndex } from '@/lib/utils';
 
 export const GridTabContentInclude = {
     include: {
@@ -10,10 +10,10 @@ export const GridTabContentInclude = {
             include: {
                 card: GridCardInclude,
             },
-            ...orderByCreatedAt,
+            ...orderByIndex,
         },
     },
-    ...orderByCreatedAt,
+    ...orderByIndex,
 };
 export function GridTabContent({
     tabContent,
