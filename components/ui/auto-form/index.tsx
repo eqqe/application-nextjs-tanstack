@@ -1,6 +1,6 @@
 'use client';
 import { Form } from '@/components/ui/form';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { DefaultValues, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -30,8 +30,6 @@ export function AutoFormSubmit({
 }
 
 export type AutoFormProps<SchemaType extends ZodObjectOrWrapped> = {
-    onValuesChange?: (values: Partial<z.infer<SchemaType>>) => void;
-    onParsedValuesChange?: (values: Partial<z.infer<SchemaType>>) => void;
     onSubmit?: (values: z.infer<SchemaType>) => Promise<void>;
     fieldConfig?: FieldConfig<z.infer<SchemaType>>;
     children?: React.ReactNode;
@@ -42,8 +40,6 @@ export type AutoFormProps<SchemaType extends ZodObjectOrWrapped> = {
 function AutoForm<SchemaType extends ZodObjectOrWrapped>({
     formSchema,
     values: valuesProp,
-    onValuesChange: onValuesChangeProp,
-    onParsedValuesChange,
     onSubmit: onSubmitProp,
     fieldConfig,
     children,
@@ -51,9 +47,9 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
     dependencies,
 }: AutoFormProps<SchemaType> & CommonFormTable<SchemaType>) {
     const objectFormSchema = getObjectFormSchema(formSchema);
-    const defaultValues: DefaultValues<z.infer<typeof objectFormSchema>> | null = getDefaultValues(
-        objectFormSchema,
-        fieldConfig
+    const defaultValues: DefaultValues<z.infer<typeof objectFormSchema>> | null = useMemo(
+        () => getDefaultValues(objectFormSchema, fieldConfig),
+        [fieldConfig, objectFormSchema]
     );
 
     const form = useForm<z.infer<typeof objectFormSchema>>({
@@ -72,24 +68,6 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
             setSubmitDisabled(false);
         }
     }
-
-    const values = form.watch();
-    // valuesString is needed because form.watch() returns a new object every time
-    const valuesString = JSON.stringify(values);
-
-    React.useEffect(() => {
-        onValuesChangeProp?.(values);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [onParsedValuesChange, onValuesChangeProp, valuesString]);
-
-    React.useEffect(() => {
-        const parsedValues = formSchema.safeParse(values);
-        if (parsedValues.success) {
-            onParsedValuesChange?.(parsedValues.data);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [formSchema, onParsedValuesChange, onValuesChangeProp, valuesString]);
-
     return (
         <div className="w-full">
             <Form {...form}>
@@ -119,4 +97,4 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
     );
 }
 
-export default AutoForm;
+export default React.memo(AutoForm);

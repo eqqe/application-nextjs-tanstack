@@ -7,7 +7,8 @@ import { Dependency, FieldConfig, FieldConfigItem } from '../types';
 import { beautifyObjectName, getBaseSchema, getBaseType, zodToHtmlInputProps } from '../utils';
 import AutoFormArray from './array';
 import resolveDependencies from '../dependencies';
-import { ReactNode } from 'react';
+import { ReactNode, useMemo } from 'react';
+import React from 'react';
 
 function DefaultParent({ children }: { children: ReactNode }) {
     return <>{children}</>;
@@ -26,7 +27,7 @@ export const handleIfZodNumber = (item: z.ZodAny) => {
     return item;
 };
 
-export default function AutoFormObject<SchemaType extends z.ZodObject<any, any>>({
+function AutoFormObject<SchemaType extends z.ZodObject<any, any>>({
     schema,
     form,
     fieldConfig,
@@ -41,18 +42,13 @@ export default function AutoFormObject<SchemaType extends z.ZodObject<any, any>>
 }) {
     const { watch } = useFormContext(); // Use useFormContext to access the watch function
 
-    if (!schema) {
-        return null;
-    }
-    const { shape } = getBaseSchema<SchemaType>(schema) || {};
+    const baseSchema = useMemo(() => getBaseSchema<SchemaType>(schema) ?? void 0, [schema]);
 
-    if (!shape) {
-        return null;
-    }
+    const shape = baseSchema?.shape;
 
-    return (
-        <Accordion type="multiple" className="space-y-5 border-none">
-            {Object.keys(shape).map((name) => {
+    const content = useMemo(
+        () =>
+            Object.keys(shape).map((name) => {
                 if (['id', 'createdAt', 'updatedAt', 'ownerId'].includes(name)) {
                     return null;
                 }
@@ -152,7 +148,19 @@ export default function AutoFormObject<SchemaType extends z.ZodObject<any, any>>
                         }}
                     />
                 );
-            })}
+            }),
+        [dependencies, fieldConfig, form, path, shape, watch]
+    );
+
+    if (!shape) {
+        return null;
+    }
+
+    return (
+        <Accordion type="multiple" className="space-y-5 border-none">
+            {content}
         </Accordion>
     );
 }
+
+export default React.memo(AutoFormObject);

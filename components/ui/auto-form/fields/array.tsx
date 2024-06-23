@@ -6,6 +6,7 @@ import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { beautifyObjectName } from '../utils';
 import AutoFormObject from './object';
+import React from 'react';
 
 function isZodArray(item: z.ZodArray<any> | z.ZodDefault<any>): item is z.ZodArray<any> {
     return item instanceof z.ZodArray;
@@ -15,7 +16,7 @@ function isZodDefault(item: z.ZodArray<any> | z.ZodDefault<any>): item is z.ZodD
     return item instanceof z.ZodDefault;
 }
 
-export default function AutoFormArray({
+function AutoFormArray({
     name,
     item,
     form,
@@ -74,3 +75,5 @@ export default function AutoFormArray({
         </AccordionItem>
     );
 }
+
+export default React.memo(AutoFormArray);

@@ -21,6 +21,8 @@ export default function AutoFormSearch({
     }
     const { type, enableMultiRowSelection, where } = search;
     const { setValue } = useFormContext();
+
+    // WARNING FIELD PROPS CHANGE ALL THE TIME
     const onRowSelection = React.useCallback(
         (ids: string[]) => setValue(fieldProps.name, ids.join(',')),
         [fieldProps, setValue]
