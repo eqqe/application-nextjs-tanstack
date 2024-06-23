@@ -13,6 +13,7 @@ export type FieldConfigItem = {
     search?: {
         type: Type;
         enableMultiRowSelection: boolean;
+        optional: boolean;
         where?: any;
     };
 

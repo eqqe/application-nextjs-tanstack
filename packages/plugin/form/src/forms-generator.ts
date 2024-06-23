@@ -1,4 +1,4 @@
-import { isDataModel, type DataModel, type Model, DataModelFieldType } from '@zenstackhq/sdk/ast';
+import { isDataModel, type DataModel, type Model, DataModelFieldType, isArrayExpr } from '@zenstackhq/sdk/ast';
 import fs from 'fs';
 import {
     PluginError,
@@ -9,12 +9,13 @@ import {
     generateModelMeta,
     getDataModels,
     requireOption,
+    isEnumFieldReference,
     resolvePath,
     saveProject,
     ZModelCodeGenerator,
 } from '@zenstackhq/sdk';
 import path from 'path';
-import { paramCase } from 'change-case';
+import { paramCase, camelCase } from 'change-case';
 import { getPrismaClientImportSpec, supportCreateMany, type DMMF } from '@zenstackhq/sdk/prisma';
 import { VariableDeclarationKind } from 'ts-morph';
 
@@ -32,25 +33,47 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
         const fileName = paramCase(dataModel.name);
         const sf = project.createSourceFile(path.join(outDir, `${fileName}.ts`), undefined, { overwrite: true });
 
-        const fields = dataModel.fields.flatMap((field) => {
-            if (field.name === 'ownerId') {
-                return [];
+        const fieldsConfigs: string[] = [];
+        const extendedSchema: string[] = [];
+        dataModel.fields.forEach((field) => {
+            if (field.name === 'owner') {
+                return;
             }
             const ref = field.type.reference?.ref;
             if (ref?.$type === 'DataModel') {
-                return [`${field.name} ${ref.name} ${JSON.stringify(ref.attributes)}`];
+                const id = `${field.name}Id`;
+                fieldsConfigs.push(
+                    `${id}: {
+                    fieldType: 'search',
+                    search: {
+                        type: '${ref.name}',
+                        enableMultiRowSelection: ${field.type.array},
+                        optional: ${field.type.optional} 
+                    },
+                }`
+                );
+                const zodType = field.type.array || field.type.optional ? 'z.string().optional()' : 'z.string()';
+                extendedSchema.push(`${id}: ${zodType}`);
             }
-            return [];
+            return;
         });
 
         sf.addStatements('/* eslint-disable */');
+        sf.addStatements(`import { FieldConfigItem } from '@/components/ui/auto-form/types'`);
+        sf.addStatements(`import { z, AnyZodObject } from 'zod'`);
+        const scalarSchemaName = `${dataModel.name}ScalarSchema`;
+        sf.addStatements(`import { ${scalarSchemaName} } from '@zenstackhq/runtime/zod/models'`);
         sf.addVariableStatement({
             isExported: true,
             declarationKind: VariableDeclarationKind.Const,
             declarations: [
                 {
-                    name: `${dataModel.name}FormSchema`,
-                    initializer: fields.join(','),
+                    name: `${dataModel.name}FormConfig`,
+                    initializer: `{
+                        fieldConfig: {${fieldsConfigs.join(',')}},
+                        formSchema: z.object({ ${extendedSchema.join(',')} }).extend(${scalarSchemaName}.shape)
+                    }`,
+                    type: '{ fieldConfig: Record<string, FieldConfigItem>; formSchema: AnyZodObject }',
                 },
             ],
         });
