@@ -233,17 +233,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                             create: {
                                                                 title: 'Property Tenancy',
                                                                 invertTitleDescription: false,
-                                                                description: `Click here to add one`,
-                                                                footer: {
-                                                                    create: {
-                                                                        button: {
-                                                                            create: {
-                                                                                text: 'Create Property Tenancy',
-                                                                                table: 'PropertyTenancy',
-                                                                            },
-                                                                        },
-                                                                    },
-                                                                },
+                                                                description: `Count`,
                                                             },
                                                         },
                                                     },
@@ -257,6 +247,16 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                 invertTitleDescription: false,
                                                                 description: `property tenancy`,
                                                                 count: 'PropertyJointTenancy',
+                                                                footer: {
+                                                                    create: {
+                                                                        button: {
+                                                                            create: {
+                                                                                text: 'Create Property Tenancy Joint',
+                                                                                table: 'PropertyJointTenancy',
+                                                                            },
+                                                                        },
+                                                                    },
+                                                                },
                                                             },
                                                         },
                                                     },
@@ -270,6 +270,16 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                 invertTitleDescription: false,
                                                                 description: `property tenancy`,
                                                                 count: 'PropertyTenancyInCommon',
+                                                                footer: {
+                                                                    create: {
+                                                                        button: {
+                                                                            create: {
+                                                                                text: 'Create PropertyTenancyInCommon',
+                                                                                table: 'PropertyTenancyInCommon',
+                                                                            },
+                                                                        },
+                                                                    },
+                                                                },
                                                             },
                                                         },
                                                     },
@@ -283,6 +293,16 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                 invertTitleDescription: false,
                                                                 description: `property tenancy`,
                                                                 count: 'PropertyTenancyByEntirety',
+                                                                footer: {
+                                                                    create: {
+                                                                        button: {
+                                                                            create: {
+                                                                                text: 'Create PropertyTenancyByEntirety',
+                                                                                table: 'PropertyTenancyByEntirety',
+                                                                            },
+                                                                        },
+                                                                    },
+                                                                },
                                                             },
                                                         },
                                                     },

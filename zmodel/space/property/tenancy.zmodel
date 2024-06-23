@@ -3,10 +3,10 @@ import "../space"
 import "../person/person"
 import "property"
 import "lease"
-
+import "../../../packages/plugin/form/src/plugin"
 
 abstract model PropertyTenancyLink extends Component {
-    propertyTenancy PropertyTenancy?
+    propertyTenancy PropertyTenancy? @form.polymorphism()
 
     @@allow('all', propertyTenancy.properties?[spaceId in auth().selectedSpaces && space.profiles?[users?[user.id == auth().id] && (role == ADMIN || role == USER)]])
     @@allow('all', propertyTenancy.properties?[spaceId in auth().selectedSpaces && space.profiles?[users?[user.id == auth().id] && (role == ADMIN || role == USER)]])

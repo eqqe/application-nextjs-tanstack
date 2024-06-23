@@ -1,4 +1,4 @@
-import { type Model } from '@zenstackhq/sdk/ast';
+import { type Model, ReferenceExpr } from '@zenstackhq/sdk/ast';
 import {
     type PluginOptions,
     createProject,
@@ -30,7 +30,7 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
         const fieldsConfigs: string[] = [];
         const foreignKeys: string[] = [];
         const foreignArrays: string[] = [];
-        const polymorphFields: { fieldName: string; refName: string }[] = [];
+        const polymorphModels: string[] = [];
         dataModel.fields.forEach((field) => {
             if (field.name === 'owner' || field.name === 'space') {
                 return;
@@ -41,10 +41,35 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
                     (attribute) => attribute.decl.ref?.name === '@form.polymorphism'
                 );
                 if (polymorphAttribute) {
-                    polymorphFields.push({
-                        fieldName: field.name,
-                        refName: ref.name,
-                    });
+                    polymorphModels.push(ref.name);
+                    const polymorphRefAttribute = ref.attributes.find(
+                        (attribute) => attribute.decl.ref?.name === '@@form.polymorphism'
+                    );
+                    if (!polymorphRefAttribute) {
+                        warnings.push(`Should also define @@form.polymorphism on ${ref.name}`);
+                    }
+
+                    const parent = (polymorphRefAttribute?.args[1].value as ReferenceExpr).target.ref;
+                    if (parent?.$type === 'DataModelField') {
+                        fieldsConfigs.push(
+                            `${parent.name}: {
+                        fieldType: 'search',
+                        search: {
+                            type: '${parent?.type.reference?.ref?.name}',
+                            enableMultiRowSelection: ${parent.type.array},
+                            optional: false
+                        },
+                    }`
+                        );
+                        foreignKeys.push(
+                            `${field.name}: z.object({create: ${ref.name}CreateScalarSchema.extend({
+                                ${(polymorphRefAttribute?.args[0].value as ReferenceExpr).target.ref?.name}: z.enum(['${
+                                dataModel.name
+                            }']).default('${dataModel.name}'),
+                                ${parent?.name}: z.string()
+                        }) })`
+                        );
+                    }
                 } else {
                     fieldsConfigs.push(
                         `${field.name}: {
@@ -71,18 +96,9 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
         const scalarSchemaName = `${dataModel.name}CreateScalarSchema`;
         sf.addStatements(
             `import { ${[scalarSchemaName].concat(
-                polymorphFields.map(({ refName }) => `${refName}CreateScalarSchema`)
+                polymorphModels.map((refName) => `${refName}CreateScalarSchema`)
             )} } from '@zenstackhq/runtime/zod/models'`
         );
-
-        const polymorphismExtend = polymorphFields.length
-            ? `.extend(z.object({${polymorphFields
-                  .map(
-                      ({ fieldName, refName }) =>
-                          `${fieldName}: z.object({create: ${refName}CreateScalarSchema}).optional()`
-                  )
-                  .join(',')}}))`
-            : '';
 
         sf.addVariableStatement({
             isExported: true,
@@ -92,9 +108,7 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
                     name: `${dataModel.name}FormConfig`,
                     initializer: `z.object({ ${foreignKeys.join(
                         ','
-                    )} }).extend(${scalarSchemaName}.shape)${polymorphismExtend}.extend({ ${foreignArrays.join(
-                        ','
-                    )} })`,
+                    )} }).extend(${scalarSchemaName}.shape).extend({ ${foreignArrays.join(',')} })`,
                 },
             ],
         });

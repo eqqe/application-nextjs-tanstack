@@ -123,7 +123,7 @@ export function generateData({ length, spaceId }: { length: number; spaceId: str
                     tenancy: {
                         create: {
                             name: faker.word.noun(),
-                            type: PropertyTenancyType.ByEntirety,
+                            type: 'InCommon',
                             tenancyInCommon: {
                                 create: {
                                     ...fakeTenancyInCommon(),

@@ -18,11 +18,6 @@ abstract model Address {
     state         String?
 }
 
-enum PropertyTenancyType {
-    InCommon
-    Joint
-    ByEntirety
-}
 
 model Property extends Address, SpaceComponent {
     propertyType PropertyType
@@ -36,7 +31,7 @@ model Property extends Address, SpaceComponent {
 model PropertyTenancy extends Named, Component {
     properties          Property[]
 
-    type                PropertyTenancyType
+    type                String
 
     tenancyInCommon     PropertyTenancyInCommon?   @relation(fields: [tenancyInCommonId], references: [id], onDelete: Cascade)
     tenancyInCommonId   String?                    @unique
@@ -47,6 +42,8 @@ model PropertyTenancy extends Named, Component {
 
     tenancyByEntirety   PropertyTenancyByEntirety? @relation(fields: [tenancyByEntiretyId], references: [id], onDelete: Cascade)
     tenancyByEntiretyId String?                    @unique
+
+    @@form.polymorphism(typeField: type, parentField: properties)
     @@allow('all', properties?[spaceId in auth().selectedSpaces && space.profiles?[users?[user.id == auth().id] && (role == ADMIN || role == USER)]])
 }
 

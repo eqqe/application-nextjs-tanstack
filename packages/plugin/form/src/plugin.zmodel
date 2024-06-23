@@ -1,1 +1,2 @@
-attribute @@form.polymorphism()
+attribute @form.polymorphism()
+attribute @@form.polymorphism(typeField: FieldReference, parentField: FieldReference)

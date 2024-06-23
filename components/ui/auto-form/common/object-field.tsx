@@ -9,6 +9,7 @@ import resolveDependencies from '../dependencies';
 import { ReactNode } from 'react';
 import { useFormContext } from 'react-hook-form';
 import AutoFormObject, { CommonFormObject } from '../fields/object';
+import Search from '../fields/search';
 
 export const handleIfZodNumber = (item: z.ZodAny) => {
     const isZodNumber = (item as any)._def.typeName === 'ZodNumber';
@@ -72,7 +73,7 @@ function ObjectField<SchemaType extends z.ZodObject<any, any>>({
             />
         );
     }
-    if (zodBaseType === 'ZodArray') {
+    if (zodBaseType === 'ZodArray' && !fieldConfig?.connect?.search) {
         return (
             <AutoFormArray
                 key={key}
@@ -108,9 +109,6 @@ function ObjectField<SchemaType extends z.ZodObject<any, any>>({
 
                 const defaultValue = fieldConfigItem.inputProps?.defaultValue;
                 const value = field.value ?? defaultValue ?? '';
-
-                // TODO SRE this changes all the time and cause all the tables to reload !
-                // !!!! TODO TO memoize
                 const fieldProps = {
                     ...zodToHtmlInputProps(item),
                     ...field,

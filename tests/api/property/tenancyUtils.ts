@@ -43,7 +43,7 @@ export function propertyTenancyByEntiretyCreateArgs({ property, user }: { proper
             propertyTenancy: {
                 create: {
                     name: faker.word.noun(),
-                    type: PropertyTenancyType.ByEntirety,
+                    type: 'ByEntirerty',
                     properties: {
                         connect: {
                             id: property.id,

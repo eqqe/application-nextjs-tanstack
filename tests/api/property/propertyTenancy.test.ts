@@ -52,7 +52,7 @@ it('Should allow a user to create property tenancy and list and group by them', 
                     },
                 },
             },
-            ...orderByCreatedAt
+            ...orderByCreatedAt,
         });
     }
     let properties = await getProperties();
