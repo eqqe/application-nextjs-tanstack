@@ -28,8 +28,8 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
         const sf = project.createSourceFile(path.join(outDir, `${fileName}.ts`), undefined, { overwrite: true });
 
         const fieldsConfigs: string[] = [];
-        const foreignKeys: string[] = [];
-        const foreignArrays: string[] = [];
+        const topRefs: string[] = [];
+        const lowRefs: string[] = [];
         const polymorphModels: string[] = [];
         dataModel.fields.forEach((field) => {
             if (field.name === 'owner' || field.name === 'space') {
@@ -42,23 +42,22 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
                 );
 
                 function getFieldConfigSearch(fieldConnect: DataModelField) {
-                    return `${fieldConnect.name}: {
-                        connect: {
+                    const searchValue = `{
                         fieldType: 'search',
                         search: {
                             type: '${fieldConnect?.type.reference?.ref?.name}',
                             enableMultiRowSelection: ${fieldConnect.type.array},
                             optional: ${fieldConnect.type.optional}
-                        },
-                         }
-                    }`;
+                        }
+                        }`;
+                    if (fieldConnect.type.array) {
+                        return `${fieldConnect.name}: {
+                            connect: ${searchValue}
+                        }`;
+                    }
+                    return `${fieldConnect.name}: ${searchValue}`;
                 }
 
-                function getZodConnect(fieldConnect: DataModelField) {
-                    return `${fieldConnect?.name}: z.object({connect: z.array(z.object({ id: z.string() }))${
-                        field.type.optional ? `.optional()` : ''
-                    },})`;
-                }
                 if (polymorphAttribute) {
                     polymorphModels.push(ref.name);
                     const polymorphRefAttribute = ref.attributes.find(
@@ -77,21 +76,26 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
                             }
                            `
                         );
-                        foreignKeys.push(
-                            `${field.name}: z.object({create: ${ref.name}CreateScalarSchema.extend({
-                                ${(polymorphRefAttribute?.args[0].value as ReferenceExpr).target.ref?.name}: z.enum(['${
-                                dataModel.name
-                            }']).default('${dataModel.name}'),
-                                ${getZodConnect(parent)}
-                        }) })`
+                        topRefs.push(
+                            `${field.name}: z.object({
+                                create: ${ref.name}CreateScalarSchema.extend({
+                                    ${
+                                        (polymorphRefAttribute?.args[0].value as ReferenceExpr).target.ref?.name
+                                    }: z.enum(['${dataModel.name}']).default('${dataModel.name}'),
+                                    ${parent.name}: z.object({ 
+                                        connect: z.array(z.object({ id: z.string() }))
+                                    })
+                                })`
                         );
                     }
                 } else {
                     fieldsConfigs.push(getFieldConfigSearch(field));
                     if (field.type.array) {
-                        foreignArrays.push(getZodConnect(field));
+                        lowRefs.push(
+                            `${field?.name}: z.object({connect: z.array(z.object({ id: z.string() }))).optional()`
+                        );
                     } else {
-                        foreignKeys.push(`${field.name}: z.string()${field.type.optional ? `.optional()` : ''}`);
+                        topRefs.push(`${field.name}: z.string()${field.type.optional ? `.optional()` : ''}`);
                     }
                 }
             }
@@ -113,9 +117,9 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
             declarations: [
                 {
                     name: `${dataModel.name}FormConfig`,
-                    initializer: `z.object({ ${foreignKeys.join(
+                    initializer: `z.object({ ${topRefs.join(
                         ','
-                    )} }).extend(${scalarSchemaName}.shape).extend({ ${foreignArrays.join(',')} })`,
+                    )} }).extend(${scalarSchemaName}.shape).extend({ ${lowRefs.join(',')} })`,
                 },
             ],
         });
