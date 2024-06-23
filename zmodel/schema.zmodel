@@ -10,23 +10,23 @@ generator js {
     provider = 'prisma-client-js'
 }
 
-// plugin enhancer {
-//     provider = '@core/enhancer'
-//     generatePermissionChecker = true
-// }
-// plugin zod {
-//     provider = '@core/zod'
-// }
+plugin enhancer {
+    provider = '@core/enhancer'
+    generatePermissionChecker = true
+}
+plugin zod {
+    provider = '@core/zod'
+}
 
 plugin form {
     provider = '../packages/plugin/dist/forms-generator'
     output = 'lib/forms'
 }
 
-// plugin hooks {
-//     provider = '@zenstackhq/tanstack-query'
-//     output = 'lib/hooks'
-//     target = 'react'
-//     version = 'v5'
-// }
+plugin hooks {
+    provider = '@zenstackhq/tanstack-query'
+    output = 'lib/hooks'
+    target = 'react'
+    version = 'v5'
+}
 
