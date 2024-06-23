@@ -36,7 +36,7 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
         const fieldsConfigs: string[] = [];
         const extendedSchema: string[] = [];
         dataModel.fields.forEach((field) => {
-            if (field.name === 'owner') {
+            if (field.name === 'owner' || field.name === 'space') {
                 return;
             }
             const ref = field.type.reference?.ref;
