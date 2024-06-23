@@ -1,7 +1,7 @@
 import { Prisma } from '@prisma/client';
 import { AutoFormDialog } from '@/components/Form/AutoFormDialog';
-import { getTypeHook } from '../Table/getTypeHook';
 import { toast } from 'react-toastify';
+import { typeHooks } from '@/zmodel/lib/forms/typeHooks';
 
 export const GridCardFooterButtonInclude = true;
 
@@ -10,21 +10,22 @@ export function GridCardFooterButton({
 }: {
     button: Prisma.GridCardFooterButtonGetPayload<typeof GridCardFooterButtonInclude>;
 }) {
-    const typeHook = getTypeHook({ type: button.table });
-
-    if (typeHook.form) {
-        return <typeHook.form />;
-    }
+    const typeHook = typeHooks[button.table];
 
     const create = typeHook.useCreate.single();
 
     return (
         <AutoFormDialog
-            formSchema={typeHook.schema.create}
+            formSchema={typeHook.form.formConfig}
+            fieldConfig={typeHook.form.fieldConfig}
             onSubmitData={async (data) => {
-                // @ts-ignore
-                await create.mutateAsync({ data });
-                toast.success(`${button.table} created successfully!`);
+                try {
+                    // @ts-ignore
+                    await create.mutateAsync({ data });
+                    toast.success(`${button.table} created successfully!`);
+                } catch {
+                    toast.error(`Error creating ${button.table}`);
+                }
             }}
             title={button.text}
         />

@@ -4,9 +4,8 @@ import { handleIfZodNumber } from '@/components/ui/auto-form/fields/object';
 import { ZodObjectOrWrapped, getBaseSchema, getBaseType, getObjectFormSchema } from '@/components/ui/auto-form/utils';
 import { CommonFormTable } from '../ui/auto-common/types';
 import { Type } from '@prisma/client';
-import { getTypeHook } from '@/components/Grid/Table/getTypeHook';
 import { ColumnDef, TableOptions, TableState } from '@tanstack/react-table';
-import { ReactNode, useMemo } from 'react';
+import { ReactNode } from 'react';
 import { getColumnDef } from '@/components/AutoTable/getColumnDef';
 
 export function AutoTable<SchemaType extends ZodObjectOrWrapped>({
@@ -30,7 +29,6 @@ export function AutoTable<SchemaType extends ZodObjectOrWrapped>({
         onlyAdditionalColumns?: boolean;
         type?: Type;
     }) {
-    const getRowLink = useMemo(() => (type ? getTypeHook({ type })?.getLink : undefined), [type]);
     const objectFormSchema = getObjectFormSchema(formSchema);
     if (!objectFormSchema) {
         return null;
@@ -80,7 +78,6 @@ export function AutoTable<SchemaType extends ZodObjectOrWrapped>({
             enableMultiRowSelection={enableMultiRowSelection}
             columns={columns}
             data={data}
-            getRowLink={getRowLink}
             rowCount={rowCount}
         />
     );

@@ -31,6 +31,7 @@ enum Type {
   PropertyTenancyInCommonTenant
   PropertyJointTenancy
   PropertyTenancyByEntirety
+  Corporation
 }
 
 enum PropertyType {

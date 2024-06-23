@@ -128,6 +128,27 @@ enum Type {
     PropertyTenancyInCommonTenant
     PropertyJointTenancy
     PropertyTenancyByEntirety
+    Corporation
+    ProfileUser
+    Space
+    Account
+    SpaceApplicationVersion
+    FolderApplicationVersion
+    ApplicationVersion
+    GridCardTable
+    TabFolder
+    GridCardFooter
+    GridCard
+    GridCardFooterButton
+    GridCardFooterProgress
+    Chart
+    GroupBy
+    GridElement
+    GridTabContent
+    GridTabs
+    LeaseMailOtherAddress
+    PropertyJointTenancyTenant
+    Application
 }
 
 // next-auth

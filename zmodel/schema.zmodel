@@ -22,7 +22,6 @@ plugin form {
     provider = '../packages/plugin/dist/forms-generator'
     output = 'lib/forms'
 }
-/*
 
 plugin hooks {
     provider = '@zenstackhq/tanstack-query'
@@ -31,5 +30,3 @@ plugin hooks {
     version = 'v5'
 }
 
-
-*/

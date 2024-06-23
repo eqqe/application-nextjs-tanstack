@@ -1,5 +1,4 @@
 import { Prisma } from '@prisma/client';
-import { getTypeHook } from './getTypeHook';
 import { AutoFormDialog } from '@/components/Form/AutoFormDialog';
 import { FallbackError } from '@/components/layout/FallbackError';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -12,6 +11,7 @@ import { getColumnDef } from '@/components/AutoTable/getColumnDef';
 import { keepPreviousData } from '@tanstack/react-query';
 import { beautifyObjectName } from '@/components/ui/auto-form/utils';
 import { useSearchParams } from 'next/navigation';
+import { typeHooks } from '@/zmodel/lib/forms/typeHooks';
 
 export const GridCardTableInclude = {
     include: {
@@ -53,7 +53,7 @@ export function CardTableComponent({
     multiTablesGlobalFilter?: boolean;
     where?: any;
 }) {
-    const { useHook, schema, useUpdate, useCount } = getTypeHook({ type });
+    const { useHook, schema, useUpdate, useCount } = typeHooks[type];
 
     const [rowSelection, setRowSelection] = useState({});
 
