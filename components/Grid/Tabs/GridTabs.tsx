@@ -24,7 +24,7 @@ export function GridTabs({ tabs }: { tabs: Prisma.GridTabsGetPayload<typeof Grid
                     ))}
                 </TabsList>
             </div>
-            {tabsContent.reverse().map((tabContent) => (
+            {tabsContent.map((tabContent) => (
                 <GridTabContent key={tabContent.id} tabContent={tabContent} />
             ))}
         </Tabs>
