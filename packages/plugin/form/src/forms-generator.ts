@@ -41,9 +41,8 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
             }
             const ref = field.type.reference?.ref;
             if (ref?.$type === 'DataModel') {
-                const id = `${field.name}Id`;
                 fieldsConfigs.push(
-                    `${id}: {
+                    `${field.name}: {
                     fieldType: 'search',
                     search: {
                         type: '${ref.name}',
@@ -53,7 +52,7 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
                 }`
                 );
                 const zodType = field.type.array || field.type.optional ? 'z.string().optional()' : 'z.string()';
-                extendedSchema.push(`${id}: ${zodType}`);
+                extendedSchema.push(`${field.name}: ${zodType}`);
             }
             return;
         });
@@ -61,7 +60,7 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
         sf.addStatements('/* eslint-disable */');
         sf.addStatements(`import { FieldConfigItem } from '@/components/ui/auto-form/types'`);
         sf.addStatements(`import { z, AnyZodObject } from 'zod'`);
-        const scalarSchemaName = `${dataModel.name}ScalarSchema`;
+        const scalarSchemaName = `${dataModel.name}CreateScalarSchema`;
         sf.addStatements(`import { ${scalarSchemaName} } from '@zenstackhq/runtime/zod/models'`);
         sf.addVariableStatement({
             isExported: true,
