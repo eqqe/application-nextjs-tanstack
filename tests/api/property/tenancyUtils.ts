@@ -11,7 +11,6 @@ export function propertyJointTenancyCreateArgs({ property, user }: { property: P
             propertyTenancy: {
                 create: {
                     name: faker.word.noun(),
-                    type: PropertyTenancyType.Joint,
                     properties: {
                         connect: {
                             id: property.id,

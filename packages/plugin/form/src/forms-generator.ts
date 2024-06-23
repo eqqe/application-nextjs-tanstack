@@ -1,22 +1,16 @@
-import { isDataModel, type DataModel, type Model, DataModelFieldType, isArrayExpr } from '@zenstackhq/sdk/ast';
-import fs from 'fs';
+import { type Model } from '@zenstackhq/sdk/ast';
 import {
-    PluginError,
     type PluginOptions,
-    RUNTIME_PACKAGE,
     createProject,
     ensureEmptyDir,
-    generateModelMeta,
     getDataModels,
     requireOption,
-    isEnumFieldReference,
     resolvePath,
     saveProject,
-    ZModelCodeGenerator,
 } from '@zenstackhq/sdk';
 import path from 'path';
-import { paramCase, camelCase } from 'change-case';
-import { getPrismaClientImportSpec, supportCreateMany, type DMMF } from '@zenstackhq/sdk/prisma';
+import { paramCase } from 'change-case';
+import { type DMMF } from '@zenstackhq/sdk/prisma';
 import { VariableDeclarationKind } from 'ts-morph';
 
 export const name = 'Form';
@@ -36,38 +30,60 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
         const fieldsConfigs: string[] = [];
         const foreignKeys: string[] = [];
         const foreignArrays: string[] = [];
+        const polymorphFields: { fieldName: string; refName: string }[] = [];
         dataModel.fields.forEach((field) => {
             if (field.name === 'owner' || field.name === 'space') {
                 return;
             }
             const ref = field.type.reference?.ref;
             if (ref?.$type === 'DataModel') {
-                fieldsConfigs.push(
-                    `${field.name}: {
-                    fieldType: 'search',
-                    search: {
-                        type: '${ref.name}',
-                        enableMultiRowSelection: ${field.type.array},
-                        optional: ${field.type.optional} 
-                    },
-                }`
+                const polymorphAttribute = field.attributes.find(
+                    (attribute) => attribute.decl.ref?.name === '@form.polymorphism'
                 );
-
-                const zodType = field.type.array || field.type.optional ? 'z.string().optional()' : 'z.string()';
-                if (field.type.array) {
-                    foreignArrays.push(`${field.name}: ${zodType}`);
+                if (polymorphAttribute) {
+                    polymorphFields.push({
+                        fieldName: field.name,
+                        refName: ref.name,
+                    });
                 } else {
-                    foreignKeys.push(`${field.name}: ${zodType}`);
+                    fieldsConfigs.push(
+                        `${field.name}: {
+                        fieldType: 'search',
+                        search: {
+                            type: '${ref.name}',
+                            enableMultiRowSelection: ${field.type.array},
+                            optional: ${field.type.optional} 
+                        },
+                    }`
+                    );
+                    if (field.type.array || field.type.optional) {
+                        foreignArrays.push(`${field.name}: z.string()`);
+                    } else {
+                        foreignKeys.push(`${field.name}: z.string().optional()`);
+                    }
                 }
             }
-            return;
         });
 
         sf.addStatements('/* eslint-disable */');
         sf.addStatements(`import { FieldConfigItem } from '@/components/ui/auto-form/types'`);
         sf.addStatements(`import { z, AnyZodObject } from 'zod'`);
         const scalarSchemaName = `${dataModel.name}CreateScalarSchema`;
-        sf.addStatements(`import { ${scalarSchemaName} } from '@zenstackhq/runtime/zod/models'`);
+        sf.addStatements(
+            `import { ${[scalarSchemaName].concat(
+                polymorphFields.map(({ refName }) => `${refName}CreateScalarSchema`)
+            )} } from '@zenstackhq/runtime/zod/models'`
+        );
+
+        const polymorphismExtend = polymorphFields.length
+            ? `.extend(z.object({${polymorphFields
+                  .map(
+                      ({ fieldName, refName }) =>
+                          `${fieldName}: z.object({create: ${refName}CreateScalarSchema}).optional()`
+                  )
+                  .join(',')}}))`
+            : '';
+
         sf.addVariableStatement({
             isExported: true,
             declarationKind: VariableDeclarationKind.Const,
@@ -76,7 +92,9 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
                     name: `${dataModel.name}FormConfig`,
                     initializer: `z.object({ ${foreignKeys.join(
                         ','
-                    )} }).extend(${scalarSchemaName}.shape).extend({ ${foreignArrays.join(',')} })`,
+                    )} }).extend(${scalarSchemaName}.shape)${polymorphismExtend}.extend({ ${foreignArrays.join(
+                        ','
+                    )} })`,
                 },
             ],
         });
