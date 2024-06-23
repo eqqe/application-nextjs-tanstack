@@ -19,6 +19,13 @@ export function GridCardFooterButton({
             formSchema={typeHook.form.formConfig}
             fieldConfig={typeHook.form.fieldConfig}
             onSubmitData={async (data) => {
+                Object.entries(typeHook.form.fieldConfig).forEach(([key, config]) => {
+                    if (typeof data[key] === 'string' && config.search?.enableMultiRowSelection) {
+                        data[key] = {
+                            connect: (data[key] as string).split(',').map((id) => ({ id })),
+                        };
+                    }
+                });
                 // @ts-ignore
                 await create.mutateAsync({ data });
                 toast.success(`${button.table} created successfully!`);
