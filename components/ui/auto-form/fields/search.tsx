@@ -4,7 +4,6 @@ import AutoFormLabel from '../common/label';
 import AutoFormTooltip from '../common/tooltip';
 import { AutoFormInputComponentProps } from '../types';
 import { CardTableComponent } from '@/components/Grid/Table/CardTableComponent';
-import { PropertyColumns } from '@/zmodel/prisma/applications/assets/columns';
 import { useFormContext } from 'react-hook-form';
 
 export default function AutoFormSearch({

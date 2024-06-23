@@ -19,13 +19,9 @@ export function GridCardFooterButton({
             formSchema={typeHook.form.formConfig}
             fieldConfig={typeHook.form.fieldConfig}
             onSubmitData={async (data) => {
-                try {
-                    // @ts-ignore
-                    await create.mutateAsync({ data });
-                    toast.success(`${button.table} created successfully!`);
-                } catch {
-                    toast.error(`Error creating ${button.table}`);
-                }
+                // @ts-ignore
+                await create.mutateAsync({ data });
+                toast.success(`${button.table} created successfully!`);
             }}
             title={button.text}
         />
