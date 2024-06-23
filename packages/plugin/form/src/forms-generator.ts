@@ -55,7 +55,9 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
                 }
 
                 function getZodConnect(fieldConnect: DataModelField) {
-                    return `${fieldConnect?.name}: z.object({connect: z.array(z.object({ id: z.string() })),})`;
+                    return `${fieldConnect?.name}: z.object({connect: z.array(z.object({ id: z.string() }))${
+                        field.type.optional ? `.optional()` : ''
+                    },})`;
                 }
                 if (polymorphAttribute) {
                     polymorphModels.push(ref.name);
@@ -86,10 +88,10 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
                     }
                 } else {
                     fieldsConfigs.push(getFieldConfigSearch(field));
-                    if (field.type.array || field.type.optional) {
+                    if (field.type.array) {
                         foreignArrays.push(getZodConnect(field));
                     } else {
-                        foreignKeys.push(`${field.name}: z.string().optional()`);
+                        foreignKeys.push(`${field.name}: z.string()${field.type.optional ? `.optional()` : ''}`);
                     }
                 }
             }
