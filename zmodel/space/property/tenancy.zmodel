@@ -1,4 +1,4 @@
-import "../../schema"
+import "../../base"
 import "../space"
 import "../person/person"
 import "property"

@@ -1,5 +1,5 @@
-import "schema"
-import "space/space.zmodel"
+import "base"
+import "space/space"
 import "space/grid/grid"
 
 model SpaceApplicationVersion extends IdCreatedUpdatedSpace {

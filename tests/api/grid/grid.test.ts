@@ -1,10 +1,11 @@
 import { assert, it } from 'vitest';
 import { getEnhancedPrisma } from '@/tests/mock/enhanced-prisma';
 import { GridInclude } from '@/hooks/useCurrentGrid';
+import { orderByCreatedAt } from '@/lib/utils';
 
 it('Should get grids', async () => {
     function checkGrids() {
-        assert.equal(grids.length, 5);
+        assert.equal(grids.length, 4);
         const firstGrid = grids[0];
         assert.equal(firstGrid.columns, 6);
         const card = firstGrid.elements[0];
@@ -24,12 +25,12 @@ it('Should get grids', async () => {
     }
     const { user1, user2, user3 } = await getEnhancedPrisma();
 
-    let grids = await user1.prisma.grid.findMany({ include: GridInclude });
+    let grids = await user1.prisma.grid.findMany({ include: GridInclude, ...orderByCreatedAt });
     assert.notOk(grids.length);
 
-    grids = await user2.prisma.grid.findMany({ include: GridInclude });
+    grids = await user2.prisma.grid.findMany({ include: GridInclude, ...orderByCreatedAt });
     checkGrids();
 
-    grids = await user3.prisma.grid.findMany({ include: GridInclude });
+    grids = await user3.prisma.grid.findMany({ include: GridInclude, ...orderByCreatedAt });
     checkGrids();
 });

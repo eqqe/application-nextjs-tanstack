@@ -1,6 +1,6 @@
 
-import "../../schema.zmodel"
-import "../space.zmodel"
+import "../../base"
+import "../space"
 import "property"
 import "tenancy"
 import "../person/person"
