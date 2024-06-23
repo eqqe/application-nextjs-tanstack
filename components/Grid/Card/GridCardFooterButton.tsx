@@ -20,7 +20,7 @@ export function GridCardFooterButton({
             fieldConfig={typeHook.form.fieldConfig}
             onSubmitData={async (data: Record<string, any>) => {
                 Object.entries(typeHook.form.fieldConfig).forEach(([key, config]) => {
-                    if (typeof data[key] === 'string' && config.search?.enableMultiRowSelection) {
+                    if (data[key] && typeof data[key] === 'string' && config.search?.enableMultiRowSelection) {
                         data[key] = {
                             connect: (data[key] as string).split(',').map((id) => ({ id })),
                         };
