@@ -1,4 +1,4 @@
-import { type Model, ReferenceExpr } from '@zenstackhq/sdk/ast';
+import { type Model, ReferenceExpr, DataModelField } from '@zenstackhq/sdk/ast';
 import {
     type PluginOptions,
     createProject,
@@ -40,6 +40,23 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
                 const polymorphAttribute = field.attributes.find(
                     (attribute) => attribute.decl.ref?.name === '@form.polymorphism'
                 );
+
+                function getFieldConfigSearch(fieldConnect: DataModelField) {
+                    return `${fieldConnect.name}: {
+                        connect: {
+                        fieldType: 'search',
+                        search: {
+                            type: '${fieldConnect?.type.reference?.ref?.name}',
+                            enableMultiRowSelection: ${fieldConnect.type.array},
+                            optional: ${fieldConnect.type.optional}
+                        },
+                         }
+                    }`;
+                }
+
+                function getZodConnect(fieldConnect: DataModelField) {
+                    return `${fieldConnect?.name}: z.object({connect: z.array(z.object({ id: z.string() })),})`;
+                }
                 if (polymorphAttribute) {
                     polymorphModels.push(ref.name);
                     const polymorphRefAttribute = ref.attributes.find(
@@ -51,38 +68,26 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
 
                     const parent = (polymorphRefAttribute?.args[1].value as ReferenceExpr).target.ref;
                     if (parent?.$type === 'DataModelField') {
+                        // TODO SRE : filter out already associated parents (for example, a property will be disociated from existing tenant)
                         fieldsConfigs.push(
-                            `${parent.name}: {
-                        fieldType: 'search',
-                        search: {
-                            type: '${parent?.type.reference?.ref?.name}',
-                            enableMultiRowSelection: ${parent.type.array},
-                            optional: false
-                        },
-                    }`
+                            `${field.name}: {
+                                create: { ${getFieldConfigSearch(parent)}}
+                            }
+                           `
                         );
                         foreignKeys.push(
                             `${field.name}: z.object({create: ${ref.name}CreateScalarSchema.extend({
                                 ${(polymorphRefAttribute?.args[0].value as ReferenceExpr).target.ref?.name}: z.enum(['${
                                 dataModel.name
                             }']).default('${dataModel.name}'),
-                                ${parent?.name}: z.string()
+                                ${getZodConnect(parent)}
                         }) })`
                         );
                     }
                 } else {
-                    fieldsConfigs.push(
-                        `${field.name}: {
-                        fieldType: 'search',
-                        search: {
-                            type: '${ref.name}',
-                            enableMultiRowSelection: ${field.type.array},
-                            optional: ${field.type.optional} 
-                        },
-                    }`
-                    );
+                    fieldsConfigs.push(getFieldConfigSearch(field));
                     if (field.type.array || field.type.optional) {
-                        foreignArrays.push(`${field.name}: z.string()`);
+                        foreignArrays.push(getZodConnect(field));
                     } else {
                         foreignKeys.push(`${field.name}: z.string().optional()`);
                     }
@@ -119,7 +124,6 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
                 {
                     name: `${dataModel.name}FieldConfig`,
                     initializer: `{${fieldsConfigs.join(',')}}`,
-                    type: 'Record<string, FieldConfigItem>',
                 },
             ],
         });
