@@ -20,11 +20,17 @@ export const useFindUniqueGridParam = (gridId: string) => ({
     },
     include: GridInclude,
 });
+
 export const useCurrentGrid = () => {
     const router = useRouter();
     const gridId = router.query.gridId as string;
 
-    const { data: grid } = trpc.grid.findUnique.useQuery(useFindUniqueGridParam(gridId), {
+    const params = useFindUniqueGridParam(gridId);
+    if (!gridId) {
+        return;
+    }
+
+    const { data: grid } = trpc.grid.findUnique.useQuery(params, {
         enabled: !!gridId,
     });
     return grid;
