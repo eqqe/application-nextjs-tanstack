@@ -111,9 +111,9 @@ export const CardTableComponent = React.memo(
                 }, {});
             }
             switch (typeTableRequest) {
-                case 'Aggregate':
+                case 'aggregate':
                     return {};
-                case 'FindMany': {
+                case 'findMany': {
                     return {
                         orderBy: sorting.reduce((accumulator, currentValue) => {
                             accumulator[currentValue.id] = currentValue.desc
@@ -130,7 +130,7 @@ export const CardTableComponent = React.memo(
                         skip: pagination.pageSize * pagination.pageIndex,
                     };
                 }
-                case 'GroupBy':
+                case 'groupBy':
                     if (!groupBy) {
                         throw '! table.groupBy';
                     }
@@ -151,11 +151,11 @@ export const CardTableComponent = React.memo(
             }
         }, [groupBy, orFilter, pagination.pageIndex, pagination.pageSize, sorting, typeTableRequest]);
         type ColumnDefFromSchema = ColumnDef<any, ReactNode>;
-        const findMany = typeTableRequest === 'FindMany';
+        const findMany = typeTableRequest === 'findMany';
 
         const columnDataTable = useMemo(() => {
             let cols = columns;
-            if (typeTableRequest === 'GroupBy') {
+            if (typeTableRequest === 'groupBy') {
                 if (!groupBy) {
                     throw '! table.groupBy';
                 }
@@ -232,10 +232,10 @@ export const CardTableComponent = React.memo(
             params.where = { ...params.where, ...where };
         }
 
-        const useFindManyQuery = trpc[type].findMany.useQuery;
+        const useTypedQuery = trpc[type][typeTableRequest].useQuery;
 
         // @ts-expect-error
-        rows = useFindManyQuery(params, options).data;
+        rows = useTypedQuery(params, options).data;
 
         let rowCount: number | undefined;
 

@@ -27,6 +27,5 @@ plugin trpc {
     provider = '@zenstackhq/trpc'
     output = '../server/routers/generated'
     generateClientHelpers = 'next'
-    generateModelActions = 'create,update,delete,count,findUnique,findMany'
 }
 

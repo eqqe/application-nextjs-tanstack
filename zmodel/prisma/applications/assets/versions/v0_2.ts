@@ -120,7 +120,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                                                 create: {
                                                                                                     type: Type.property,
                                                                                                     typeTableRequest:
-                                                                                                        'FindMany',
+                                                                                                        'findMany',
                                                                                                     columns: [
                                                                                                         PropertyColumns.streetAddress,
                                                                                                         PropertyColumns.city,
@@ -151,7 +151,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                                                 create: {
                                                                                                     type: Type.property,
                                                                                                     typeTableRequest:
-                                                                                                        TypeTableRequest.GroupBy,
+                                                                                                        TypeTableRequest.groupBy,
                                                                                                     groupBy: {
                                                                                                         create: {
                                                                                                             fields: [
@@ -187,7 +187,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                                                 create: {
                                                                                                     type: Type.property,
                                                                                                     typeTableRequest:
-                                                                                                        TypeTableRequest.GroupBy,
+                                                                                                        TypeTableRequest.groupBy,
                                                                                                     chart: {
                                                                                                         create: {
                                                                                                             type: 'PieChart',
@@ -338,7 +338,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                                                         PropertyTenancyInCommonScalarSchemaColumns.updatedAt,
                                                                                                     ],
                                                                                                     typeTableRequest:
-                                                                                                        'FindMany',
+                                                                                                        'findMany',
                                                                                                 },
                                                                                             },
                                                                                         },
@@ -364,7 +364,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                                                 create: {
                                                                                                     type: 'propertyJointTenancy',
                                                                                                     typeTableRequest:
-                                                                                                        'FindMany',
+                                                                                                        'findMany',
                                                                                                 },
                                                                                             },
                                                                                         },
@@ -390,7 +390,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                                                 create: {
                                                                                                     type: 'propertyTenancyByEntirety',
                                                                                                     typeTableRequest:
-                                                                                                        'FindMany',
+                                                                                                        'findMany',
                                                                                                 },
                                                                                             },
                                                                                         },
@@ -416,7 +416,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                                                 create: {
                                                                                                     type: 'propertyTenancyInCommonTenant',
                                                                                                     typeTableRequest:
-                                                                                                        'FindMany',
+                                                                                                        'findMany',
                                                                                                 },
                                                                                             },
                                                                                         },
@@ -442,7 +442,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                                                 create: {
                                                                                                     type: 'propertyTenancy',
                                                                                                     typeTableRequest:
-                                                                                                        'FindMany',
+                                                                                                        'findMany',
                                                                                                 },
                                                                                             },
                                                                                         },
@@ -538,7 +538,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                                                     type: 'lease',
                                                                                                     columns: [],
                                                                                                     typeTableRequest:
-                                                                                                        'FindMany',
+                                                                                                        'findMany',
                                                                                                 },
                                                                                             },
                                                                                         },
@@ -564,7 +564,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                                                 create: {
                                                                                                     type: 'leaseTenant',
                                                                                                     typeTableRequest:
-                                                                                                        'FindMany',
+                                                                                                        'findMany',
                                                                                                 },
                                                                                             },
                                                                                         },
@@ -756,7 +756,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                             },
                                                                         },
                                                                         type: 'lease',
-                                                                        typeTableRequest: 'GroupBy',
+                                                                        typeTableRequest: 'groupBy',
                                                                     },
                                                                 },
                                                             },
@@ -785,7 +785,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                             },
                                                                         },
                                                                         type: 'property',
-                                                                        typeTableRequest: 'GroupBy',
+                                                                        typeTableRequest: 'groupBy',
                                                                     },
                                                                 },
                                                             },

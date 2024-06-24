@@ -45,13 +45,13 @@ it('Should enable an application in space', async () => {
     assert.equal(tabsElement.type, 'Tabs');
     const cardTable = tabsElement.tabs?.tabsContent[0].elements[0].card?.table;
     assert.deepEqual(cardTable?.columns, ['streetAddress', 'city', 'postalCode']);
-    assert.equal(cardTable?.typeTableRequest, 'FindMany');
+    assert.equal(cardTable?.typeTableRequest, 'findMany');
     assert.notOk(cardTable?.groupBy);
 
     const cardTableList = tabsElement.tabs?.tabsContent[1].elements[0].card?.table;
 
     assert.deepEqual(cardTableList?.columns, []);
-    assert.equal(cardTableList?.typeTableRequest, 'GroupBy');
+    assert.equal(cardTableList?.typeTableRequest, 'groupBy');
     assert.deepEqual(cardTableList?.groupBy?.sum, ['surface']);
     assert.deepEqual(cardTableList?.groupBy?.fields, ['city']);
 });

@@ -4,6 +4,6 @@ export function Counter({ type }: { type: Type }) {
     const useCountQuery = trpc[type].count.useQuery;
 
     // @ts-expect-error
-    const { data: count } = useCountQuery();
+    const { data: count } = useCountQuery({});
     return <>{count}</>;
 }

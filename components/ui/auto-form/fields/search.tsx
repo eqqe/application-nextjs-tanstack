@@ -39,7 +39,7 @@ function AutoFormSearch({ label, isRequired, fieldConfigItem, fieldProps }: Auto
             groupBy: null,
             chart: null,
             columns: [],
-            typeTableRequest: TypeTableRequest.FindMany,
+            typeTableRequest: TypeTableRequest.findMany,
         }),
         [type]
     );
