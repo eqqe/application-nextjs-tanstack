@@ -8,11 +8,11 @@ import { AutoTable } from '@/components/AutoTable/AutoTable';
 import { ReactNode, useState, useMemo, useEffect, useCallback } from 'react';
 import { Chart } from '@/components/Grid/Card/Chart';
 import { getColumnDef } from '@/components/AutoTable/getColumnDef';
-import { keepPreviousData } from '@tanstack/react-query';
 import { beautifyObjectName } from '@/components/ui/auto-form/utils';
 import { useSearchParams } from 'next/navigation';
 import { typeHooks } from '@/zmodel/lib/forms/typeHooks';
 import React from 'react';
+import { trpc } from '@/lib/trpc';
 
 export const GridCardTableInclude = {
     include: {
@@ -36,6 +36,7 @@ export type CardTableComponentProps = {
         'id' | 'parentId' | 'updatedAt' | 'createdAt'
     >;
 };
+
 export const CardTableComponent = React.memo(
     ({
         table: { type, typeTableRequest, columns, groupBy, chart },
@@ -55,7 +56,9 @@ export const CardTableComponent = React.memo(
         multiTablesGlobalFilter?: boolean;
         where?: any;
     }) => {
-        const { useHook, schema, useUpdate, useCount } = typeHooks[type];
+        const { schema } = typeHooks[type];
+
+        const useUpdate = trpc[type].update.useMutation();
 
         const [rowSelection, setRowSelection] = useState({});
 
@@ -216,22 +219,21 @@ export const CardTableComponent = React.memo(
             update,
         ]);
 
-        const useHookTyped = useHook[typeTableRequest];
-
         let rows: any[] | undefined;
 
         const options = {
-            placeholderData: keepPreviousData,
+            keepPreviousData: true,
             enabled: !multiTablesGlobalFilter || !!orFilter.length,
         };
 
         if (where) {
             params.where = { ...params.where, ...where };
         }
-        rows = useHookTyped(params, options).data;
+
+        rows = trpc[type.toLowerCase()].findMany.useQuery(params, options).data;
 
         let rowCount: number | undefined;
-        rowCount = useCount({ where: params.where ?? {} }, options).data;
+        rowCount = trpc[type.toLowerCase()].count.useQuery({ where: params.where ?? {} }, options).data;
 
         if (!options.enabled || (multiTablesGlobalFilter && !rowCount)) {
             return null;

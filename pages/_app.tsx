@@ -4,7 +4,6 @@ import { SessionProvider } from 'next-auth/react';
 import type { AppProps } from 'next/app';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Provider as ZenStackHooksProvider } from '../zmodel/lib/hooks';
 import '../styles/globals.css';
 import { ReactElement } from 'react';
 import { ThemeProvider, useTheme } from 'next-themes';
@@ -21,17 +20,15 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
             {/* <ReactQueryDevtools /> */}
             <SessionProvider session={session}>
                 <TooltipProvider>
-                    <ZenStackHooksProvider value={{ endpoint: '/api/model', logging: true }}>
-                        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-                            <SelectedSpacesProvider>
-                                <AppContent>
-                                    <div className="h-100 grow">
-                                        <Component {...pageProps} />
-                                    </div>
-                                </AppContent>
-                            </SelectedSpacesProvider>
-                        </ThemeProvider>
-                    </ZenStackHooksProvider>
+                    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+                        <SelectedSpacesProvider>
+                            <AppContent>
+                                <div className="h-100 grow">
+                                    <Component {...pageProps} />
+                                </div>
+                            </AppContent>
+                        </SelectedSpacesProvider>
+                    </ThemeProvider>
                 </TooltipProvider>
             </SessionProvider>
         </QueryClientProvider>

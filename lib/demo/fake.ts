@@ -18,9 +18,9 @@ import {
     LeaseCreateScalarSchema,
     PersonCreateScalarSchema,
     PaymentCreateScalarSchema,
-    PropertyTenancyInCommonCreateScalarSchema,
-    PropertyTenancyInCommonTenantCreateScalarSchema,
-    PropertyJointTenancyTenantCreateScalarSchema,
+    propertyTenancyInCommonCreateScalarSchema,
+    propertyTenancyInCommonTenantCreateScalarSchema,
+    propertyJointTenancyTenantCreateScalarSchema,
 } from '@zenstackhq/runtime/zod/models';
 
 export const cityPlaywrightTest = 'Lyon';
@@ -46,7 +46,7 @@ export const fakeLease = (): z.infer<typeof LeaseCreateScalarSchema> => ({
     iban: faker.finance.accountNumber(),
 });
 
-export const fakeTenancyInCommon = (): z.infer<typeof PropertyTenancyInCommonCreateScalarSchema> => ({
+export const fakeTenancyInCommon = (): z.infer<typeof propertyTenancyInCommonCreateScalarSchema> => ({
     ...fakeAddress(),
     siret: faker.finance.accountNumber(),
     siren: faker.finance.accountNumber(),
@@ -67,14 +67,14 @@ const fakeAddress = () => ({
     country: faker.location.country(),
     state: faker.location.state(),
 });
-export const fakeInCommonTenant = (): z.infer<typeof PropertyTenancyInCommonTenantCreateScalarSchema> => {
+export const fakeInCommonTenant = (): z.infer<typeof propertyTenancyInCommonTenantCreateScalarSchema> => {
     return {
         entryDate: faker.date.past(),
         exitDate: faker.date.recent(),
     };
 };
 
-export const fakeJointTenancyTenant = (): z.infer<typeof PropertyJointTenancyTenantCreateScalarSchema> => {
+export const fakeJointTenancyTenant = (): z.infer<typeof propertyJointTenancyTenantCreateScalarSchema> => {
     return {};
 };
 
@@ -123,7 +123,7 @@ export function generateData({ length, spaceId }: { length: number; spaceId: str
                     tenancy: {
                         create: {
                             name: faker.word.noun(),
-                            type: PropertyTenancyType.PropertyTenancyInCommon,
+                            type: PropertyTenancyType.propertyTenancyInCommon,
                             tenancyInCommon: {
                                 create: {
                                     ...fakeTenancyInCommon(),

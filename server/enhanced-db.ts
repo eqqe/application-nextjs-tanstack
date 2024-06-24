@@ -1,7 +1,6 @@
 import { enhance } from '@zenstackhq/runtime';
 import type { GetServerSidePropsContext } from 'next';
 import { getServerAuthSession } from './auth';
-import { prisma } from './db';
 import { SelectedSpaces, selectedSpacesCookieName } from '@/lib/context';
 
 export function enhancePrisma({ userId, selectedSpaces }: { userId?: string; selectedSpaces?: SelectedSpaces }) {

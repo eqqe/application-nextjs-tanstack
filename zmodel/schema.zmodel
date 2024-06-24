@@ -23,10 +23,10 @@ plugin form {
     output = 'lib/forms'
 }
 
-plugin hooks {
-    provider = '@zenstackhq/tanstack-query'
-    output = 'lib/hooks'
-    target = 'react'
-    version = 'v5'
+plugin trpc {
+    provider = '@zenstackhq/trpc'
+    output = '../server/routers/generated'
+    generateClientHelpers = 'next'
+    generateModelActions = 'create,update,delete,count,findUnique,findMany'
 }
 

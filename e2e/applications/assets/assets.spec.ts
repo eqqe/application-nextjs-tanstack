@@ -53,12 +53,12 @@ test('Should enable assets application, see essential data, create a property te
     let property = fakeProperty();
     await utils.assets.createProperty({ property });
 
-    const titleCommon = 'Your PropertyTenancyInCommon';
-    const titleEntirety = 'Your PropertyTenancyByEntirety';
-    const titleJoint = 'Your PropertyJointTenancy';
+    const titleCommon = 'Your propertyTenancyInCommon';
+    const titleEntirety = 'Your propertyTenancyByEntirety';
+    const titleJoint = 'Your propertyJointTenancy';
     await utils.checkCountInCard({ title: titleCommon, count: 0 });
 
-    await utils.assets.createPropertyTenancyInCommon({
+    await utils.assets.createpropertyTenancyInCommon({
         propertyTenancyName: 'SCI Simon',
         tenancyInCommon: fakeTenancyInCommon(),
         surface: property.surface,
@@ -72,7 +72,7 @@ test('Should enable assets application, see essential data, create a property te
     await utils.assets.createProperty({ property });
 
     /* TODO SRE : sub model creation
-    await utils.assets.createPropertyTenancyByEntirety({
+    await utils.assets.createpropertyTenancyByEntirety({
         propertyTenancyName: 'Simon',
         byEntirety: {},
         surface: property.surface,
@@ -85,7 +85,7 @@ test('Should enable assets application, see essential data, create a property te
     property = fakeProperty();
     await utils.assets.createProperty({ property });
 
-    await utils.assets.createPropertyTenancyByEntirety({
+    await utils.assets.createpropertyTenancyByEntirety({
         propertyTenancyName: 'Simon 2',
         byEntirety: {},
         surface: property.surface,

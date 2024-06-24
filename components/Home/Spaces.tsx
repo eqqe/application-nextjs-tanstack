@@ -1,6 +1,6 @@
+import { trpc } from '@/lib/trpc';
 import { getSpaceUrl } from '@/lib/urls';
 import { orderByCreatedAt } from '@/lib/utils';
-import { useFindManySpace } from '@/zmodel/lib/hooks';
 import { Space } from '@prisma/client';
 import Link from 'next/link';
 
@@ -17,7 +17,7 @@ function SpaceItem({ space }: { space: Space }) {
 }
 
 export function Spaces() {
-    const { data: spaces } = useFindManySpace(orderByCreatedAt);
+    const { data: spaces } = trpc.space.findMany.useQuery(orderByCreatedAt);
     return (
         <ul className="flex flex-wrap gap-4">
             {spaces?.map((space) => (

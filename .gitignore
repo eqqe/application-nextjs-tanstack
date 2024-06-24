@@ -6,6 +6,7 @@ node_modules/
 .zenstack_repl*
 zmodel/lib/hooks
 zmodel/lib/forms
+generated
 .env
 zmodel/prisma/schema.prisma
 /test-results/

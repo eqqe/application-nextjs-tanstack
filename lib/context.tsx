@@ -1,11 +1,11 @@
-import { useFindManySpace, useFindManySubTabFolder, useFindUniqueSpace, useFindUniqueUser } from '@/zmodel/lib/hooks';
 import { useSession } from 'next-auth/react';
 import { getCookie, setCookie } from 'cookies-next';
 import { useRouter } from 'next/router';
-import { createContext, useState, useContext, ReactNode, useEffect, useCallback } from 'react';
+import { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Space } from '@prisma/client';
 import { orderByCreatedAt, orderByIndex } from '@/lib/utils';
+import { trpc } from './trpc';
 
 export type SelectedSpaces = string[];
 
@@ -29,7 +29,7 @@ export const useSelectedSpaces = () => {
 export const useCurrentSpace = () => {
     const { selectedSpaces } = useSelectedSpaces();
 
-    const { data: spaces } = useFindManySpace();
+    const { data: spaces } = trpc.space.findMany.useQuery(orderByCreatedAt);
 
     if (spaces && spaces.length) {
         return spaces.find((space) => space.id === selectedSpaces[0]);
@@ -39,7 +39,7 @@ export const useCurrentSpace = () => {
 
 export const useSubTabs = () => {
     const selectedSpaces = useSelectedSpaces();
-    const { data: subTabs } = useFindManySubTabFolder(
+    const { data: subTabs } = trpc.subTabFolder.findMany.useQuery(
         {
             include: {
                 grids: orderByIndex,
@@ -59,7 +59,7 @@ export const SelectedSpacesProvider: React.FC<{ children: ReactNode }> = ({ chil
     const currentUser = useCurrentSessionUser();
     const queryClient = useQueryClient();
 
-    const { data: spaces } = useFindManySpace(orderByCreatedAt);
+    const { data: spaces } = trpc.space.findMany.useQuery(orderByCreatedAt);
 
     useEffect(() => {
         if (!selectedSpaces.length && currentUser) {
@@ -104,7 +104,10 @@ export function useCurrentSessionUser() {
 
 export function useCurrentUser() {
     const sessionUser = useCurrentSessionUser();
-    const { data: user } = useFindUniqueUser({ where: { id: sessionUser?.id } }, { enabled: !!sessionUser });
+    const { data: user } = trpc.user.findUnique.useQuery(
+        { where: { id: sessionUser?.id } },
+        { enabled: !!sessionUser }
+    );
     return user;
 }
 

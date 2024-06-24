@@ -3,12 +3,12 @@ import { WithNavBar } from '@/components/layout/WithNavBar';
 import AutoForm from '@/components/ui/auto-form';
 import { UserUpdateScalarSchema } from '@zenstackhq/runtime/zod/models';
 import { useCurrentUser } from '@/lib/context';
-import { useUpdateUser } from '@/zmodel/lib/hooks';
 import { toast } from 'react-toastify';
+import { trpc } from '@/lib/trpc';
 
 export const User: NextPage = () => {
     const user = useCurrentUser();
-    const update = useUpdateUser();
+    const update = trpc.user.update.useMutation();
     return (
         <WithNavBar>
             <AutoForm
