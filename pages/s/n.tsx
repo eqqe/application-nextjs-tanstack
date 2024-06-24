@@ -3,13 +3,13 @@ import { WithNavBar } from '@/components/layout/WithNavBar';
 import AutoForm from '@/components/ui/auto-form';
 import { useCurrentSessionUser, useSelectedSpaces } from '@/lib/context';
 import { getNewSpace } from '@/lib/getNewSpace';
-import { useCreateSpace } from '@/zmodel/lib/hooks';
+import { trpc } from '@/lib/trpc';
 import { SpaceCreateScalarSchema } from '@zenstackhq/runtime/zod/models';
 import type { NextPage } from 'next';
 import { toast } from 'react-toastify';
 
 export const Home: NextPage = () => {
-    const createSpace = useCreateSpace();
+    const createSpace = trpc.space.create.useMutation();
     const user = useCurrentSessionUser();
     const { switchSpace } = useSelectedSpaces();
     if (!user) {

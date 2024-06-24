@@ -18,7 +18,7 @@ it('Should get grids', async () => {
         assert.equal(cardInGrid?.type, 'Card');
         assert.equal(cardInGrid?.card?.title, 'By surface');
         assert.equal(cardInGrid?.card?.content, 'Listed here');
-        assert.equal(cardInGrid?.card?.table?.type, 'Property');
+        assert.equal(cardInGrid?.card?.table?.type, 'property');
         assert.deepEqual(cardInGrid?.card?.table?.columns, []);
         assert.deepEqual(cardInGrid?.card?.table?.groupBy?.sum, ['surface']);
         assert.deepEqual(cardInGrid?.card?.table?.groupBy?.fields, ['city']);

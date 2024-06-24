@@ -1,8 +1,8 @@
-import { useFindUniqueGrid } from '@/zmodel/lib/hooks';
 import { GridCardInclude } from '@/components/Grid/Card/GridCard';
 import { GridTabsInclude } from '@/components/Grid/Tabs/GridTabs';
 import { useRouter } from 'next/router';
 import { orderByIndex } from '@/lib/utils';
+import { trpc } from '@/lib/trpc';
 
 export const GridInclude = {
     elements: {
@@ -20,11 +20,17 @@ export const useFindUniqueGridParam = (gridId: string) => ({
     },
     include: GridInclude,
 });
+
 export const useCurrentGrid = () => {
     const router = useRouter();
     const gridId = router.query.gridId as string;
 
-    const { data: grid } = useFindUniqueGrid(useFindUniqueGridParam(gridId), {
+    const params = useFindUniqueGridParam(gridId);
+    if (!gridId) {
+        return;
+    }
+
+    const { data: grid } = trpc.grid.findUnique.useQuery(params, {
         enabled: !!gridId,
     });
     return grid;

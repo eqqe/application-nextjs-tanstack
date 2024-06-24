@@ -5,9 +5,9 @@ import "../../application"
 import "grid"
 
 enum TypeTableRequest {
-    Aggregate
-    GroupBy
-    FindMany
+    findMany
+    groupBy
+    aggregate
 }
 
 model GridCardTable extends IdCreatedUpdatedAuth {

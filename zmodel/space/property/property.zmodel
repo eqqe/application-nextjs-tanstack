@@ -29,9 +29,9 @@ model Property extends Address, SpaceComponent {
 }
 
 enum PropertyTenancyType {
-    PropertyTenancyInCommon
-    PropertyJointTenancy
-    PropertyTenancyByEntirety
+    propertyTenancyInCommon
+    propertyJointTenancy
+    propertyTenancyByEntirety
 }
 
 model PropertyTenancy extends Named, Component {

@@ -1,11 +1,11 @@
-import { useFindUniqueSubTabFolder } from '@/zmodel/lib/hooks';
+import { trpc } from '@/lib/trpc';
 import { useRouter } from 'next/router';
 
 export function useCurrentSubTab() {
     const router = useRouter();
     const subTabId = router.query.subTabId as string;
 
-    const { data: subTab } = useFindUniqueSubTabFolder(
+    const { data: subTab } = trpc.subTabFolder.findUnique.useQuery(
         {
             where: {
                 id: subTabId,

@@ -11,15 +11,15 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { ErrorBoundary } from 'react-error-boundary';
 import { FallbackError } from '../layout/FallbackError';
-import { useFindManySpace } from '@/zmodel/lib/hooks';
 import { useRouter } from 'next/navigation';
 import { useSelectedSpaces } from '@/lib/context';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { orderByCreatedAt } from '@/lib/utils';
+import { trpc } from '@/lib/trpc';
 
 export function SpaceSwitch() {
-    const { data: spaces } = useFindManySpace(orderByCreatedAt);
+    const { data: spaces } = trpc.space.findMany.useQuery(orderByCreatedAt);
 
     const router = useRouter();
 

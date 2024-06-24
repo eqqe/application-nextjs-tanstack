@@ -4,34 +4,29 @@ import { SessionProvider } from 'next-auth/react';
 import type { AppProps } from 'next/app';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Provider as ZenStackHooksProvider } from '../zmodel/lib/hooks';
 import '../styles/globals.css';
 import { ReactElement } from 'react';
 import { ThemeProvider, useTheme } from 'next-themes';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { SelectedSpacesProvider } from '@/lib/context';
-
-// import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { trpc } from '@/lib/trpc';
 
 const queryClient = new QueryClient();
 
 function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
     return (
         <QueryClientProvider client={queryClient}>
-            {/* <ReactQueryDevtools /> */}
             <SessionProvider session={session}>
                 <TooltipProvider>
-                    <ZenStackHooksProvider value={{ endpoint: '/api/model', logging: true }}>
-                        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-                            <SelectedSpacesProvider>
-                                <AppContent>
-                                    <div className="h-100 grow">
-                                        <Component {...pageProps} />
-                                    </div>
-                                </AppContent>
-                            </SelectedSpacesProvider>
-                        </ThemeProvider>
-                    </ZenStackHooksProvider>
+                    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+                        <SelectedSpacesProvider>
+                            <AppContent>
+                                <div className="h-100 grow">
+                                    <Component {...pageProps} />
+                                </div>
+                            </AppContent>
+                        </SelectedSpacesProvider>
+                    </ThemeProvider>
                 </TooltipProvider>
             </SessionProvider>
         </QueryClientProvider>
@@ -48,4 +43,4 @@ function AppContent(props: { children: ReactElement | ReactElement[] }) {
     );
 }
 
-export default App;
+export default trpc.withTRPC(App);

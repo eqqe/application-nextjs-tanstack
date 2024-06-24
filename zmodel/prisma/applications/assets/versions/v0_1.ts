@@ -38,8 +38,8 @@ export const assetsv0_1: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                 invertTitleDescription: true,
                                                                 table: {
                                                                     create: {
-                                                                        type: Type.Property,
-                                                                        typeTableRequest: TypeTableRequest.FindMany,
+                                                                        type: Type.property,
+                                                                        typeTableRequest: TypeTableRequest.findMany,
                                                                         columns: [
                                                                             PropertyColumns.streetAddress,
                                                                             PropertyColumns.propertyType,

@@ -3,7 +3,7 @@ import NextAuth, { User } from 'next-auth';
 import { NextAuthOptions } from 'next-auth';
 import EmailProvider from 'next-auth/providers/email';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { prisma } from 'server/db';
+import { prisma } from 'server/db/client';
 import { signInPath } from '@/components/AuthGuard';
 import { Provider } from 'next-auth/providers';
 import { testUser } from '@/lib/demo/testUser';

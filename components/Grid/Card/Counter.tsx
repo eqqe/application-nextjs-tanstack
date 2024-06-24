@@ -1,7 +1,9 @@
-import { typeHooks } from '@/zmodel/lib/forms/typeHooks';
 import { Type } from '@prisma/client';
+import { trpc } from '@/lib/trpc';
 export function Counter({ type }: { type: Type }) {
-    const typeHook = typeHooks[type];
-    const { data: count } = typeHook.useCount();
+    const useCountQuery = trpc[type].count.useQuery;
+
+    // @ts-expect-error
+    const { data: count } = useCountQuery({});
     return <>{count}</>;
 }

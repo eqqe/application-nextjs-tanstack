@@ -12,7 +12,7 @@ test('Search for created property and tenancy, vs no result', async ({ page, uti
     await utils.assets.createProperty({ property });
 
     const propertyTenancyName = 'SCI Simon';
-    await utils.assets.createPropertyTenancyInCommon({
+    await utils.assets.createpropertyTenancyInCommon({
         propertyTenancyName,
         tenancyInCommon: fakeTenancyInCommon(),
         surface: property.surface,

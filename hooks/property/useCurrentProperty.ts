@@ -1,10 +1,10 @@
 import { useComponentIdRouter } from '@/lib/context';
-import { useFindUniqueProperty } from '@/zmodel/lib/hooks';
+import { trpc } from '@/lib/trpc';
 
 export function useCurrentProperty() {
     const componentId = useComponentIdRouter();
 
-    const { data: property } = useFindUniqueProperty(
+    const { data: property } = trpc.property.findUnique.useQuery(
         {
             where: {
                 id: componentId,

@@ -1,10 +1,3 @@
-import {
-    useCreateSpaceApplicationVersion,
-    useDeleteSpaceApplicationVersion,
-    useFindManyApplication,
-    useFindManySpaceApplicationVersion,
-    useUpdateSpaceApplicationVersion,
-} from '@/zmodel/lib/hooks';
 import { Button } from '@/components/ui/button';
 import { ApplicationScalarSchema, ApplicationVersionScalarSchema } from '@zenstackhq/runtime/zod/models';
 import { z } from 'zod';
@@ -13,6 +6,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { ColumnDef } from '@tanstack/react-table';
 import { Prisma } from '@prisma/client';
 import { AutoTable } from '@/components/AutoTable/AutoTable';
+import { trpc } from '@/lib/trpc';
 
 export const findManyApplicationArgs = {
     include: {
@@ -36,12 +30,12 @@ export const findManyApplicationArgs = {
     },
 };
 export const Applications = () => {
-    const { data: applications } = useFindManyApplication(findManyApplicationArgs);
+    const { data: applications } = trpc.application.findMany.useQuery(findManyApplicationArgs);
 
-    const activate = useCreateSpaceApplicationVersion();
-    const desactivate = useDeleteSpaceApplicationVersion();
-    const update = useUpdateSpaceApplicationVersion();
-    const { data: spaceApplications } = useFindManySpaceApplicationVersion({
+    const activate = trpc.spaceApplicationVersion.create.useMutation();
+    const desactivate = trpc.spaceApplicationVersion.delete.useMutation();
+    const update = trpc.spaceApplicationVersion.update.useMutation();
+    const { data: spaceApplications } = trpc.spaceApplicationVersion.findMany.useQuery({
         include: {
             applicationVersion: {
                 include: {
@@ -52,6 +46,8 @@ export const Applications = () => {
     });
 
     const queryClient = useQueryClient();
+
+    console.log(queryClient.getQueryCache());
     if (!applications) {
         return <>Loading...</>;
     }
@@ -102,7 +98,7 @@ export const Applications = () => {
                         : null,
                 };
                 async function refetchGrids() {
-                    await queryClient.refetchQueries({ queryKey: ['zenstack', 'SubTabFolder'], stale: true });
+                    await queryClient.refetchQueries();
                 }
                 async function onClickActivate() {
                     if (activated) {

@@ -1,8 +1,9 @@
 import { expect } from '@playwright/test';
 import { test } from '@/e2e/utils';
 import { cityPlaywrightTest } from '@/lib/demo/fake';
-import { lenghtDemo } from '@/components/Space/GenerateDemonstration';
 import assert from 'assert';
+
+const lenghtDemo = 3;
 
 test('Should enable assets application, rollback, and update', async ({ page, utils }) => {
     const { openHomeCreateSpace, assets, generateDemonstration, openSettings } = utils;
@@ -23,7 +24,7 @@ test('Should enable assets application, rollback, and update', async ({ page, ut
 
     assert(lenghtDemo > 2);
 
-    await utils.checkCountInCard({ title: 'Your PropertyTenancyInCommon', count: lenghtDemo });
+    await utils.checkCountInCard({ title: 'Your propertyTenancyInCommon', count: lenghtDemo });
     await utils.checkCountInCard({ title: 'Your leases', count: lenghtDemo * lenghtDemo });
     await utils.checkCountInCard({ title: 'Your properties', count: lenghtDemo });
     await utils.checkCountInCard({ title: 'Your persons', count: 2 * lenghtDemo * lenghtDemo });

@@ -10,7 +10,7 @@ import {
     saveProject,
 } from '@zenstackhq/sdk';
 import path from 'path';
-import { paramCase } from 'change-case';
+import { paramCase, camelCase } from 'change-case';
 import { type DMMF } from '@zenstackhq/sdk/prisma';
 import { VariableDeclarationKind } from 'ts-morph';
 
@@ -56,7 +56,7 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
         const sf = project.createSourceFile(path.join(outDir, `${fileName}.ts`), undefined, { overwrite: true });
 
         const formDefinition: FormDefinition = {
-            type: dataModel.name,
+            type: camelCase(dataModel.name),
             mode: 'create',
             polymorphisms: [],
             parents: [],
@@ -94,7 +94,7 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
                                     const { key, minLenghtArray1 } = getKeyAndMinLenghtArray1(parent);
                                     formDefinition.polymorphisms.push({
                                         key: field.name,
-                                        type: ref.name,
+                                        type: camelCase(ref.name),
                                         storeTypeField,
                                         parent: {
                                             key,
@@ -102,7 +102,7 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
                                             mode: 'connect',
                                             optional: parent.type.optional,
                                             minLenghtArray1,
-                                            type: parentType,
+                                            type: camelCase(parentType),
                                         },
                                     });
                                 }
@@ -125,7 +125,7 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
                         mode: 'connect',
                         optional: field.type.optional,
                         minLenghtArray1,
-                        type,
+                        type: camelCase(type),
                     };
                     if (field.type.array) {
                         formDefinition.children.push(dependency);
@@ -164,18 +164,7 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
     ]);
     sf.addStatements(`import { ${schemas.join(',')} } from '@zenstackhq/runtime/zod/models';`);
 
-    const hooks = names.flatMap((name) => [
-        `useAggregate${name}`,
-        `useGroupBy${name}`,
-        `useFindMany${name}`,
-        `useCount${name}`,
-        `useUpdate${name}`,
-        `useUpdateMany${name}`,
-        `useCreate${name}`,
-        `useCreateMany${name}`,
-    ]);
-    sf.addStatements(`import { ${hooks.join(',')} } from '@/zmodel/lib/hooks';
-                     import { Type } from '@zenstackhq/runtime/models';
+    sf.addStatements(`import { Type } from '@zenstackhq/runtime/models';
                      import { type FormDefinition } from '@/lib/formDefinition';
                      import { AnyZodObject } from 'zod';`);
 
@@ -186,25 +175,11 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
     const mappings = names
         .map(
             (name) => `
-    ${name}: {
-        useHook: {
-            Aggregate: useAggregate${name},
-            GroupBy: useGroupBy${name},
-            FindMany: useFindMany${name},
-        },
+    ${camelCase(name)}: {
         schema: {
             base: ${name}ScalarSchema,
             update: ${name}UpdateScalarSchema,
             create: ${name}CreateScalarSchema,
-        },
-        useCount: useCount${name},
-        useUpdate: {
-            single: useUpdate${name},
-            many: useUpdateMany${name},
-        },
-        useCreate: {
-            single: useCreate${name},
-            many: useCreateMany${name},
         },
         form: {
             create: ${name}CreateForm
@@ -224,24 +199,10 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
                 type: `Record<
                         Type,
                         {
-                            useHook: {
-                                Aggregate: Function;
-                                GroupBy: Function;
-                                FindMany: Function;
-                            };
                             schema: {
                                 base: AnyZodObject;
                                 update: AnyZodObject;
                                 create: AnyZodObject;
-                            };
-                            useCount: Function;
-                            useUpdate: {
-                                single: Function;
-                                many: Function;
-                            };
-                            useCreate: {
-                                single: Function;
-                                many: Function;
                             };
                             form: {
                                 create: FormDefinition;

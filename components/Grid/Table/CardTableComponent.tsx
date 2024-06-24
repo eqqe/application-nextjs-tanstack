@@ -8,11 +8,11 @@ import { AutoTable } from '@/components/AutoTable/AutoTable';
 import { ReactNode, useState, useMemo, useEffect, useCallback } from 'react';
 import { Chart } from '@/components/Grid/Card/Chart';
 import { getColumnDef } from '@/components/AutoTable/getColumnDef';
-import { keepPreviousData } from '@tanstack/react-query';
 import { beautifyObjectName } from '@/components/ui/auto-form/utils';
 import { useSearchParams } from 'next/navigation';
 import { typeHooks } from '@/zmodel/lib/forms/typeHooks';
 import React from 'react';
+import { trpc } from '@/lib/trpc';
 
 export const GridCardTableInclude = {
     include: {
@@ -36,6 +36,7 @@ export type CardTableComponentProps = {
         'id' | 'parentId' | 'updatedAt' | 'createdAt'
     >;
 };
+
 export const CardTableComponent = React.memo(
     ({
         table: { type, typeTableRequest, columns, groupBy, chart },
@@ -55,7 +56,9 @@ export const CardTableComponent = React.memo(
         multiTablesGlobalFilter?: boolean;
         where?: any;
     }) => {
-        const { useHook, schema, useUpdate, useCount } = typeHooks[type];
+        const { schema } = typeHooks[type];
+
+        const useUpdateMutation = trpc[type].update.useMutation;
 
         const [rowSelection, setRowSelection] = useState({});
 
@@ -74,7 +77,9 @@ export const CardTableComponent = React.memo(
                 onGlobalFilterChange(queryParam);
             }
         }, [searchParams]);
-        const update = useUpdate.single();
+
+        // @ts-expect-error Here we cannot define the args of the mutation for any type
+        const update = useUpdateMutation();
 
         const orFilter = useMemo(() => {
             if (!globalFilter) {
@@ -106,9 +111,9 @@ export const CardTableComponent = React.memo(
                 }, {});
             }
             switch (typeTableRequest) {
-                case 'Aggregate':
+                case 'aggregate':
                     return {};
-                case 'FindMany': {
+                case 'findMany': {
                     return {
                         orderBy: sorting.reduce((accumulator, currentValue) => {
                             accumulator[currentValue.id] = currentValue.desc
@@ -125,7 +130,7 @@ export const CardTableComponent = React.memo(
                         skip: pagination.pageSize * pagination.pageIndex,
                     };
                 }
-                case 'GroupBy':
+                case 'groupBy':
                     if (!groupBy) {
                         throw '! table.groupBy';
                     }
@@ -146,11 +151,11 @@ export const CardTableComponent = React.memo(
             }
         }, [groupBy, orFilter, pagination.pageIndex, pagination.pageSize, sorting, typeTableRequest]);
         type ColumnDefFromSchema = ColumnDef<any, ReactNode>;
-        const findMany = typeTableRequest === 'FindMany';
+        const findMany = typeTableRequest === 'findMany';
 
         const columnDataTable = useMemo(() => {
             let cols = columns;
-            if (typeTableRequest === 'GroupBy') {
+            if (typeTableRequest === 'groupBy') {
                 if (!groupBy) {
                     throw '! table.groupBy';
                 }
@@ -216,22 +221,28 @@ export const CardTableComponent = React.memo(
             update,
         ]);
 
-        const useHookTyped = useHook[typeTableRequest];
-
         let rows: any[] | undefined;
 
         const options = {
-            placeholderData: keepPreviousData,
+            keepPreviousData: true,
             enabled: !multiTablesGlobalFilter || !!orFilter.length,
         };
 
         if (where) {
             params.where = { ...params.where, ...where };
         }
-        rows = useHookTyped(params, options).data;
+
+        const useTypedQuery = trpc[type][typeTableRequest].useQuery;
+
+        // @ts-expect-error
+        rows = useTypedQuery(params, options).data;
 
         let rowCount: number | undefined;
-        rowCount = useCount({ where: params.where ?? {} }, options).data;
+
+        const useCountQuery = trpc[type].count.useQuery;
+
+        // @ts-expect-error
+        rowCount = useCountQuery({ where: params.where ?? {} }, options).data;
 
         if (!options.enabled || (multiTablesGlobalFilter && !rowCount)) {
             return null;

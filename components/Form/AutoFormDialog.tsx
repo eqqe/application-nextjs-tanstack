@@ -17,6 +17,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { FallbackError } from '@/components/layout/FallbackError';
 import { CommonFormTable } from '@/components/ui/auto-common/types';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useQueryClient } from '@tanstack/react-query';
 
 export function AutoFormDialog<SchemaType extends ZodObjectOrWrapped>({
     onSubmitData,
@@ -30,10 +31,12 @@ export function AutoFormDialog<SchemaType extends ZodObjectOrWrapped>({
 } & AutoFormProps<SchemaType> &
     CommonFormTable<SchemaType>) {
     const [open, setOpen] = useState(false);
+    const queryClient = useQueryClient();
     const onSubmit = async (data: z.infer<SchemaType>) => {
         toast.dismiss();
         try {
             await onSubmitData(data);
+            queryClient.refetchQueries();
             setOpen(false);
         } catch (err) {
             toast.error('Failed to create');

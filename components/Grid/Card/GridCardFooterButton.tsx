@@ -5,6 +5,7 @@ import { typeHooks } from '@/zmodel/lib/forms/typeHooks';
 import { AnyZodObject, z } from 'zod';
 import { FieldConfig } from '@/components/ui/auto-form/types';
 import { Dependency } from '@/lib/formDefinition';
+import { trpc } from '@/lib/trpc';
 
 export const GridCardFooterButtonInclude = true;
 
@@ -13,10 +14,10 @@ export function GridCardFooterButton({
 }: {
     button: Prisma.GridCardFooterButtonGetPayload<typeof GridCardFooterButtonInclude>;
 }) {
-    const typeHook = typeHooks[button.table];
-
-    const create = typeHook.useCreate.single();
-    const formDefinition = typeHook.form.create;
+    const useCreateMutation = trpc[button.table].create.useMutation;
+    // @ts-expect-error
+    const create = useCreateMutation();
+    const formDefinition = typeHooks[button.table].form.create;
     const formSchema = formDefinition.children.reduce(
         (schema, dependency) => reduceDependency({ schema, dependency }),
         formDefinition.parents

@@ -66,11 +66,11 @@ export function getAssetsUtils(base: ReturnType<typeof getBaseUtils>, page: Page
         await base.getByLabel('private').check();
         await base.clickSaveChanges();
 
-        await base.checkToastCreated('Property');
+        await base.checkToastCreated('property');
         return streetAddress;
     }
 
-    async function createPropertyTenancyInCommon({
+    async function createpropertyTenancyInCommon({
         tenancyInCommon,
         propertyTenancyName,
         surface,
@@ -80,7 +80,7 @@ export function getAssetsUtils(base: ReturnType<typeof getBaseUtils>, page: Page
         // Surface to identify property line in test
         surface: number;
     }) {
-        await base.clickButton('Create PropertyTenancyInCommon');
+        await base.clickButton('Create propertyTenancyInCommon');
 
         await base.selectLine({ name: surface.toString() });
 
@@ -108,13 +108,13 @@ export function getAssetsUtils(base: ReturnType<typeof getBaseUtils>, page: Page
         // Surface to identify property line in test
         surface: number;
     }) {
-        await base.clickButton('Create PropertyJointTenancy');
+        await base.clickButton('Create propertyJointTenancy');
         await base.selectLine({ name: surface.toString() });
         await base.getByLabel<PropertyTenancy>('name').fill(propertyTenancyName);
         await base.clickSaveChanges();
     }
 
-    async function createPropertyTenancyByEntirety({
+    async function createpropertyTenancyByEntirety({
         byEntirety,
         propertyTenancyName,
         surface,
@@ -124,7 +124,7 @@ export function getAssetsUtils(base: ReturnType<typeof getBaseUtils>, page: Page
         // Surface to identify property line in test
         surface: number;
     }) {
-        await base.clickButton('Create PropertyTenancyByEntirety');
+        await base.clickButton('Create propertyTenancyByEntirety');
         await base.selectLine({ name: surface.toString() });
         await base.getByLabel<PropertyTenancy>('name').fill(propertyTenancyName);
         await base.getByLabel<Person>('birthDate').fill('1990-12-12');
@@ -135,9 +135,9 @@ export function getAssetsUtils(base: ReturnType<typeof getBaseUtils>, page: Page
         enable,
         openEssentialData,
         createProperty,
-        createPropertyTenancyInCommon,
+        createpropertyTenancyInCommon,
         createPropertyTenancyJoint,
-        createPropertyTenancyByEntirety,
+        createpropertyTenancyByEntirety,
         createLease,
         createLeaseFindProperty,
     };

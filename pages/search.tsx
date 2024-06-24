@@ -12,7 +12,7 @@ export const Search: NextPage = () => {
                 groupBy: null,
                 chart: null,
                 columns: [],
-                typeTableRequest: 'FindMany',
+                typeTableRequest: 'findMany',
             }}
             pageSize={5}
             editableItems={false}
