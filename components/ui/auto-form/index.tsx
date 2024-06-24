@@ -69,7 +69,6 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
         }
     }
 
-    console.log(form.getValues());
     return (
         <div className="w-full">
             <Form {...form}>

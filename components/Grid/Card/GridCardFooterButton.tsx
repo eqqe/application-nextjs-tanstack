@@ -78,11 +78,16 @@ export function GridCardFooterButton({
                 if (array) {
                     if (minLenghtArray1) {
                         schema = schema.extend({
-                            [key]: z.object({ connect: z.array(z.object({ id: z.string() })).min(1) }),
+                            [key]: z.object({
+                                connect: z
+                                    .array(z.object({ id: z.string() }))
+                                    .min(1)
+                                    .default([]),
+                            }),
                         });
                     } else {
                         schema = schema.extend({
-                            [key]: z.object({ connect: z.array(z.object({ id: z.string() })) }),
+                            [key]: z.object({ connect: z.array(z.object({ id: z.string() })).default([]) }),
                         });
                     }
                 } else {
@@ -101,11 +106,11 @@ export function GridCardFooterButton({
                 if (array) {
                     if (minLenghtArray1) {
                         schema = schema.extend({
-                            [key]: z.object({ createMany: z.array(typeHooks[type].schema.create).min(1) }),
+                            [key]: z.object({ createMany: z.array(typeHooks[type].schema.create).min(1).default([]) }),
                         });
                     } else {
                         schema = schema.extend({
-                            [key]: z.object({ createMany: z.array(typeHooks[type].schema.create) }),
+                            [key]: z.object({ createMany: z.array(typeHooks[type].schema.create).default([]) }),
                         });
                     }
                 } else {
