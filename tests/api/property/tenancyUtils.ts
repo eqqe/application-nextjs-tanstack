@@ -1,5 +1,5 @@
 import { fakeInCommonTenant, fakeJointTenancyTenant, fakePerson, fakeTenancyInCommon } from '@/lib/demo/fake';
-import { Property, User } from '@prisma/client';
+import { Property, User, PropertyTenancyType } from '@prisma/client';
 import { faker } from '@faker-js/faker';
 
 export const person = fakePerson();
@@ -11,7 +11,7 @@ export function propertyJointTenancyCreateArgs({ property, user }: { property: P
             propertyTenancy: {
                 create: {
                     name: faker.word.noun(),
-                    type: 'Joint',
+                    type: PropertyTenancyType.PropertyJointTenancy,
                     properties: {
                         connect: {
                             id: property.id,
@@ -44,7 +44,7 @@ export function propertyTenancyByEntiretyCreateArgs({ property, user }: { proper
             propertyTenancy: {
                 create: {
                     name: faker.word.noun(),
-                    type: 'ByEntirety',
+                    type: PropertyTenancyType.PropertyTenancyByEntirety,
                     properties: {
                         connect: {
                             id: property.id,
@@ -73,7 +73,7 @@ export function propertyTenancyInCommonCreateArgs({ property, user }: { property
             propertyTenancy: {
                 create: {
                     name: faker.word.noun(),
-                    type: 'InCommon',
+                    type: PropertyTenancyType.PropertyTenancyInCommon,
                     properties: {
                         connect: {
                             id: property.id,

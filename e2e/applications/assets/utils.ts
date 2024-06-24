@@ -1,10 +1,7 @@
 import { getBaseUtils } from '@/e2e/utils';
-import { fakeLease, fakeProperty, fakeTenancyInCommon } from '@/lib/demo/fake';
-import { PropertyTenancyInCommonCreateForm } from '@/zmodel/lib/forms/property-tenancy-in-common';
-import { useCreatePropertyTenancy } from '@/zmodel/lib/hooks';
+import { fakeLease, fakeProperty } from '@/lib/demo/fake';
 import { Page, expect } from '@playwright/test';
 import { Lease, Property, PropertyTenancy, PropertyTenancyInCommon, Person } from '@prisma/client';
-import { PropertyJointTenancy } from '@zenstackhq/runtime/models';
 import {
     PropertyJointTenancyCreateScalarSchema,
     PropertyTenancyByEntiretyCreateScalarSchema,

@@ -28,10 +28,16 @@ model Property extends Address, SpaceComponent {
     tenancyId    String?
 }
 
+enum PropertyTenancyType {
+    PropertyTenancyInCommon
+    PropertyJointTenancy
+    PropertyTenancyByEntirety
+}
+
 model PropertyTenancy extends Named, Component {
     properties          Property[]                 @form.minLenghtArray1
 
-    type                String
+    type                PropertyTenancyType
 
     tenancyInCommon     PropertyTenancyInCommon?   @relation(fields: [tenancyInCommonId], references: [id], onDelete: Cascade)
     tenancyInCommonId   String?                    @unique
