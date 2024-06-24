@@ -46,6 +46,8 @@ export const Applications = () => {
     });
 
     const queryClient = useQueryClient();
+
+    console.log(queryClient.getQueryCache());
     if (!applications) {
         return <>Loading...</>;
     }
@@ -96,7 +98,7 @@ export const Applications = () => {
                         : null,
                 };
                 async function refetchGrids() {
-                    await queryClient.refetchQueries({ queryKey: ['zenstack', 'SubTabFolder'], stale: true });
+                    await queryClient.refetchQueries();
                 }
                 async function onClickActivate() {
                     if (activated) {

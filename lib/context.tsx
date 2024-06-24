@@ -77,7 +77,7 @@ export const SelectedSpacesProvider: React.FC<{ children: ReactNode }> = ({ chil
 
     useEffect(() => {
         if (selectedSpaces && selectedSpaces.length) {
-            queryClient.refetchQueries({ queryKey: ['zenstack'], stale: true });
+            queryClient.refetchQueries({ queryKey: [], stale: true });
         }
     }, [queryClient, selectedSpaces]);
 

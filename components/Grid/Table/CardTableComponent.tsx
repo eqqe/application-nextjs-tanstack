@@ -60,9 +60,6 @@ export const CardTableComponent = React.memo(
 
         const useUpdateMutation = trpc[type].update.useMutation;
 
-        // @ts-expect-error Here we cannot define the args of the mutation for any type
-        const useUpdate = useUpdateMutation();
-
         const [rowSelection, setRowSelection] = useState({});
 
         const [pagination, onPaginationChange] = useState<PaginationState>({
@@ -80,7 +77,9 @@ export const CardTableComponent = React.memo(
                 onGlobalFilterChange(queryParam);
             }
         }, [searchParams]);
-        const update = useUpdate.single();
+
+        // @ts-expect-error Here we cannot define the args of the mutation for any type
+        const update = useUpdateMutation();
 
         const orFilter = useMemo(() => {
             if (!globalFilter) {

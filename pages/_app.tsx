@@ -11,14 +11,11 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { SelectedSpacesProvider } from '@/lib/context';
 import { trpc } from '@/lib/trpc';
 
-// import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-
 const queryClient = new QueryClient();
 
 function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
     return (
         <QueryClientProvider client={queryClient}>
-            {/* <ReactQueryDevtools /> */}
             <SessionProvider session={session}>
                 <TooltipProvider>
                     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
