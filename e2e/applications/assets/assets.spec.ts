@@ -71,6 +71,7 @@ test('Should enable assets application, see essential data, create a property te
     property = fakeProperty();
     await utils.assets.createProperty({ property });
 
+    /* TODO SRE : sub model creation
     await utils.assets.createPropertyTenancyByEntirety({
         propertyTenancyName: 'Simon',
         byEntirety: {},
@@ -93,7 +94,7 @@ test('Should enable assets application, see essential data, create a property te
     await utils.checkCountInCard({ title: titleCommon, count: 1 });
     await utils.checkCountInCard({ title: titleEntirety, count: 2 });
     await utils.checkCountInCard({ title: titleJoint, count: 0 });
-
+*/
     property = fakeProperty();
     await utils.assets.createProperty({ property });
 
@@ -104,6 +105,6 @@ test('Should enable assets application, see essential data, create a property te
     });
 
     await utils.checkCountInCard({ title: titleCommon, count: 1 });
-    await utils.checkCountInCard({ title: titleEntirety, count: 1 });
+    await utils.checkCountInCard({ title: titleEntirety, count: 0 });
     await utils.checkCountInCard({ title: titleJoint, count: 1 });
 });

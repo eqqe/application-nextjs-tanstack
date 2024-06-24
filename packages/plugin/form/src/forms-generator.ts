@@ -49,6 +49,9 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
     const models = getDataModels(model);
 
     models.map((dataModel) => {
+        if (!!getAttribute(dataModel, '@@form.ignore')) {
+            return;
+        }
         const fileName = paramCase(dataModel.name);
         const sf = project.createSourceFile(path.join(outDir, `${fileName}.ts`), undefined, { overwrite: true });
 

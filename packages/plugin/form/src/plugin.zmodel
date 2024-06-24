@@ -1,4 +1,5 @@
 attribute @form.polymorphism()
 attribute @form.ignore()
+attribute @@form.ignore()
 attribute @form.minLenghtArray1()
 attribute @@form.polymorphism(typeField: FieldReference, parentField: FieldReference)

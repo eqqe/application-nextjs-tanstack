@@ -21,7 +21,7 @@ export function getAssetsUtils(base: ReturnType<typeof getBaseUtils>, page: Page
         await page.getByText('Your essential data').click();
     }
     async function createFillScalarLeaseFields({ startDate }: { startDate: string }) {
-        await base.clickButton('Create Lease');
+        await base.clickButton('Create lease');
 
         const lease = fakeLease();
         await base.getByLabel<Lease>('startDate').fill(startDate);
