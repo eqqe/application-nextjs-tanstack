@@ -118,7 +118,7 @@ enum Type {
     property
     lease
     payment
-    leasetenant
+    leaseTenant
     charge
     person
     user

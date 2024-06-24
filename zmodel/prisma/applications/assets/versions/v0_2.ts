@@ -1,6 +1,6 @@
 import { GridElementType } from '@prisma/client';
 import { Type, type Prisma, TypeTableRequest } from '@prisma/client';
-import { PropertyColumns, LeaseColumns, propertyTenancyInCommonScalarSchemaColumns } from '../columns';
+import { PropertyColumns, LeaseColumns, PropertyTenancyInCommonScalarSchemaColumns } from '../columns';
 
 export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput = {
     versionMajor: 0,
@@ -332,10 +332,10 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                                                 create: {
                                                                                                     type: 'propertyTenancyInCommon',
                                                                                                     columns: [
-                                                                                                        propertyTenancyInCommonScalarSchemaColumns.city,
-                                                                                                        propertyTenancyInCommonScalarSchemaColumns.intraCommunityVAT,
-                                                                                                        propertyTenancyInCommonScalarSchemaColumns.postalCode,
-                                                                                                        propertyTenancyInCommonScalarSchemaColumns.updatedAt,
+                                                                                                        PropertyTenancyInCommonScalarSchemaColumns.city,
+                                                                                                        PropertyTenancyInCommonScalarSchemaColumns.intraCommunityVAT,
+                                                                                                        PropertyTenancyInCommonScalarSchemaColumns.postalCode,
+                                                                                                        PropertyTenancyInCommonScalarSchemaColumns.updatedAt,
                                                                                                     ],
                                                                                                     typeTableRequest:
                                                                                                         'FindMany',
@@ -497,13 +497,13 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                 title: 'Tenants',
                                                                 invertTitleDescription: false,
                                                                 description: `Click here to add one`,
-                                                                count: 'leasetenant',
+                                                                count: 'leaseTenant',
                                                                 footer: {
                                                                     create: {
                                                                         button: {
                                                                             create: {
                                                                                 text: 'Create Lease Tenants',
-                                                                                table: 'leasetenant',
+                                                                                table: 'leaseTenant',
                                                                             },
                                                                         },
                                                                     },
@@ -562,7 +562,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                                             description: `List`,
                                                                                             table: {
                                                                                                 create: {
-                                                                                                    type: 'leasetenant',
+                                                                                                    type: 'leaseTenant',
                                                                                                     typeTableRequest:
                                                                                                         'FindMany',
                                                                                                 },
