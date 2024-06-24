@@ -17,13 +17,16 @@ type BaseDependency = {
     key: string;
     type: string;
 };
-type Dependency = BaseDependency & {
+export type Dependency = BaseDependency & {
     array: boolean;
     optional: boolean;
     mode: 'connect' | 'create';
 };
 
-type Polymorphism = BaseDependency;
+type Polymorphism = BaseDependency & {
+    parent: Dependency;
+    storeTypeField: string;
+};
 
 export type FormDefinition = {
     mode: 'create' | 'update' | 'view';
@@ -96,25 +99,7 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
                     (attribute) => attribute.decl.ref?.name === '@form.polymorphism'
                 );
 
-                function getFieldConfigSearch(fieldConnect: DataModelField) {
-                    const searchValue = `{
-                        fieldType: 'search',
-                        search: {
-                            type: '${fieldConnect?.type.reference?.ref?.name}',
-                            enableMultiRowSelection: ${fieldConnect.type.array},
-                            optional: ${fieldConnect.type.optional}
-                        }
-                        }`;
-                    if (fieldConnect.type.array) {
-                        return `${fieldConnect.name}: {
-                            connect: ${searchValue}
-                        }`;
-                    }
-                    return `${fieldConnect.name}: ${searchValue}`;
-                }
-
                 if (polymorphAttribute) {
-                    polymorphModels.push(ref.name);
                     const polymorphRefAttribute = ref.attributes.find(
                         (attribute) => attribute.decl.ref?.name === '@@form.polymorphism'
                     );
@@ -124,74 +109,79 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
 
                     const parent = (polymorphRefAttribute?.args[1].value as ReferenceExpr).target.ref;
                     if (parent?.$type === 'DataModelField') {
-                        // TODO SRE : filter out already associated parents (for example, a property will be disociated from existing tenant)
-                        fieldsConfigs.push(
-                            `${field.name}: {
-                                create: { ${getFieldConfigSearch(parent)}}
-                            }
-                           `
-                        );
-                        topRefs.push(
-                            `${field.name}: z.object({
-                                create: ${ref.name}CreateScalarSchema.extend({
-                                    ${
-                                        (polymorphRefAttribute?.args[0].value as ReferenceExpr).target.ref?.name
-                                    }: z.enum(['${dataModel.name}']).default('${dataModel.name}'),
-                                    ${parent.name}: z.object({ 
-                                        connect: z.array(z.object({ id: z.string() }))
-                                    })
-                                })`
-                        );
                         // TODO
 
+                        /*
+
+                            const formDefinition: FormDefinition = {
+                            type: 'PropertyTenancyInCommon',
+                            mode: 'create',
+                            polymorphisms: [
+                                {
+                                    key: 'propertyTenancy',
+                                    type: 'PropertyTenancy',
+                                    storeTypeField: 'type',
+                                    parent: {
+                                        key: 'properties',
+                                        type: 'Property',
+                                        mode: 'connect',
+                                        array: true,
+                                        optional: false,
+                                    },
+                                },
+                            ],*/
+
+                        const storeTypeField = (polymorphRefAttribute?.args[0].value as ReferenceExpr).target.ref?.name;
+                        if (!storeTypeField) {
+                            throw '!storeFieldType';
+                        }
+                        const parentType = parent.type.reference?.ref?.name;
+                        if (!parentType) {
+                            throw '!parentType';
+                        }
                         formDefinition.polymorphisms.push({
                             key: field.name,
                             type: ref.name,
-                            storeTypeField: (polymorphRefAttribute?.args[0].value as ReferenceExpr).target.ref?.name,
+                            storeTypeField,
+                            parent: {
+                                key: parent.name,
+                                array: parent.type.array,
+                                mode: 'connect',
+                                optional: parent.type.optional,
+                                type: parentType,
+                            },
                         });
                     }
                 } else {
-                    fieldsConfigs.push(getFieldConfigSearch(field));
+                    const type = field.type.reference?.ref?.name;
+                    if (!type) {
+                        throw '!type';
+                    }
+                    const dependency: Dependency = {
+                        key: field.name,
+                        array: field.type.array,
+                        mode: 'connect',
+                        optional: field.type.optional,
+                        type,
+                    };
                     if (field.type.array) {
-                        lowRefs.push(
-                            `${field?.name}: z.object({connect: z.array(z.object({ id: z.string() }))).optional()`
-                        );
+                        formDefinition.children.push(dependency);
                     } else {
-                        topRefs.push(`${field.name}: z.string()${field.type.optional ? `.optional()` : ''}`);
+                        formDefinition.parents.push(dependency);
                     }
                 }
             }
         });
 
         sf.addStatements('/* eslint-disable */');
-        sf.addStatements(`import { FieldConfigItem } from '@/components/ui/auto-form/types'`);
-        sf.addStatements(`import { z, AnyZodObject } from 'zod'`);
-        const scalarSchemaName = `${dataModel.name}CreateScalarSchema`;
-        sf.addStatements(
-            `import { ${[scalarSchemaName].concat(
-                polymorphModels.map((refName) => `${refName}CreateScalarSchema`)
-            )} } from '@zenstackhq/runtime/zod/models'`
-        );
 
         sf.addVariableStatement({
             isExported: true,
             declarationKind: VariableDeclarationKind.Const,
             declarations: [
                 {
-                    name: `${dataModel.name}FormConfig`,
-                    initializer: `z.object({ ${topRefs.join(
-                        ','
-                    )} }).extend(${scalarSchemaName}.shape).extend({ ${lowRefs.join(',')} })`,
-                },
-            ],
-        });
-        sf.addVariableStatement({
-            isExported: true,
-            declarationKind: VariableDeclarationKind.Const,
-            declarations: [
-                {
-                    name: `${dataModel.name}FieldConfig`,
-                    initializer: `{${fieldsConfigs.join(',')}}`,
+                    name: `${dataModel.name}CreateForm`,
+                    initializer: JSON.stringify(formDefinition),
                 },
             ],
         });
@@ -222,11 +212,9 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
     ]);
     sf.addStatements(`import { ${hooks.join(',')} } from '@/zmodel/lib/hooks';`);
 
-    /*names.forEach((name) => {
-        sf.addStatements(
-            `import { ${name}FormConfig, ${name}FieldConfig } from '@/zmodel/lib/forms/${paramCase(name)}';`
-        );
-    });*/
+    names.forEach((name) => {
+        sf.addStatements(`import { ${name}CreateForm } from '@/zmodel/lib/forms/${paramCase(name)}';`);
+    });
 
     const mappings = names
         .map(
@@ -251,6 +239,9 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
             single: useCreate${name},
             many: useCreateMany${name},
         },
+        form: {
+            create: ${name}CreateForm
+        }
     }
     `
         )

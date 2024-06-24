@@ -74,8 +74,6 @@ export function GridCardFooterButton({
                             }),
                         }),
                     });
-                    // TODO SRE : reduce dependency in key only
-
                     return schema;
                 }, z.object({}))
             )
