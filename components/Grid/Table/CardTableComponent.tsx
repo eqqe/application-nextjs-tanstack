@@ -58,7 +58,10 @@ export const CardTableComponent = React.memo(
     }) => {
         const { schema } = typeHooks[type];
 
-        const useUpdate = trpc[type].update.useMutation();
+        const useUpdateMutation = trpc[type].update.useMutation;
+
+        // @ts-expect-error Here we cannot define the args of the mutation for any type
+        const useUpdate = useUpdateMutation();
 
         const [rowSelection, setRowSelection] = useState({});
 
@@ -230,10 +233,17 @@ export const CardTableComponent = React.memo(
             params.where = { ...params.where, ...where };
         }
 
-        rows = trpc[type.toLowerCase()].findMany.useQuery(params, options).data;
+        const useFindManyQuery = trpc[type].findMany.useQuery;
+
+        // @ts-expect-error
+        rows = useFindManyQuery(params, options).data;
 
         let rowCount: number | undefined;
-        rowCount = trpc[type.toLowerCase()].count.useQuery({ where: params.where ?? {} }, options).data;
+
+        const useCountQuery = trpc[type].count.useQuery;
+
+        // @ts-expect-error
+        rowCount = useCountQuery({ where: params.where ?? {} }, options).data;
 
         if (!options.enabled || (multiTablesGlobalFilter && !rowCount)) {
             return null;

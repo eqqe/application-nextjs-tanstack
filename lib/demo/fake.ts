@@ -18,9 +18,9 @@ import {
     LeaseCreateScalarSchema,
     PersonCreateScalarSchema,
     PaymentCreateScalarSchema,
-    propertyTenancyInCommonCreateScalarSchema,
-    propertyTenancyInCommonTenantCreateScalarSchema,
-    propertyJointTenancyTenantCreateScalarSchema,
+    PropertyTenancyInCommonCreateScalarSchema,
+    PropertyTenancyInCommonTenantCreateScalarSchema,
+    PropertyJointTenancyTenantCreateScalarSchema,
 } from '@zenstackhq/runtime/zod/models';
 
 export const cityPlaywrightTest = 'Lyon';
@@ -46,7 +46,7 @@ export const fakeLease = (): z.infer<typeof LeaseCreateScalarSchema> => ({
     iban: faker.finance.accountNumber(),
 });
 
-export const fakeTenancyInCommon = (): z.infer<typeof propertyTenancyInCommonCreateScalarSchema> => ({
+export const fakeTenancyInCommon = (): z.infer<typeof PropertyTenancyInCommonCreateScalarSchema> => ({
     ...fakeAddress(),
     siret: faker.finance.accountNumber(),
     siren: faker.finance.accountNumber(),
@@ -67,14 +67,14 @@ const fakeAddress = () => ({
     country: faker.location.country(),
     state: faker.location.state(),
 });
-export const fakeInCommonTenant = (): z.infer<typeof propertyTenancyInCommonTenantCreateScalarSchema> => {
+export const fakeInCommonTenant = (): z.infer<typeof PropertyTenancyInCommonTenantCreateScalarSchema> => {
     return {
         entryDate: faker.date.past(),
         exitDate: faker.date.recent(),
     };
 };
 
-export const fakeJointTenancyTenant = (): z.infer<typeof propertyJointTenancyTenantCreateScalarSchema> => {
+export const fakeJointTenancyTenant = (): z.infer<typeof PropertyJointTenancyTenantCreateScalarSchema> => {
     return {};
 };
 

@@ -1,11 +1,11 @@
 import { getBaseUtils } from '@/e2e/utils';
 import { fakeLease, fakeProperty } from '@/lib/demo/fake';
 import { Page, expect } from '@playwright/test';
-import { Lease, Property, PropertyTenancy, propertyTenancyInCommon, Person } from '@prisma/client';
+import { Lease, Property, PropertyTenancy, PropertyTenancyInCommon, Person } from '@prisma/client';
 import {
-    propertyJointTenancyCreateScalarSchema,
-    propertyTenancyByEntiretyCreateScalarSchema,
-    propertyTenancyInCommonCreateScalarSchema,
+    PropertyJointTenancyCreateScalarSchema,
+    PropertyTenancyByEntiretyCreateScalarSchema,
+    PropertyTenancyInCommonCreateScalarSchema,
 } from '@zenstackhq/runtime/zod/models';
 import { z } from 'zod';
 
@@ -75,7 +75,7 @@ export function getAssetsUtils(base: ReturnType<typeof getBaseUtils>, page: Page
         propertyTenancyName,
         surface,
     }: {
-        tenancyInCommon: z.infer<typeof propertyTenancyInCommonCreateScalarSchema>;
+        tenancyInCommon: z.infer<typeof PropertyTenancyInCommonCreateScalarSchema>;
         propertyTenancyName: string;
         // Surface to identify property line in test
         surface: number;
@@ -86,15 +86,15 @@ export function getAssetsUtils(base: ReturnType<typeof getBaseUtils>, page: Page
 
         await base.getByLabel<PropertyTenancy>('name').fill(propertyTenancyName);
 
-        await base.getByLabel<propertyTenancyInCommon>('streetAddress').fill(tenancyInCommon.streetAddress);
-        await base.getByLabel<propertyTenancyInCommon>('city').fill(tenancyInCommon.city);
-        await base.getByLabel<propertyTenancyInCommon>('postalCode').fill(tenancyInCommon.postalCode);
-        await base.getByLabel<propertyTenancyInCommon>('country').fill(tenancyInCommon.country);
+        await base.getByLabel<PropertyTenancyInCommon>('streetAddress').fill(tenancyInCommon.streetAddress);
+        await base.getByLabel<PropertyTenancyInCommon>('city').fill(tenancyInCommon.city);
+        await base.getByLabel<PropertyTenancyInCommon>('postalCode').fill(tenancyInCommon.postalCode);
+        await base.getByLabel<PropertyTenancyInCommon>('country').fill(tenancyInCommon.country);
         await base
-            .getByLabel<propertyTenancyInCommon>('intraCommunityVAT')
+            .getByLabel<PropertyTenancyInCommon>('intraCommunityVAT')
             .fill(tenancyInCommon.intraCommunityVAT ?? '');
-        await base.getByLabel<propertyTenancyInCommon>('siren').fill(tenancyInCommon.siren ?? '');
-        await base.getByLabel<propertyTenancyInCommon>('siret').fill(tenancyInCommon.siret ?? '');
+        await base.getByLabel<PropertyTenancyInCommon>('siren').fill(tenancyInCommon.siren ?? '');
+        await base.getByLabel<PropertyTenancyInCommon>('siret').fill(tenancyInCommon.siret ?? '');
         await base.clickSaveChanges();
     }
 
@@ -103,7 +103,7 @@ export function getAssetsUtils(base: ReturnType<typeof getBaseUtils>, page: Page
         propertyTenancyName,
         surface,
     }: {
-        jointTenancy: z.infer<typeof propertyJointTenancyCreateScalarSchema>;
+        jointTenancy: z.infer<typeof PropertyJointTenancyCreateScalarSchema>;
         propertyTenancyName: string;
         // Surface to identify property line in test
         surface: number;
@@ -119,7 +119,7 @@ export function getAssetsUtils(base: ReturnType<typeof getBaseUtils>, page: Page
         propertyTenancyName,
         surface,
     }: {
-        byEntirety: z.infer<typeof propertyTenancyByEntiretyCreateScalarSchema>;
+        byEntirety: z.infer<typeof PropertyTenancyByEntiretyCreateScalarSchema>;
         propertyTenancyName: string;
         // Surface to identify property line in test
         surface: number;

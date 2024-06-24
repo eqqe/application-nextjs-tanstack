@@ -14,7 +14,9 @@ export function GridCardFooterButton({
 }: {
     button: Prisma.GridCardFooterButtonGetPayload<typeof GridCardFooterButtonInclude>;
 }) {
-    const create = trpc[button.table].create.useMutation();
+    const useCreateMutation = trpc[button.table].create.useMutation;
+    // @ts-expect-error
+    const create = useCreateMutation();
     const formDefinition = typeHooks[button.table].form.create;
     const formSchema = formDefinition.children.reduce(
         (schema, dependency) => reduceDependency({ schema, dependency }),

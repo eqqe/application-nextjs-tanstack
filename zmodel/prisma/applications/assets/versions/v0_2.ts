@@ -414,7 +414,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                                             description: `List`,
                                                                                             table: {
                                                                                                 create: {
-                                                                                                    type: '',
+                                                                                                    type: 'propertyTenancyInCommonTenant',
                                                                                                     typeTableRequest:
                                                                                                         'FindMany',
                                                                                                 },
@@ -440,7 +440,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                                             description: `List`,
                                                                                             table: {
                                                                                                 create: {
-                                                                                                    type: 'PropertyTenancy',
+                                                                                                    type: 'propertyTenancy',
                                                                                                     typeTableRequest:
                                                                                                         'FindMany',
                                                                                                 },
@@ -474,13 +474,13 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                 title: 'Leases',
                                                                 invertTitleDescription: false,
                                                                 description: `Click here to add one`,
-                                                                count: 'Lease',
+                                                                count: 'lease',
                                                                 footer: {
                                                                     create: {
                                                                         button: {
                                                                             create: {
                                                                                 text: 'Create Lease',
-                                                                                table: 'Lease',
+                                                                                table: 'lease',
                                                                             },
                                                                         },
                                                                     },
@@ -535,7 +535,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                                             description: `List`,
                                                                                             table: {
                                                                                                 create: {
-                                                                                                    type: 'Lease',
+                                                                                                    type: 'lease',
                                                                                                     columns: [],
                                                                                                     typeTableRequest:
                                                                                                         'FindMany',
@@ -644,14 +644,14 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                 title: 'Your leases',
                                                                 invertTitleDescription: false,
                                                                 description: `leases`,
-                                                                count: 'Lease',
+                                                                count: 'lease',
                                                                 icon: 'FolderKey',
                                                                 footer: {
                                                                     create: {
                                                                         button: {
                                                                             create: {
                                                                                 text: 'Create lease',
-                                                                                table: 'Lease',
+                                                                                table: 'lease',
                                                                             },
                                                                         },
                                                                     },
@@ -668,14 +668,14 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                 title: 'Your persons',
                                                                 invertTitleDescription: false,
                                                                 description: `persons`,
-                                                                count: 'Person',
+                                                                count: 'person',
                                                                 icon: 'Users',
                                                                 footer: {
                                                                     create: {
                                                                         button: {
                                                                             create: {
                                                                                 text: 'Create person',
-                                                                                table: 'Person',
+                                                                                table: 'person',
                                                                             },
                                                                         },
                                                                     },
@@ -755,7 +755,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                                                 type: 'PieChart',
                                                                             },
                                                                         },
-                                                                        type: 'Lease',
+                                                                        type: 'lease',
                                                                         typeTableRequest: 'GroupBy',
                                                                     },
                                                                 },
