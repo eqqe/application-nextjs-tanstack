@@ -29,7 +29,7 @@ model Property extends Address, SpaceComponent {
 }
 
 model PropertyTenancy extends Named, Component {
-    properties          Property[]
+    properties          Property[]                 @form.minLenghtArray1
 
     type                String
 

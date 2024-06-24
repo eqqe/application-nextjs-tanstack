@@ -7,6 +7,7 @@ type BaseDependency = {
 export type Dependency = BaseDependency & {
     array: boolean;
     optional: boolean;
+    minLenghtArray1: boolean;
     mode: 'connect' | 'create';
 };
 

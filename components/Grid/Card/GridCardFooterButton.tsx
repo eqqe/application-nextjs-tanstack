@@ -3,8 +3,8 @@ import { AutoFormDialog } from '@/components/Form/AutoFormDialog';
 import { toast } from 'react-toastify';
 import { typeHooks } from '@/zmodel/lib/forms/typeHooks';
 import { AnyZodObject, z } from 'zod';
-import { FieldConfig, FieldConfigItem } from '@/components/ui/auto-form/types';
-import { FormDefinition, Dependency } from '@/lib/formDefinition';
+import { FieldConfig } from '@/components/ui/auto-form/types';
+import { Dependency } from '@/lib/formDefinition';
 
 export const GridCardFooterButtonInclude = true;
 
@@ -68,7 +68,7 @@ export function GridCardFooterButton({
 
     function reduceDependency({
         schema,
-        dependency: { mode, array, optional, key, type },
+        dependency: { mode, array, optional, minLenghtArray1, key, type },
     }: {
         schema: AnyZodObject;
         dependency: Dependency;
@@ -76,9 +76,9 @@ export function GridCardFooterButton({
         switch (mode) {
             case 'connect':
                 if (array) {
-                    if (optional) {
+                    if (minLenghtArray1) {
                         schema = schema.extend({
-                            [key]: z.object({ connect: z.array(z.object({ id: z.string() })).optional() }),
+                            [key]: z.object({ connect: z.array(z.object({ id: z.string() })).min(1) }),
                         });
                     } else {
                         schema = schema.extend({
@@ -99,9 +99,9 @@ export function GridCardFooterButton({
                 break;
             case 'create':
                 if (array) {
-                    if (optional) {
+                    if (minLenghtArray1) {
                         schema = schema.extend({
-                            [key]: z.object({ createMany: z.array(typeHooks[type].schema.create).optional() }),
+                            [key]: z.object({ createMany: z.array(typeHooks[type].schema.create).min(1) }),
                         });
                     } else {
                         schema = schema.extend({

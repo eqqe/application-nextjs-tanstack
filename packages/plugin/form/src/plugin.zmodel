@@ -1,2 +1,3 @@
 attribute @form.polymorphism()
+attribute @form.minLenghtArray1()
 attribute @@form.polymorphism(typeField: FieldReference, parentField: FieldReference)

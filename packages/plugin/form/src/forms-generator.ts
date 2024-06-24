@@ -20,6 +20,7 @@ type BaseDependency = {
 export type Dependency = BaseDependency & {
     array: boolean;
     optional: boolean;
+    minLenghtArray1: boolean;
     mode: 'connect' | 'create';
 };
 
@@ -68,6 +69,10 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
                     (attribute) => attribute.decl.ref?.name === '@form.polymorphism'
                 );
 
+                const minLenghtArray1 = field.attributes.find(
+                    (attribute) => attribute.decl.ref?.name === '@form.minLenghtArray1'
+                );
+
                 if (polymorphAttribute) {
                     const polymorphRefAttribute = ref.attributes.find(
                         (attribute) => attribute.decl.ref?.name === '@@form.polymorphism'
@@ -86,6 +91,10 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
                         if (!parentType) {
                             throw '!parentType';
                         }
+                        const minLenghtArray1 = parent.attributes.find(
+                            (attribute) => attribute.decl.ref?.name === '@form.minLenghtArray1'
+                        );
+
                         formDefinition.polymorphisms.push({
                             key: field.name,
                             type: ref.name,
@@ -95,6 +104,7 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
                                 array: parent.type.array,
                                 mode: 'connect',
                                 optional: parent.type.optional,
+                                minLenghtArray1: !!minLenghtArray1,
                                 type: parentType,
                             },
                         });
@@ -109,6 +119,7 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
                         array: field.type.array,
                         mode: 'connect',
                         optional: field.type.optional,
+                        minLenghtArray1: !!minLenghtArray1,
                         type,
                     };
                     if (field.type.array) {
