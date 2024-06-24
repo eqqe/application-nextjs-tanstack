@@ -7,7 +7,7 @@ import {
     propertyTenancyByEntiretyCreateArgs,
     propertyTenancyInCommonCreateArgs,
 } from '@/tests/api/property/tenancyUtils';
-import { Prisma } from '@prisma/client';
+import { PropertyTenancyType } from '@prisma/client';
 import { orderByCreatedAt } from '@/lib/utils';
 
 it('Should allow a user to create property tenancy and list and group by them', async () => {
@@ -58,10 +58,10 @@ it('Should allow a user to create property tenancy and list and group by them', 
     let properties = await getProperties();
 
     assert.equal(properties.length, 2);
-    assert.equal(properties[0].tenancy?.type, 'InCommon');
+    assert.equal(properties[0].tenancy?.type, PropertyTenancyType.PropertyTenancyInCommon);
     assert.equal(properties[0].tenancy?.tenancyInCommon?.intraCommunityVAT, tenancyInCommon.intraCommunityVAT);
     assert.equal(properties[0].tenancy?.tenancyInCommon?.tenants.length, 1);
-    assert.equal(properties[1].tenancy?.type, 'InCommon');
+    assert.equal(properties[1].tenancy?.type, PropertyTenancyType.PropertyTenancyInCommon);
     assert.equal(properties[1].tenancy?.tenancyInCommon?.intraCommunityVAT, tenancyInCommon.intraCommunityVAT);
     assert.equal(properties[1].tenancy?.tenancyInCommon?.tenants.length, 1);
 
@@ -73,7 +73,7 @@ it('Should allow a user to create property tenancy and list and group by them', 
     }
 
     let propertyTenanciesCountByType = await getPropertyTenanciesCountByType();
-    assert.deepEqual(propertyTenanciesCountByType, [{ type: 'InCommon', _count: 1 }]);
+    assert.deepEqual(propertyTenanciesCountByType, [{ type: PropertyTenancyType.PropertyTenancyInCommon, _count: 1 }]);
 
     const newProperty3 = await user2.prisma.property.create({ data: fakeProperty() });
 
@@ -82,7 +82,7 @@ it('Should allow a user to create property tenancy and list and group by them', 
     );
 
     properties = await getProperties();
-    assert.equal(properties[0].tenancy?.type, 'Joint');
+    assert.equal(properties[0].tenancy?.type, PropertyTenancyType.PropertyJointTenancy);
     assert.equal(properties[0].tenancy?.jointTenancy?.tenants.length, 1);
     assert.equal(properties[1].tenancy?.tenancyInCommon?.intraCommunityVAT, tenancyInCommon.intraCommunityVAT);
     assert.equal(properties[2].tenancy?.tenancyInCommon?.intraCommunityVAT, tenancyInCommon.intraCommunityVAT);
@@ -90,8 +90,8 @@ it('Should allow a user to create property tenancy and list and group by them', 
     propertyTenanciesCountByType = await getPropertyTenanciesCountByType();
 
     assert.deepEqual(propertyTenanciesCountByType, [
-        { type: 'InCommon', _count: 1 },
-        { type: 'Joint', _count: 1 },
+        { type: PropertyTenancyType.PropertyTenancyInCommon, _count: 1 },
+        { type: PropertyTenancyType.PropertyJointTenancy, _count: 1 },
     ]);
 
     const newProperty4 = await user2.prisma.property.create({ data: fakeProperty() });
@@ -101,17 +101,17 @@ it('Should allow a user to create property tenancy and list and group by them', 
     );
 
     properties = await getProperties();
-    assert.equal(properties[0].tenancy?.type, 'Joint');
+    assert.equal(properties[0].tenancy?.type, PropertyTenancyType.PropertyJointTenancy);
     assert.equal(properties[0].tenancy?.jointTenancy?.tenants.length, 1);
-    assert.equal(properties[1].tenancy?.type, 'Joint');
+    assert.equal(properties[1].tenancy?.type, PropertyTenancyType.PropertyJointTenancy);
     assert.equal(properties[2].tenancy?.tenancyInCommon?.intraCommunityVAT, tenancyInCommon.intraCommunityVAT);
     assert.equal(properties[3].tenancy?.tenancyInCommon?.intraCommunityVAT, tenancyInCommon.intraCommunityVAT);
 
     propertyTenanciesCountByType = await getPropertyTenanciesCountByType();
 
     assert.deepEqual(propertyTenanciesCountByType, [
-        { type: 'InCommon', _count: 1 },
-        { type: 'Joint', _count: 2 },
+        { type: PropertyTenancyType.PropertyTenancyInCommon, _count: 1 },
+        { type: PropertyTenancyType.PropertyJointTenancy, _count: 2 },
     ]);
 
     const newProperty5 = await user2.prisma.property.create({ data: fakeProperty() });
@@ -121,18 +121,18 @@ it('Should allow a user to create property tenancy and list and group by them', 
     );
 
     properties = await getProperties();
-    assert.equal(properties[0].tenancy?.type, 'ByEntirety');
+    assert.equal(properties[0].tenancy?.type, PropertyTenancyType.PropertyTenancyByEntirety);
     assert.equal(properties[0].tenancy?.tenancyByEntirety?.person.phone, person.phone);
-    assert.equal(properties[1].tenancy?.type, 'Joint');
-    assert.equal(properties[2].tenancy?.type, 'Joint');
+    assert.equal(properties[1].tenancy?.type, PropertyTenancyType.PropertyJointTenancy);
+    assert.equal(properties[2].tenancy?.type, PropertyTenancyType.PropertyJointTenancy);
     assert.equal(properties[3].tenancy?.tenancyInCommon?.intraCommunityVAT, tenancyInCommon.intraCommunityVAT);
     assert.equal(properties[4].tenancy?.tenancyInCommon?.intraCommunityVAT, tenancyInCommon.intraCommunityVAT);
 
     propertyTenanciesCountByType = await getPropertyTenanciesCountByType();
 
     assert.deepEqual(propertyTenanciesCountByType, [
-        { type: 'ByEntirety', _count: 1 },
-        { type: 'InCommon', _count: 1 },
-        { type: 'Joint', _count: 2 },
+        { type: PropertyTenancyType.PropertyTenancyInCommon, _count: 1 },
+        { type: PropertyTenancyType.PropertyJointTenancy, _count: 2 },
+        { type: PropertyTenancyType.PropertyTenancyByEntirety, _count: 1 },
     ]);
 });
