@@ -62,28 +62,30 @@ function ObjectField<SchemaType extends z.ZodObject<any, any>>({
         return null;
     }
 
-    if (zodBaseType === 'ZodObject') {
-        return (
-            <AutoFormObject
-                key={name}
-                schema={item as unknown as z.ZodObject<any, any>}
-                form={form}
-                fieldConfig={(fieldConfig?.[name] ?? {}) as FieldConfig<z.infer<typeof item>>}
-                path={pathArg}
-            />
-        );
-    }
-    if (zodBaseType === 'ZodArray' && fieldConfig?.connect?.fieldType !== 'search') {
-        return (
-            <AutoFormArray
-                key={key}
-                name={name}
-                item={item as unknown as z.ZodArray<any>}
-                form={form}
-                fieldConfig={fieldConfig?.[name] ?? {}}
-                path={[...path, name]}
-            />
-        );
+    if (fieldConfig?.connect?.fieldType !== 'search') {
+        if (zodBaseType === 'ZodObject') {
+            return (
+                <AutoFormObject
+                    key={name}
+                    schema={item as unknown as z.ZodObject<any, any>}
+                    form={form}
+                    fieldConfig={(fieldConfig?.[name] ?? {}) as FieldConfig<z.infer<typeof item>>}
+                    path={pathArg}
+                />
+            );
+        }
+        if (zodBaseType === 'ZodArray') {
+            return (
+                <AutoFormArray
+                    key={key}
+                    name={name}
+                    item={item as unknown as z.ZodArray<any>}
+                    form={form}
+                    fieldConfig={fieldConfig?.[name] ?? {}}
+                    path={[...path, name]}
+                />
+            );
+        }
     }
 
     const fieldConfigItem: FieldConfigItem = fieldConfig?.[name] ?? {};

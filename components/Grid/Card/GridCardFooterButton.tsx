@@ -93,11 +93,11 @@ export function GridCardFooterButton({
                 } else {
                     if (optional) {
                         schema = schema.extend({
-                            [key]: z.object({ connect: z.string().optional() }),
+                            [key]: z.object({ connect: z.object({ id: z.string() }).optional() }),
                         });
                     } else {
                         schema = schema.extend({
-                            [key]: z.object({ connect: z.string() }),
+                            [key]: z.object({ connect: z.object({ id: z.string() }) }),
                         });
                     }
                 }

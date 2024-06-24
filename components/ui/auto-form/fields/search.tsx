@@ -25,7 +25,7 @@ function AutoFormSearch({ label, isRequired, fieldConfigItem, fieldProps }: Auto
                 ids.length
                     ? enableMultiRowSelection
                         ? ids.map((id) => ({ id }))
-                        : ids[0]
+                        : { id: ids[0] }
                     : enableMultiRowSelection
                     ? []
                     : void 0

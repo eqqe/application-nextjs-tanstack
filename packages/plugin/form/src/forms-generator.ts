@@ -226,8 +226,7 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
 function getKeyAndMinLenghtArray1(field: DataModelField) {
     const minLenghtArray1 = !!getAttribute(field, '@form.minLenghtArray1');
 
-    const relations = getRelationKeyPairs(field);
-    const key = relations.length ? relations[0].foreignKey.name : field.name;
+    const key = field.name;
 
     return { minLenghtArray1, key };
 }
