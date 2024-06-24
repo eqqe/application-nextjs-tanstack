@@ -9,6 +9,7 @@ import { ReactElement } from 'react';
 import { ThemeProvider, useTheme } from 'next-themes';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { SelectedSpacesProvider } from '@/lib/context';
+import { trpc } from '@/lib/trpc';
 
 // import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
@@ -45,4 +46,4 @@ function AppContent(props: { children: ReactElement | ReactElement[] }) {
     );
 }
 
-export default App;
+export default trpc.withTRPC(App);
