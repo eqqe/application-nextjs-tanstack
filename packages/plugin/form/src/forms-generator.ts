@@ -23,7 +23,7 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
     const warnings: string[] = [];
     const models = getDataModels(model);
 
-    models.map((dataModel) => {
+    /*models.map((dataModel) => {
         const fileName = paramCase(dataModel.name);
         const sf = project.createSourceFile(path.join(outDir, `${fileName}.ts`), undefined, { overwrite: true });
 
@@ -101,7 +101,7 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
             }
         });
 
-        sf.addStatements('/* eslint-disable */');
+        // + eslint disable
         sf.addStatements(`import { FieldConfigItem } from '@/components/ui/auto-form/types'`);
         sf.addStatements(`import { z, AnyZodObject } from 'zod'`);
         const scalarSchemaName = `${dataModel.name}CreateScalarSchema`;
@@ -135,7 +135,7 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
         });
 
         return `${dataModel.name}`;
-    });
+    });*/
 
     const sf = project.createSourceFile(path.join(outDir, `typeHooks.tsx`), undefined, { overwrite: true });
     const names = models.map((dataModel) => dataModel.name);
@@ -160,11 +160,11 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
     ]);
     sf.addStatements(`import { ${hooks.join(',')} } from '@/zmodel/lib/hooks';`);
 
-    names.forEach((name) => {
+    /*names.forEach((name) => {
         sf.addStatements(
             `import { ${name}FormConfig, ${name}FieldConfig } from '@/zmodel/lib/forms/${paramCase(name)}';`
         );
-    });
+    });*/
 
     const mappings = names
         .map(
@@ -189,10 +189,6 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
             single: useCreate${name},
             many: useCreateMany${name},
         },
-        form: {
-            formConfig: ${name}FormConfig,
-            fieldConfig: ${name}FieldConfig
-        }
     }
     `
         )
