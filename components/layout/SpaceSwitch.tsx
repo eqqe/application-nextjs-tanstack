@@ -16,9 +16,10 @@ import { useRouter } from 'next/navigation';
 import { useSelectedSpaces } from '@/lib/context';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { orderByCreatedAt } from '@/lib/utils';
 
 export function SpaceSwitch() {
-    const { data: spaces } = useFindManySpace();
+    const { data: spaces } = useFindManySpace(orderByCreatedAt);
 
     const router = useRouter();
 

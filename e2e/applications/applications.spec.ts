@@ -12,9 +12,9 @@ test('Should enable assets application, rollback, and update', async ({ page, ut
     await expect(page.getByText('This Week')).toBeVisible();
     await expect(page.getByText('Your properties')).toBeVisible();
     await expect(page.getByText('Listed here')).toBeVisible();
-    await page.getByRole('tab', { name: 'Month' }).click();
-    await expect(page.getByRole('cell', { name: 'Address' })).toBeVisible();
-    await expect(page.getByText('City')).toBeVisible();
+    await page.getByRole('tab', { name: 'All' }).click();
+    await expect(page.getByRole('cell', { name: 'Street Address' })).toBeVisible();
+    await expect(page.getByText('City', { exact: true })).toBeVisible();
     await expect(page.getByText('Postal Code')).toBeVisible();
     await expect(page.getByText('No results.')).toBeVisible();
 
@@ -23,14 +23,14 @@ test('Should enable assets application, rollback, and update', async ({ page, ut
 
     assert(lenghtDemo > 2);
 
-    await utils.checkCountInCard({ title: 'Your property tenancies', count: lenghtDemo });
+    await utils.checkCountInCard({ title: 'Your PropertyTenancyInCommon', count: lenghtDemo });
     await utils.checkCountInCard({ title: 'Your leases', count: lenghtDemo * lenghtDemo });
     await utils.checkCountInCard({ title: 'Your properties', count: lenghtDemo });
-    await utils.checkCountInCard({ title: 'Your lease tenants', count: lenghtDemo * lenghtDemo });
+    await utils.checkCountInCard({ title: 'Your persons', count: 2 * lenghtDemo * lenghtDemo });
 
     await utils.openSettings();
     await page.getByText('Properties').click();
-    await page.getByRole('tab', { name: 'Month' }).click();
+    await page.getByRole('tab', { name: 'All' }).click();
     await expect(page.getByText(cityPlaywrightTest)).toBeVisible();
     await openSettings();
     const rollbackButtonText = 'Rollback to version 0.1';
@@ -41,6 +41,6 @@ test('Should enable assets application, rollback, and update', async ({ page, ut
     await page.getByText('Update to version 0.2').click();
     await expect(page.getByText(rollbackButtonText)).toBeVisible();
     await page.getByText('Properties').click();
-    await page.getByRole('tab', { name: 'Month' }).click();
+    await page.getByRole('tab', { name: 'All' }).click();
     await expect(page.getByText(cityPlaywrightTest)).toBeVisible();
 });

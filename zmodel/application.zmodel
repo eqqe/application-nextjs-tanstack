@@ -1,5 +1,5 @@
-import "schema"
-import "space/space.zmodel"
+import "base"
+import "space/space"
 import "space/grid/grid"
 
 model SpaceApplicationVersion extends IdCreatedUpdatedSpace {
@@ -34,7 +34,7 @@ model ApplicationVersion extends IdCreatedUpdatedAuth {
     @@allow('read', auth() != null)
 }
 
-model FolderApplicationVersion extends IdCreatedUpdatedAuth {
+model FolderApplicationVersion extends IdCreatedUpdatedAuth, Indexed {
     applicationVersion   ApplicationVersion @relation(fields: [applicationVersionId], references: [id], onDelete: Cascade)
     applicationVersionId String
     tabs                 TabFolder[]
@@ -43,7 +43,7 @@ model FolderApplicationVersion extends IdCreatedUpdatedAuth {
     @@allow('read', applicationVersion.activations?[spaceId in auth().selectedSpaces && space.profiles?[users?[user.id == auth().id] && (role == ADMIN || role == USER)]])
 }
 
-model TabFolder extends IdCreatedUpdatedAuth {
+model TabFolder extends IdCreatedUpdatedAuth, Indexed {
     folder   FolderApplicationVersion @relation(fields: [folderId], references: [id], onDelete: Cascade)
     folderId String
 
@@ -51,7 +51,7 @@ model TabFolder extends IdCreatedUpdatedAuth {
     @@allow('read', folder.applicationVersion.activations?[spaceId in auth().selectedSpaces && space.profiles?[users?[user.id == auth().id] && (role == ADMIN || role == USER)]])
 }
 
-model SubTabFolder extends IdCreatedUpdatedAuth, Named {
+model SubTabFolder extends IdCreatedUpdatedAuth, Named, Indexed {
     tab   TabFolder @relation(fields: [tabId], references: [id], onDelete: Cascade)
     tabId String
 

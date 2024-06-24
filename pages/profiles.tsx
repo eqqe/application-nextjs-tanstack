@@ -4,9 +4,10 @@ import { useFindManyProfile, useUpdateProfile } from '@/zmodel/lib/hooks';
 import AutoForm from '@/components/ui/auto-form';
 import { ProfileUpdateScalarSchema } from '@zenstackhq/runtime/zod/models';
 import { toast } from 'react-toastify';
+import { orderByCreatedAt } from '@/lib/utils';
 
 export const Profiles: NextPage = () => {
-    const { data: profiles } = useFindManyProfile();
+    const { data: profiles } = useFindManyProfile(orderByCreatedAt);
     const update = useUpdateProfile();
     return (
         <WithNavBar>

@@ -28,8 +28,8 @@ it('Should enable an application in space', async () => {
     assert.equal(firstFolder.path, '/properties');
 
     const grids = await prisma.grid.findMany();
-    assert.equal(grids.length, 3);
-    const secondGrid = grids[1];
+    assert.equal(grids.length, 4);
+    const secondGrid = grids[0];
     assert.equal(secondGrid.columns, 6);
 
     const gridDetail = await prisma.grid.findUnique(useFindUniqueGridParam(secondGrid.id));
@@ -43,15 +43,15 @@ it('Should enable an application in space', async () => {
 
     const tabsElement = gridDetail.elements[3];
     assert.equal(tabsElement.type, 'Tabs');
-    const cardTableGroupBy = tabsElement.tabs?.tabsContent[0].elements[0].card?.table;
-    assert.deepEqual(cardTableGroupBy?.columns, []);
-    assert.equal(cardTableGroupBy?.typeTableRequest, 'GroupBy');
-    assert.deepEqual(cardTableGroupBy?.groupBy?.sum, ['surface']);
-    assert.deepEqual(cardTableGroupBy?.groupBy?.fields, ['city']);
+    const cardTable = tabsElement.tabs?.tabsContent[0].elements[0].card?.table;
+    assert.deepEqual(cardTable?.columns, ['streetAddress', 'city', 'postalCode']);
+    assert.equal(cardTable?.typeTableRequest, 'FindMany');
+    assert.notOk(cardTable?.groupBy);
 
     const cardTableList = tabsElement.tabs?.tabsContent[1].elements[0].card?.table;
 
-    assert.deepEqual(cardTableList?.columns, ['streetAddress', 'city', 'postalCode']);
-    assert.equal(cardTableList?.typeTableRequest, 'FindMany');
-    assert.notOk(cardTableList?.groupBy);
+    assert.deepEqual(cardTableList?.columns, []);
+    assert.equal(cardTableList?.typeTableRequest, 'GroupBy');
+    assert.deepEqual(cardTableList?.groupBy?.sum, ['surface']);
+    assert.deepEqual(cardTableList?.groupBy?.fields, ['city']);
 });

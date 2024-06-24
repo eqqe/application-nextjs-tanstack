@@ -5,6 +5,7 @@ node_modules/
 .next
 .zenstack_repl*
 zmodel/lib/hooks
+zmodel/lib/forms
 .env
 zmodel/prisma/schema.prisma
 /test-results/
@@ -12,3 +13,4 @@ zmodel/prisma/schema.prisma
 /blob-report/
 /playwright/.cache/
 tsconfig.tsbuildinfo
+dist

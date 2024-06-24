@@ -1,5 +1,5 @@
 import { GridElementType } from '@prisma/client';
-import { Type, Prisma, TypeTableRequest } from '@prisma/client';
+import { Type, type Prisma, TypeTableRequest } from '@prisma/client';
 import { PropertyColumns } from '../columns';
 
 export const assetsv0_1: Prisma.ApplicationVersionCreateWithoutApplicationInput = {
@@ -8,20 +8,25 @@ export const assetsv0_1: Prisma.ApplicationVersionCreateWithoutApplicationInput 
     folders: {
         create: [
             {
+                index: 0,
                 path: '/properties',
                 tabs: {
                     create: {
+                        index: 0,
                         subTabs: {
                             create: {
+                                index: 0,
                                 name: 'Properties subTab',
                                 grids: {
                                     create: [
                                         {
+                                            index: 0,
                                             name: 'List of properties',
                                             columns: 1,
                                             elements: {
                                                 create: [
                                                     {
+                                                        index: 0,
                                                         type: GridElementType.Card,
                                                         card: {
                                                             create: {

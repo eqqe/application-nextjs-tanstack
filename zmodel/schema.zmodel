@@ -1,9 +1,4 @@
-import "application"
-import "space/space"
-import "space/property/property"
-import "space/property/lease"
-import "space/property/tenancy"
-import "space/person/person"
+import "base"
 
 datasource db {
     provider = 'postgresql'
@@ -19,9 +14,13 @@ plugin enhancer {
     provider = '@core/enhancer'
     generatePermissionChecker = true
 }
-
 plugin zod {
     provider = '@core/zod'
+}
+
+plugin form {
+    provider = '../packages/plugin/dist/forms-generator'
+    output = 'lib/forms'
 }
 
 plugin hooks {
@@ -31,154 +30,3 @@ plugin hooks {
     version = 'v5'
 }
 
-abstract model IdCreatedUpdated {
-    id        String   @id @default(uuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-}
-abstract model IdCreatedUpdatedAuth extends IdCreatedUpdated {
-    @@deny('all', auth() == null)
-}
-
-abstract model IdCreatedUpdatedSpace extends IdCreatedUpdatedAuth {
-    space   Space  @relation(fields: [spaceId], references: [id], onDelete: Cascade)
-    spaceId String @default(auth().createSpaceId)
-
-    @@allow('read', spaceId in auth().selectedSpaces && space.profiles?[users?[user.id == auth().id] && (role == ADMIN || role == USER)])
-}
-
-enum ProfileRole {
-    USER
-    ADMIN
-    GUEST
-}
-
-
-model Profile extends Component {
-    spaces Space[]
-    users  ProfileUser[]
-
-    role   ProfileRole
-
-
-    @@allow('read', users?[user.id == auth().id] && (role == ADMIN || role == USER))
-    @@allow('create,update,delete', spaces![profiles?[users?[user.id == auth().id] && role == ADMIN]])
-}
-
-model ProfileUser extends Component {
-
-    profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
-    profileId String
-
-    user      User    @relation("user", fields: [userId], references: [id], onDelete: Cascade)
-    userId    String
-
-
-    @@allow('read', profile.users?[user.id == auth().id] && (profile.role == ADMIN || profile.role == USER))
-    @@allow('create,update,delete', profile.spaces![profiles?[users?[user.id == auth().id] && role == ADMIN]])
-}
-
-
-
-
-model User extends IdCreatedUpdated {
-    email                               String                          @unique @email
-    emailVerified                       DateTime?
-    password                            String?                         @password @omit
-    name                                String?
-    profiles                            ProfileUser[]                   @relation("user")
-    spacesOwned                         Space[]                         @relation("owner")
-    createSpaceId                       String?                         @ignore
-    selectedSpaces                      String[]                        @ignore
-    image                               String?                         @url
-
-    tenantsOwned                        LeaseTenant[]                   @relation("owner")
-
-    leases                              Lease[]                         @relation("owner")
-    properties                          Property[]                      @relation("owner")
-    payments                            Payment[]                       @relation("owner")
-    profilesOwned                       Profile[]                       @relation("owner")
-    profileUsersOwned                   ProfileUser[]                   @relation("owner")
-
-    charges                             Charge[]                        @relation("owner")
-    persons                             Person[]                        @relation("user")
-    propertyTenancyInCommonOwned        PropertyTenancyInCommon[]       @relation("owner")
-    personOwned                         Person[]                        @relation("owner")
-    propertyTenancyOwned                PropertyTenancy[]               @relation("owner")
-    propertyTenancyInCommonTenantsOwned PropertyTenancyInCommonTenant[] @relation("owner")
-    propertyJointTenancyTenantsOwned    PropertyJointTenancyTenant[]    @relation("owner")
-    propertyJointTenancies              PropertyJointTenancy[]          @relation("owner")
-    propertyTenanciesByEntiretyOwned    PropertyTenancyByEntirety[]     @relation("owner")
-    corporations                        Corporation[]                   @relation("owner")
-    leaseMailOtherAddresses             LeaseMailOtherAddress[]         @relation("owner")
-
-    
-    // next-auth
-    accounts                            Account[]
-
-    @@allow('read',  profiles?[profile.users?[user.id == auth().id] && (profile.role == ADMIN || profile.role == USER)])
-
-    // full access by oneself
-    @@allow('all', auth() == this)
-}
-
-abstract model Owner {
-    owner   User   @relation("owner", fields: [ownerId], references: [id], onDelete: Cascade)
-    ownerId String @default(auth().id)
-    @@deny('update', future().owner != owner)
-}
-
-abstract model OptionalUser {
-    user   User?   @relation("user", fields: [userId], references: [id], onDelete: Cascade)
-    userId String?
-}
-
-
-
-abstract model Component extends IdCreatedUpdatedAuth, Owner {
-}
-enum Type {
-    SubTabFolder
-    Grid
-    Property
-    Lease
-    Payment
-    LeaseTenant
-    Charge
-    Person
-    User
-    Profile
-    PropertyTenancy
-    PropertyTenancyInCommon
-    PropertyTenancyInCommonTenant
-    PropertyJointTenancy
-    PropertyTenancyByEntirety
-}
-
-// next-auth
-model Account {
-    id                       String  @id @default(uuid())
-    userId                   String
-    type                     String
-    provider                 String
-    providerAccountId        String
-    refresh_token            String?
-    refresh_token_expires_in Int?
-    access_token             String?
-    expires_at               Int?
-    token_type               String?
-    scope                    String?
-    id_token                 String?
-    session_state            String?
-    user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-    @@unique([provider, providerAccountId])
-}
-
-// next-auth
-model VerificationToken {
-    identifier String
-    token      String
-    expires    DateTime
-
-    @@id([identifier, token])
-}

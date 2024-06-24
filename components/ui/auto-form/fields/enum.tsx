@@ -5,16 +5,10 @@ import AutoFormLabel from '../common/label';
 import AutoFormTooltip from '../common/tooltip';
 import { AutoFormInputComponentProps } from '../types';
 import { getBaseSchema } from '../utils';
+import React, { useMemo } from 'react';
 
-export default function AutoFormEnum({
-    label,
-    isRequired,
-    field,
-    fieldConfigItem,
-    zodItem,
-    fieldProps,
-}: AutoFormInputComponentProps) {
-    const baseValues = (getBaseSchema(zodItem) as unknown as z.ZodEnum<any>)._def.values;
+function AutoFormEnum({ label, isRequired, field, fieldConfigItem, zodItem, fieldProps }: AutoFormInputComponentProps) {
+    const baseValues = useMemo(() => (getBaseSchema(zodItem) as unknown as z.ZodEnum<any>)._def.values, [zodItem]);
 
     let values: [string, string][] = [];
     if (!Array.isArray(baseValues)) {
@@ -51,3 +45,4 @@ export default function AutoFormEnum({
         </FormItem>
     );
 }
+export default React.memo(AutoFormEnum);

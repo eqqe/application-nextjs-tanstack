@@ -13,7 +13,7 @@
         "db:deploy": "prisma migrate deploy",
         "db:reset": "prisma migrate reset",
         "db:browse": "prisma studio",
-        "generate": "NODE_OPTIONS=\"--max-old-space-size=8192\" zenstack generate --schema zmodel/schema.zmodel",
+        "generate": "npx tsc -p packages/plugin/&& NODE_OPTIONS=\"--max-old-space-size=8192\" zenstack generate --schema zmodel/schema.zmodel",
         "test": "vitest",
         "test:e2e": "npx playwright test"
     },

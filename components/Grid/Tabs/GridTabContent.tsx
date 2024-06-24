@@ -2,6 +2,7 @@ import { TabsContent } from '@/components/ui/tabs';
 import { GridCard, GridCardInclude } from '../Card/GridCard';
 
 import { Prisma } from '@prisma/client';
+import { orderByIndex } from '@/lib/utils';
 
 export const GridTabContentInclude = {
     include: {
@@ -9,8 +10,10 @@ export const GridTabContentInclude = {
             include: {
                 card: GridCardInclude,
             },
+            ...orderByIndex,
         },
     },
+    ...orderByIndex,
 };
 export function GridTabContent({
     tabContent,

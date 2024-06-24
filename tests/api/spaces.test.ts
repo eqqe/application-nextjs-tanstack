@@ -3,7 +3,7 @@ import { getEnhancedPrisma } from '@/tests/mock/enhanced-prisma';
 import { fakeLease, fakePayment, fakeProperty } from '@/lib/demo/fake';
 import { enhancePrisma } from '@/server/enhanced-db';
 import { getNewSpace } from '@/lib/getNewSpace';
-import { findManyPropertyArgs } from './utils/findManyPropertyArgs';
+import { orderByCreatedAt } from '@/lib/utils';
 
 it('Should list spaces, and check that only current space components are visible', async () => {
     const { user1 } = await getEnhancedPrisma();
@@ -30,7 +30,7 @@ it('Should list spaces, and check that only current space components are visible
         data: property,
     });
 
-    let properties = await user1.prisma.property.findMany(findManyPropertyArgs);
+    let properties = await user1.prisma.property.findMany(orderByCreatedAt);
     assert.equal(properties.length, 1);
     assert.equal(properties[0].surface, property.surface);
     assert.equal(properties[0].streetAddress, property.streetAddress);
@@ -39,19 +39,19 @@ it('Should list spaces, and check that only current space components are visible
         userId: user1.userCreated.id,
         selectedSpaces: [newSpace.id],
     });
-    let propertiesNewSpace = await user1PrismaNewSpace.property.findMany(findManyPropertyArgs);
+    let propertiesNewSpace = await user1PrismaNewSpace.property.findMany(orderByCreatedAt);
     assert.equal(propertiesNewSpace.length, 0);
 
     const propertyNewSpace = fakeProperty();
 
     const newPropertyNewSpace = await user1PrismaNewSpace.property.create({ data: propertyNewSpace });
 
-    propertiesNewSpace = await user1PrismaNewSpace.property.findMany(findManyPropertyArgs);
+    propertiesNewSpace = await user1PrismaNewSpace.property.findMany(orderByCreatedAt);
     assert.equal(propertiesNewSpace.length, 1);
     assert.equal(propertiesNewSpace[0].surface, propertyNewSpace.surface);
     assert.equal(propertiesNewSpace[0].streetAddress, propertyNewSpace.streetAddress);
 
-    properties = await user1.prisma.property.findMany(findManyPropertyArgs);
+    properties = await user1.prisma.property.findMany(orderByCreatedAt);
     assert.equal(properties.length, 1);
     assert.equal(properties[0].surface, property.surface);
     assert.equal(properties[0].streetAddress, property.streetAddress);
