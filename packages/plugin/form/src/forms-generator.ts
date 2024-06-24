@@ -48,9 +48,9 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
     const warnings: string[] = [];
     const models = getDataModels(model);
 
-    models.map((dataModel) => {
+    const names = models.flatMap((dataModel) => {
         if (!!getAttribute(dataModel, '@@form.ignore')) {
-            return;
+            return [];
         }
         const fileName = paramCase(dataModel.name);
         const sf = project.createSourceFile(path.join(outDir, `${fileName}.ts`), undefined, { overwrite: true });
@@ -151,11 +151,10 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
             ],
         });
 
-        return `${dataModel.name}`;
+        return [`${dataModel.name}`];
     });
 
     const sf = project.createSourceFile(path.join(outDir, `typeHooks.tsx`), undefined, { overwrite: true });
-    const names = models.map((dataModel) => dataModel.name);
 
     sf.addStatements('/* eslint-disable */');
     const schemas = names.flatMap((name) => [
