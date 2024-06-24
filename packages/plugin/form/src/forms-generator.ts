@@ -95,12 +95,25 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
                             (attribute) => attribute.decl.ref?.name === '@form.minLenghtArray1'
                         );
 
+                        let key = parent.name;
+
+                        const relationAttribute = parent.attributes.find(
+                            (attribute) => attribute.decl.ref?.name === '@relation'
+                        );
+                        if (relationAttribute) {
+                            const relationFieldName = (relationAttribute?.args[0].value as ReferenceExpr).target.ref
+                                ?.name;
+                            if (relationFieldName) {
+                                key = relationFieldName;
+                            }
+                        }
+
                         formDefinition.polymorphisms.push({
                             key: field.name,
                             type: ref.name,
                             storeTypeField,
                             parent: {
-                                key: parent.name,
+                                key,
                                 array: parent.type.array,
                                 mode: 'connect',
                                 optional: parent.type.optional,
@@ -114,8 +127,21 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
                     if (!type) {
                         throw '!type';
                     }
+
+                    let key = field.name;
+
+                    const relationAttribute = field.attributes.find(
+                        (attribute) => attribute.decl.ref?.name === '@relation'
+                    );
+                    if (relationAttribute) {
+                        const relationFieldName = (relationAttribute?.args[0].value as ReferenceExpr).target.ref?.name;
+                        if (relationFieldName) {
+                            key = relationFieldName;
+                        }
+                    }
+
                     const dependency: Dependency = {
-                        key: field.name,
+                        key,
                         array: field.type.array,
                         mode: 'connect',
                         optional: field.type.optional,
