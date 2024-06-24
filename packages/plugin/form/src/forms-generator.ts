@@ -13,6 +13,26 @@ import { paramCase } from 'change-case';
 import { type DMMF } from '@zenstackhq/sdk/prisma';
 import { VariableDeclarationKind } from 'ts-morph';
 
+type BaseDependency = {
+    key: string;
+    type: string;
+};
+type Dependency = BaseDependency & {
+    array: boolean;
+    optional: boolean;
+    mode: 'connect' | 'create';
+};
+
+type Polymorphism = BaseDependency;
+
+export type FormDefinition = {
+    mode: 'create' | 'update' | 'view';
+    polymorphisms: Polymorphism[];
+    parents: Dependency[];
+    type: string;
+    children: Dependency[];
+};
+
 export const name = 'Form';
 
 export default async function run(model: Model, options: PluginOptions, dmmf: DMMF.Document) {
@@ -23,14 +43,49 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
     const warnings: string[] = [];
     const models = getDataModels(model);
 
-    /*models.map((dataModel) => {
+    /*
+
+    const formDefinition: {
+        mode: 'create' | 'update' | 'view';
+        parents: Dependency[];
+        type: Type;
+        children: Dependency[];
+    } = {
+        mode: 'create',
+        parents: [
+            {
+                key: 'propertyId',
+                type: 'Property',
+                array: false,
+                optional: false,
+                mode: 'connect',
+            },
+        ],
+        type: 'Lease',
+        children: [
+            {
+                key: 'mailOtherAddresses',
+                type: 'LeaseMailOtherAddress',
+                mode: 'connect',
+                array: true,
+                optional: true,
+            },
+            // Payment, Charges, tenant
+        ],
+    };*/
+
+    models.map((dataModel) => {
         const fileName = paramCase(dataModel.name);
         const sf = project.createSourceFile(path.join(outDir, `${fileName}.ts`), undefined, { overwrite: true });
 
-        const fieldsConfigs: string[] = [];
-        const topRefs: string[] = [];
-        const lowRefs: string[] = [];
-        const polymorphModels: string[] = [];
+        const formDefinition: FormDefinition = {
+            type: dataModel.name,
+            mode: 'create',
+            polymorphisms: [],
+            parents: [],
+            children: [],
+        };
+
         dataModel.fields.forEach((field) => {
             if (field.name === 'owner' || field.name === 'space') {
                 return;
@@ -87,6 +142,13 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
                                     })
                                 })`
                         );
+                        // TODO
+
+                        formDefinition.polymorphisms.push({
+                            key: field.name,
+                            type: ref.name,
+                            storeTypeField: (polymorphRefAttribute?.args[0].value as ReferenceExpr).target.ref?.name,
+                        });
                     }
                 } else {
                     fieldsConfigs.push(getFieldConfigSearch(field));
@@ -101,7 +163,7 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
             }
         });
 
-        // + eslint disable
+        sf.addStatements('/* eslint-disable */');
         sf.addStatements(`import { FieldConfigItem } from '@/components/ui/auto-form/types'`);
         sf.addStatements(`import { z, AnyZodObject } from 'zod'`);
         const scalarSchemaName = `${dataModel.name}CreateScalarSchema`;
@@ -135,7 +197,7 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
         });
 
         return `${dataModel.name}`;
-    });*/
+    });
 
     const sf = project.createSourceFile(path.join(outDir, `typeHooks.tsx`), undefined, { overwrite: true });
     const names = models.map((dataModel) => dataModel.name);

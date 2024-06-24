@@ -73,7 +73,7 @@ function ObjectField<SchemaType extends z.ZodObject<any, any>>({
             />
         );
     }
-    if (zodBaseType === 'ZodArray' && !fieldConfig?.connect?.search) {
+    if (zodBaseType === 'ZodArray' && fieldConfig?.connect?.fieldType !== 'search') {
         return (
             <AutoFormArray
                 key={key}

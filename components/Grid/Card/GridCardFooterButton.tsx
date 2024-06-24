@@ -5,6 +5,7 @@ import { typeHooks } from '@/zmodel/lib/forms/typeHooks';
 import { Type } from '@zenstackhq/runtime/models';
 import { AnyZodObject, z } from 'zod';
 import { FieldConfig, FieldConfigItem } from '@/components/ui/auto-form/types';
+import { FormDefinition, Dependency } from '@/lib/formDefinition';
 
 export const GridCardFooterButtonInclude = true;
 
@@ -17,38 +18,40 @@ export function GridCardFooterButton({
 
     const create = typeHook.useCreate.single();
 
-    type Dependency = {
-        key: string;
-        type: Type;
-        array: boolean;
-        optional: boolean;
-        mode: 'connect' | 'create';
-    };
-    const formDefinition: {
-        mode: 'create' | 'update' | 'view';
-        parents: Dependency[];
-        type: Type;
-        children: Dependency[];
-    } = {
+    const formDefinition: FormDefinition = {
+        type: 'LeaseMailOtherAddress',
         mode: 'create',
-        parents: [
+        polymorphisms: [
             {
-                key: 'propertyId',
-                type: 'Property',
-                array: false,
-                optional: false,
-                mode: 'connect',
+                key: 'propertyTenancy',
+                type: 'PropertyTenancy',
+                storeTypeField: 'type',
+                parent: {
+                    key: 'propertyId',
+                    type: 'Property',
+                    mode: 'connect',
+                    array: true,
+                    optional: false,
+                },
             },
         ],
-        type: 'Lease',
+        parents: [
+            // {
+            //     key: 'propertyId',
+            //     type: 'Property',
+            //     array: false,
+            //     optional: false,
+            //     mode: 'connect',
+            // },
+        ],
         children: [
-            {
-                key: 'mailOtherAddresses',
-                type: 'LeaseMailOtherAddress',
-                mode: 'connect',
-                array: true,
-                optional: true,
-            },
+            // {
+            //     key: 'mailOtherAddresses',
+            //     type: 'LeaseMailOtherAddress',
+            //     mode: 'connect',
+            //     array: true,
+            //     optional: true,
+            // },
             // Payment, Charges, tenant
         ],
     };
@@ -56,17 +59,38 @@ export function GridCardFooterButton({
     const formSchema = formDefinition.children.reduce(
         (schema, dependency) => reduceDependency({ schema, dependency }),
         formDefinition.parents
-            .reduce((schema, dependency) => reduceDependency({ schema, dependency }), z.object({}))
+            .reduce(
+                (schema, dependency) => reduceDependency({ schema, dependency }),
+                formDefinition.polymorphisms.reduce((schema, polymorphism) => {
+                    const { parent, key, type, storeTypeField } = polymorphism;
+
+                    let delegateSchema = typeHooks[type].schema.create;
+                    delegateSchema = reduceDependency({ schema: delegateSchema, dependency: parent });
+
+                    schema = schema.extend({
+                        [storeTypeField]: z.enum([formDefinition.type]).default(formDefinition.type),
+                        [key]: z.object({ create: delegateSchema }),
+                    });
+                    // TODO SRE : reduce dependency in key only
+
+                    return schema;
+                }, z.object({}))
+            )
             .extend(typeHooks[formDefinition.type].schema.create.shape)
     );
-
     const fieldConfig = formDefinition.children.reduce(
         (config, dependency) => reduceDependencyConfig({ config, dependency }),
         formDefinition.parents.reduce(
             (config, dependency) => reduceDependencyConfig({ config, dependency }),
-            {} as FieldConfig<AnyZodObject>
+            formDefinition.polymorphisms.reduce((config, dependency) => {
+                config[dependency.key] = {
+                    create: reduceDependencyConfig({ config: {}, dependency: dependency.parent }),
+                };
+                return config;
+            }, {} as Record<string, any>)
         )
     );
+    console.log(fieldConfig);
 
     return (
         <AutoFormDialog
