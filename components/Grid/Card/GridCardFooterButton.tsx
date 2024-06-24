@@ -19,7 +19,7 @@ export function GridCardFooterButton({
     const create = typeHook.useCreate.single();
 
     const formDefinition: FormDefinition = {
-        type: 'LeaseMailOtherAddress',
+        type: 'PropertyTenancyInCommon',
         mode: 'create',
         polymorphisms: [
             {
@@ -27,7 +27,7 @@ export function GridCardFooterButton({
                 type: 'PropertyTenancy',
                 storeTypeField: 'type',
                 parent: {
-                    key: 'propertyId',
+                    key: 'properties',
                     type: 'Property',
                     mode: 'connect',
                     array: true,
@@ -68,8 +68,11 @@ export function GridCardFooterButton({
                     delegateSchema = reduceDependency({ schema: delegateSchema, dependency: parent });
 
                     schema = schema.extend({
-                        [storeTypeField]: z.enum([formDefinition.type]).default(formDefinition.type),
-                        [key]: z.object({ create: delegateSchema }),
+                        [key]: z.object({
+                            create: delegateSchema.extend({
+                                [storeTypeField]: z.enum([formDefinition.type]).default(formDefinition.type),
+                            }),
+                        }),
                     });
                     // TODO SRE : reduce dependency in key only
 
@@ -90,7 +93,6 @@ export function GridCardFooterButton({
             }, {} as Record<string, any>)
         )
     );
-    console.log(fieldConfig);
 
     return (
         <AutoFormDialog
@@ -117,11 +119,11 @@ export function GridCardFooterButton({
                 if (array) {
                     if (optional) {
                         schema = schema.extend({
-                            [key]: z.object({ connect: z.array(z.string()).optional() }),
+                            [key]: z.object({ connect: z.array(z.object({ id: z.string() })).optional() }),
                         });
                     } else {
                         schema = schema.extend({
-                            [key]: z.object({ connect: z.array(z.string()) }),
+                            [key]: z.object({ connect: z.array(z.object({ id: z.string() })) }),
                         });
                     }
                 } else {

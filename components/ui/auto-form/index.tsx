@@ -68,6 +68,8 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
             setSubmitDisabled(false);
         }
     }
+
+    console.log(form.getValues());
     return (
         <div className="w-full">
             <Form {...form}>
