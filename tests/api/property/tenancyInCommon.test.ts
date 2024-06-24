@@ -2,6 +2,7 @@ import { assert, expect, it } from 'vitest';
 import { fakeProperty } from '@/lib/demo/fake';
 import { getEnhancedPrisma } from '@/tests/mock/enhanced-prisma';
 import { person, propertyTenancyInCommonCreateArgs, tenancyInCommon } from '@/tests/api/property/tenancyUtils';
+import { PropertyTenancyType } from '@prisma/client';
 
 it('Should not allow a user to create tenancy in common for properties not in their space', async () => {
     const { user1, user2 } = await getEnhancedPrisma();
@@ -73,7 +74,7 @@ it('Should allow a user to create tenancy in common for properties in their spac
 
     assert.equal(properties.length, 1);
     assert.equal(properties[0].spaceId, user2.space.id);
-    assert.equal(properties[0].tenancy?.type, 'InCommon');
+    assert.equal(properties[0].tenancy?.type, PropertyTenancyType.PropertyTenancyInCommon);
     assert.equal(properties[0].surface, property.surface);
     assert.equal(properties[0].tenancy?.tenancyInCommon?.ownerId, user3.userCreated.id);
     assert.deepEqual(properties[0].tenancy?.tenancyInCommon?.tenants[0].person.birthDate, person.birthDate);
