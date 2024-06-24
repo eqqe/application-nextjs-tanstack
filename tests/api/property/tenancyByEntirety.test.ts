@@ -2,6 +2,7 @@ import { assert, expect, it } from 'vitest';
 import { fakeProperty } from '@/lib/demo/fake';
 import { getEnhancedPrisma } from '@/tests/mock/enhanced-prisma';
 import { person, propertyTenancyByEntiretyCreateArgs } from '@/tests/api/property/tenancyUtils';
+import { PropertyTenancyType } from '@prisma/client';
 
 it('Should not allow a user to create tenancy by entirety for properties not in their space', async () => {
     const { user1, user2 } = await getEnhancedPrisma();
@@ -64,7 +65,7 @@ it('Should allow a user to create tenancy by entirety for properties in their sp
 
     assert.equal(properties.length, 1);
     assert.equal(properties[0].spaceId, user2.space.id);
-    assert.equal(properties[0].tenancy?.type, 'ByEntirety');
+    assert.equal(properties[0].tenancy?.type, PropertyTenancyType.PropertyTenancyByEntirety);
     assert.equal(properties[0].surface, property.surface);
     assert.equal(properties[0].tenancy?.tenancyByEntirety?.ownerId, user3.userCreated.id);
     assert.deepEqual(properties[0].tenancy?.tenancyByEntirety?.person.birthDate, person.birthDate);

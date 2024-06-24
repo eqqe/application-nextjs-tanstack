@@ -9,6 +9,7 @@ import {
     LeasePeriodicityType,
     LeaseQuaterlyPeriodicityType,
     LeaseType,
+    PropertyTenancyType,
 } from '@prisma/client';
 import { z } from 'zod';
 import {
@@ -122,7 +123,7 @@ export function generateData({ length, spaceId }: { length: number; spaceId: str
                     tenancy: {
                         create: {
                             name: faker.word.noun(),
-                            type: 'InCommon',
+                            type: PropertyTenancyType.PropertyTenancyInCommon,
                             tenancyInCommon: {
                                 create: {
                                     ...fakeTenancyInCommon(),
