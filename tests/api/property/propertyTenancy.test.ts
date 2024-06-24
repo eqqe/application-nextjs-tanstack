@@ -131,8 +131,8 @@ it('Should allow a user to create property tenancy and list and group by them', 
     propertyTenanciesCountByType = await getPropertyTenanciesCountByType();
 
     assert.deepEqual(propertyTenanciesCountByType, [
+        { type: 'ByEntirety', _count: 1 },
         { type: 'InCommon', _count: 1 },
         { type: 'Joint', _count: 2 },
-        { type: 'ByEntirety', _count: 1 },
     ]);
 });
