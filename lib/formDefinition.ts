@@ -9,6 +9,7 @@ export type Dependency = BaseDependency & {
     optional: boolean;
     minLenghtArray1: boolean;
     mode: 'connect' | 'create';
+    where: Record<string, any>;
 };
 
 type Polymorphism = BaseDependency & {

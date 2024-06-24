@@ -1,15 +1,3 @@
-import { ChevronLeft, ChevronRight, Copy, CreditCard, MoreVertical, Truck } from 'lucide-react';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import { Pagination, PaginationContent, PaginationItem } from '@/components/ui/pagination';
 import { useCurrentGrid } from '@/hooks/useCurrentGrid';
 import { GridCard } from './Card/GridCard';
 import { GridTabs } from './Tabs/GridTabs';

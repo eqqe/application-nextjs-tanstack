@@ -133,7 +133,7 @@ export function GridCardFooterButton({
 
     function reduceDependencyConfig({
         config,
-        dependency: { mode, array, optional, key, type },
+        dependency: { mode, array, optional, key, type, where },
     }: {
         config: FieldConfig<Record<string, any>>;
         dependency: Dependency;
@@ -145,6 +145,7 @@ export function GridCardFooterButton({
                     enableMultiRowSelection: array,
                     optional,
                     type,
+                    where,
                 },
             },
         };
