@@ -174,7 +174,10 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
         `useCreate${name}`,
         `useCreateMany${name}`,
     ]);
-    sf.addStatements(`import { ${hooks.join(',')} } from '@/zmodel/lib/hooks';`);
+    sf.addStatements(`import { ${hooks.join(',')} } from '@/zmodel/lib/hooks';
+                     import { Type } from '@zenstackhq/runtime/models';
+                     import { type FormDefinition } from '@/lib/formDefinition';
+                     import { AnyZodObject } from 'zod';`);
 
     names.forEach((name) => {
         sf.addStatements(`import { ${name}CreateForm } from '@/zmodel/lib/forms/${paramCase(name)}';`);
@@ -218,6 +221,33 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
             {
                 name: `typeHooks`,
                 initializer: `{${mappings}}`,
+                type: `Record<
+                        Type,
+                        {
+                            useHook: {
+                                Aggregate: Function;
+                                GroupBy: Function;
+                                FindMany: Function;
+                            };
+                            schema: {
+                                base: AnyZodObject;
+                                update: AnyZodObject;
+                                create: AnyZodObject;
+                            };
+                            useCount: Function;
+                            useUpdate: {
+                                single: Function;
+                                many: Function;
+                            };
+                            useCreate: {
+                                single: Function;
+                                many: Function;
+                            };
+                            form: {
+                                create: FormDefinition;
+                            };
+                        }
+                    >`,
             },
         ],
     });

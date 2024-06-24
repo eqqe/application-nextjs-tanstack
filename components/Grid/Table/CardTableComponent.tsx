@@ -3,7 +3,7 @@ import { AutoFormDialog } from '@/components/Form/AutoFormDialog';
 import { FallbackError } from '@/components/layout/FallbackError';
 import { ErrorBoundary } from 'react-error-boundary';
 import { ColumnDef, PaginationState, RowData, RowSelectionState, SortingState } from '@tanstack/react-table';
-import { z } from 'zod';
+import { AnyZodObject, z } from 'zod';
 import { AutoTable } from '@/components/AutoTable/AutoTable';
 import { ReactNode, useState, useMemo, useEffect, useCallback } from 'react';
 import { Chart } from '@/components/Grid/Card/Chart';
@@ -81,7 +81,8 @@ export const CardTableComponent = React.memo(
                 return [];
             }
             return Object.entries(schema.base.shape).flatMap(([key, zodType]) => {
-                const isString = zodType._def.typeName === z.ZodFirstPartyTypeKind.ZodString;
+                // @ts-ignore
+                const isString = zodType && zodType._def && zodType._def.typeName === z.ZodFirstPartyTypeKind.ZodString;
                 // Todo SRE : ZodEnum
                 // Search in all string to include the search value, excluding the ids (uuids unknown by user).
                 if (isString && !key.includes('id')) {
@@ -144,7 +145,7 @@ export const CardTableComponent = React.memo(
                     return res;
             }
         }, [groupBy, orFilter, pagination.pageIndex, pagination.pageSize, sorting, typeTableRequest]);
-        type ColumnDefFromSchema = ColumnDef<z.infer<typeof schema.base>, ReactNode>;
+        type ColumnDefFromSchema = ColumnDef<any, ReactNode>;
         const findMany = typeTableRequest === 'FindMany';
 
         const columnDataTable = useMemo(() => {
@@ -169,7 +170,6 @@ export const CardTableComponent = React.memo(
             let colsRes: ColumnDefFromSchema[] = cols.map((column) => {
                 let zodBaseType = 'ZodString';
                 try {
-                    // @ts-expect-error try to restore zod type from column name
                     zodBaseType = schema.base.shape[column]._def.typeName;
                 } catch {
                     // continue
@@ -191,7 +191,6 @@ export const CardTableComponent = React.memo(
                             formSchema={schema.update}
                             values={row.original}
                             onSubmitData={async (data) => {
-                                // @ts-expect-error
                                 await update.mutateAsync({
                                     data,
                                     where: {
@@ -229,11 +228,9 @@ export const CardTableComponent = React.memo(
         if (where) {
             params.where = { ...params.where, ...where };
         }
-        // @ts-expect-error
         rows = useHookTyped(params, options).data;
 
         let rowCount: number | undefined;
-        // @ts-expect-error
         rowCount = useCount({ where: params.where ?? {} }, options).data;
 
         if (!options.enabled || (multiTablesGlobalFilter && !rowCount)) {
