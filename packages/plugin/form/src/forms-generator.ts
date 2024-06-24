@@ -1,4 +1,5 @@
-import { type Model, ReferenceExpr, DataModelField } from '@zenstackhq/sdk/ast';
+import { type Model, ReferenceExpr, isReferenceExpr, ArrayExpr, DataModelField } from '@zenstackhq/sdk/ast';
+import { getRelationKeyPairs, getAttribute, getAttributeArg } from '@zenstackhq/sdk';
 import {
     type PluginOptions,
     createProject,
@@ -65,62 +66,46 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
             }
             const ref = field.type.reference?.ref;
             if (ref?.$type === 'DataModel') {
-                const polymorphAttribute = field.attributes.find(
-                    (attribute) => attribute.decl.ref?.name === '@form.polymorphism'
-                );
-
-                const minLenghtArray1 = field.attributes.find(
-                    (attribute) => attribute.decl.ref?.name === '@form.minLenghtArray1'
-                );
+                const polymorphAttribute = getAttribute(field, '@form.polymorphism');
 
                 if (polymorphAttribute) {
-                    const polymorphRefAttribute = ref.attributes.find(
-                        (attribute) => attribute.decl.ref?.name === '@@form.polymorphism'
-                    );
-                    if (!polymorphRefAttribute) {
-                        warnings.push(`Should also define @@form.polymorphism on ${ref.name}`);
-                    }
+                    const polymorphRefAttribute = getAttribute(ref, '@@form.polymorphism');
 
-                    const parent = (polymorphRefAttribute?.args[1].value as ReferenceExpr).target.ref;
-                    if (parent?.$type === 'DataModelField') {
-                        const storeTypeField = (polymorphRefAttribute?.args[0].value as ReferenceExpr).target.ref?.name;
-                        if (!storeTypeField) {
-                            throw '!storeFieldType';
-                        }
-                        const parentType = parent.type.reference?.ref?.name;
-                        if (!parentType) {
-                            throw '!parentType';
-                        }
-                        const minLenghtArray1 = parent.attributes.find(
-                            (attribute) => attribute.decl.ref?.name === '@form.minLenghtArray1'
-                        );
+                    if (polymorphRefAttribute) {
+                        const parentField = getAttributeArg(polymorphRefAttribute, 'parentField');
 
-                        let key = parent.name;
-
-                        const relationAttribute = parent.attributes.find(
-                            (attribute) => attribute.decl.ref?.name === '@relation'
-                        );
-                        if (relationAttribute) {
-                            const relationFieldName = (relationAttribute?.args[0].value as ReferenceExpr).target.ref
-                                ?.name;
-                            if (relationFieldName) {
-                                key = relationFieldName;
+                        if (isReferenceExpr(parentField)) {
+                            const parent = parentField.target.ref;
+                            if (parent?.$type === 'DataModelField') {
+                                const typeFieldArg = getAttributeArg(polymorphRefAttribute, 'typeField');
+                                if (isReferenceExpr(typeFieldArg)) {
+                                    const storeTypeField = typeFieldArg.target.ref?.name;
+                                    if (!storeTypeField) {
+                                        throw '!storeFieldType';
+                                    }
+                                    const parentType = parent.type.reference?.ref?.name;
+                                    if (!parentType) {
+                                        throw '!parentType';
+                                    }
+                                    const { key, minLenghtArray1 } = getKeyAndMinLenghtArray1(parent);
+                                    formDefinition.polymorphisms.push({
+                                        key: field.name,
+                                        type: ref.name,
+                                        storeTypeField,
+                                        parent: {
+                                            key,
+                                            array: parent.type.array,
+                                            mode: 'connect',
+                                            optional: parent.type.optional,
+                                            minLenghtArray1,
+                                            type: parentType,
+                                        },
+                                    });
+                                }
                             }
                         }
-
-                        formDefinition.polymorphisms.push({
-                            key: field.name,
-                            type: ref.name,
-                            storeTypeField,
-                            parent: {
-                                key,
-                                array: parent.type.array,
-                                mode: 'connect',
-                                optional: parent.type.optional,
-                                minLenghtArray1: !!minLenghtArray1,
-                                type: parentType,
-                            },
-                        });
+                    } else {
+                        warnings.push(`Should also define @@form.polymorphism on ${ref.name}`);
                     }
                 } else {
                     const type = field.type.reference?.ref?.name;
@@ -128,24 +113,14 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
                         throw '!type';
                     }
 
-                    let key = field.name;
-
-                    const relationAttribute = field.attributes.find(
-                        (attribute) => attribute.decl.ref?.name === '@relation'
-                    );
-                    if (relationAttribute) {
-                        const relationFieldName = (relationAttribute?.args[0].value as ReferenceExpr).target.ref?.name;
-                        if (relationFieldName) {
-                            key = relationFieldName;
-                        }
-                    }
+                    const { key, minLenghtArray1 } = getKeyAndMinLenghtArray1(field);
 
                     const dependency: Dependency = {
                         key,
                         array: field.type.array,
                         mode: 'connect',
                         optional: field.type.optional,
-                        minLenghtArray1: !!minLenghtArray1,
+                        minLenghtArray1,
                         type,
                     };
                     if (field.type.array) {
@@ -246,4 +221,13 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
     await saveProject(project);
 
     return { warnings };
+}
+
+function getKeyAndMinLenghtArray1(field: DataModelField) {
+    const minLenghtArray1 = !!getAttribute(field, '@form.minLenghtArray1');
+
+    const relations = getRelationKeyPairs(field);
+    const key = relations.length ? relations[0].foreignKey.name : field.name;
+
+    return { minLenghtArray1, key };
 }
