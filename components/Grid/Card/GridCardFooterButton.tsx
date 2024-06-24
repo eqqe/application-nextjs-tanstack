@@ -2,7 +2,6 @@ import { Prisma } from '@prisma/client';
 import { AutoFormDialog } from '@/components/Form/AutoFormDialog';
 import { toast } from 'react-toastify';
 import { typeHooks } from '@/zmodel/lib/forms/typeHooks';
-import { Type } from '@zenstackhq/runtime/models';
 import { AnyZodObject, z } from 'zod';
 import { FieldConfig, FieldConfigItem } from '@/components/ui/auto-form/types';
 import { FormDefinition, Dependency } from '@/lib/formDefinition';
@@ -17,45 +16,7 @@ export function GridCardFooterButton({
     const typeHook = typeHooks[button.table];
 
     const create = typeHook.useCreate.single();
-
-    const formDefinition: FormDefinition = {
-        type: 'PropertyTenancyInCommon',
-        mode: 'create',
-        polymorphisms: [
-            {
-                key: 'propertyTenancy',
-                type: 'PropertyTenancy',
-                storeTypeField: 'type',
-                parent: {
-                    key: 'properties',
-                    type: 'Property',
-                    mode: 'connect',
-                    array: true,
-                    optional: false,
-                },
-            },
-        ],
-        parents: [
-            // {
-            //     key: 'propertyId',
-            //     type: 'Property',
-            //     array: false,
-            //     optional: false,
-            //     mode: 'connect',
-            // },
-        ],
-        children: [
-            // {
-            //     key: 'mailOtherAddresses',
-            //     type: 'LeaseMailOtherAddress',
-            //     mode: 'connect',
-            //     array: true,
-            //     optional: true,
-            // },
-            // Payment, Charges, tenant
-        ],
-    };
-
+    const formDefinition = typeHook.form.create;
     const formSchema = formDefinition.children.reduce(
         (schema, dependency) => reduceDependency({ schema, dependency }),
         formDefinition.parents

@@ -46,37 +46,6 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
     const warnings: string[] = [];
     const models = getDataModels(model);
 
-    /*
-
-    const formDefinition: {
-        mode: 'create' | 'update' | 'view';
-        parents: Dependency[];
-        type: Type;
-        children: Dependency[];
-    } = {
-        mode: 'create',
-        parents: [
-            {
-                key: 'propertyId',
-                type: 'Property',
-                array: false,
-                optional: false,
-                mode: 'connect',
-            },
-        ],
-        type: 'Lease',
-        children: [
-            {
-                key: 'mailOtherAddresses',
-                type: 'LeaseMailOtherAddress',
-                mode: 'connect',
-                array: true,
-                optional: true,
-            },
-            // Payment, Charges, tenant
-        ],
-    };*/
-
     models.map((dataModel) => {
         const fileName = paramCase(dataModel.name);
         const sf = project.createSourceFile(path.join(outDir, `${fileName}.ts`), undefined, { overwrite: true });
@@ -109,28 +78,6 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
 
                     const parent = (polymorphRefAttribute?.args[1].value as ReferenceExpr).target.ref;
                     if (parent?.$type === 'DataModelField') {
-                        // TODO
-
-                        /*
-
-                            const formDefinition: FormDefinition = {
-                            type: 'PropertyTenancyInCommon',
-                            mode: 'create',
-                            polymorphisms: [
-                                {
-                                    key: 'propertyTenancy',
-                                    type: 'PropertyTenancy',
-                                    storeTypeField: 'type',
-                                    parent: {
-                                        key: 'properties',
-                                        type: 'Property',
-                                        mode: 'connect',
-                                        array: true,
-                                        optional: false,
-                                    },
-                                },
-                            ],*/
-
                         const storeTypeField = (polymorphRefAttribute?.args[0].value as ReferenceExpr).target.ref?.name;
                         if (!storeTypeField) {
                             throw '!storeFieldType';
@@ -174,6 +121,7 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
         });
 
         sf.addStatements('/* eslint-disable */');
+        sf.addStatements(`import { FormDefinition } from '@/lib/formDefinition';`);
 
         sf.addVariableStatement({
             isExported: true,
@@ -182,6 +130,7 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
                 {
                     name: `${dataModel.name}CreateForm`,
                     initializer: JSON.stringify(formDefinition),
+                    type: 'FormDefinition',
                 },
             ],
         });

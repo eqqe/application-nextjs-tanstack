@@ -20,7 +20,16 @@ function AutoFormSearch({ label, isRequired, fieldConfigItem, fieldProps }: Auto
     const name = fieldProps.name;
     const onRowSelection = React.useCallback(
         (ids: string[]) =>
-            setValue(name, ids.length ? (enableMultiRowSelection ? ids.map((id) => ({ id })) : ids[0]) : void 0),
+            setValue(
+                name,
+                ids.length
+                    ? enableMultiRowSelection
+                        ? ids.map((id) => ({ id }))
+                        : ids[0]
+                    : enableMultiRowSelection
+                    ? []
+                    : void 0
+            ),
         [enableMultiRowSelection, name, setValue]
     );
 
