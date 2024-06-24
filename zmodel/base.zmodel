@@ -7,17 +7,17 @@ import "space/person/person"
 
 
 abstract model IdCreatedUpdated {
-    id        String   @id @default(uuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    id        String   @id @default(uuid()) @form.ignore
+    createdAt DateTime @default(now()) @form.ignore
+    updatedAt DateTime @updatedAt @form.ignore
 }
 abstract model IdCreatedUpdatedAuth extends IdCreatedUpdated {
     @@deny('all', auth() == null)
 }
 
 abstract model IdCreatedUpdatedSpace extends IdCreatedUpdatedAuth {
-    space   Space  @relation(fields: [spaceId], references: [id], onDelete: Cascade)
-    spaceId String @default(auth().createSpaceId)
+    space   Space  @relation(fields: [spaceId], references: [id], onDelete: Cascade) @form.ignore
+    spaceId String @default(auth().createSpaceId) @form.ignore
 
     @@allow('read', spaceId in auth().selectedSpaces && space.profiles?[users?[user.id == auth().id] && (role == ADMIN || role == USER)])
 }
@@ -63,7 +63,7 @@ model User extends IdCreatedUpdated {
     name                                String?
     profiles                            ProfileUser[]                   @relation("user")
     spacesOwned                         Space[]                         @relation("owner")
-    createSpaceId                       String?                         @ignore
+    createSpaceId                       String?                         @ignore @form.ignore
     selectedSpaces                      String[]                        @ignore
     image                               String?                         @url
 
@@ -89,7 +89,7 @@ model User extends IdCreatedUpdated {
 
     
     // next-auth
-    accounts                            Account[]
+    accounts                            Account[]                       @form.ignore
 
     @@allow('read',  profiles?[profile.users?[user.id == auth().id] && (profile.role == ADMIN || profile.role == USER)])
 
@@ -98,8 +98,8 @@ model User extends IdCreatedUpdated {
 }
 
 abstract model Owner {
-    owner   User   @relation("owner", fields: [ownerId], references: [id], onDelete: Cascade)
-    ownerId String @default(auth().id)
+    owner   User   @relation("owner", fields: [ownerId], references: [id], onDelete: Cascade) @form.ignore
+    ownerId String @default(auth().id) @form.ignore
     @@deny('update', future().owner != owner)
 }
 
@@ -131,7 +131,6 @@ enum Type {
     Corporation
     ProfileUser
     Space
-    Account
     SpaceApplicationVersion
     FolderApplicationVersion
     ApplicationVersion

@@ -61,9 +61,10 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
         };
 
         dataModel.fields.forEach((field) => {
-            if (field.name === 'owner' || field.name === 'space') {
+            if (!!getAttribute(field, '@form.ignore')) {
                 return;
             }
+
             const ref = field.type.reference?.ref;
             if (ref?.$type === 'DataModel') {
                 const polymorphAttribute = getAttribute(field, '@form.polymorphism');

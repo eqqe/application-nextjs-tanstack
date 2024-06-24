@@ -2,7 +2,7 @@ import { expect } from '@playwright/test';
 import { test } from '@/e2e/utils';
 import { faker } from '@faker-js/faker';
 import { Property } from '@prisma/client';
-import { fakeProperty } from '@/lib/demo/fake';
+import { fakeProperty, fakeTenancyInCommon } from '@/lib/demo/fake';
 
 test('Should enable assets application, see groups of properties, list them, edit one', async ({ page, utils }) => {
     await utils.openHomeCreateSpace();
@@ -53,38 +53,57 @@ test('Should enable assets application, see essential data, create a property te
     let property = fakeProperty();
     await utils.assets.createProperty({ property });
 
-    const title = 'Your property tenancies';
-    await utils.checkCountInCard({ title, count: 0 });
-    await utils.assets.createPropertyTenancy({
-        propertyTenancy: {
-            type: 'InCommon',
-            name: 'SCI Simon',
-        },
+    const titleCommon = 'Your PropertyTenancyInCommon';
+    const titleEntirety = 'Your PropertyTenancyByEntirety';
+    const titleJoint = 'Your PropertyJointTenancy';
+    await utils.checkCountInCard({ title: titleCommon, count: 0 });
+
+    await utils.assets.createPropertyTenancyInCommon({
+        propertyTenancyName: 'SCI Simon',
+        tenancyInCommon: fakeTenancyInCommon(),
         surface: property.surface,
     });
-    await utils.checkCountInCard({ title, count: 1 });
+
+    await utils.checkCountInCard({ title: titleCommon, count: 1 });
+    await utils.checkCountInCard({ title: titleEntirety, count: 0 });
+    await utils.checkCountInCard({ title: titleJoint, count: 0 });
 
     property = fakeProperty();
     await utils.assets.createProperty({ property });
 
-    await utils.assets.createPropertyTenancy({
-        propertyTenancy: {
-            type: 'ByEntirety',
-            name: 'Simon',
-        },
+    await utils.assets.createPropertyTenancyByEntirety({
+        propertyTenancyName: 'Simon',
+        byEntirety: {},
         surface: property.surface,
     });
-    await utils.checkCountInCard({ title, count: 2 });
+
+    await utils.checkCountInCard({ title: titleCommon, count: 1 });
+    await utils.checkCountInCard({ title: titleEntirety, count: 1 });
+    await utils.checkCountInCard({ title: titleJoint, count: 0 });
 
     property = fakeProperty();
     await utils.assets.createProperty({ property });
 
-    await utils.assets.createPropertyTenancy({
-        propertyTenancy: {
-            type: 'Joint',
-            name: 'Simons',
-        },
+    await utils.assets.createPropertyTenancyByEntirety({
+        propertyTenancyName: 'Simon 2',
+        byEntirety: {},
         surface: property.surface,
     });
-    await utils.checkCountInCard({ title, count: 3 });
+
+    await utils.checkCountInCard({ title: titleCommon, count: 1 });
+    await utils.checkCountInCard({ title: titleEntirety, count: 2 });
+    await utils.checkCountInCard({ title: titleJoint, count: 0 });
+
+    property = fakeProperty();
+    await utils.assets.createProperty({ property });
+
+    await utils.assets.createPropertyTenancyJoint({
+        propertyTenancyName: 'Simons',
+        jointTenancy: {},
+        surface: property.surface,
+    });
+
+    await utils.checkCountInCard({ title: titleCommon, count: 1 });
+    await utils.checkCountInCard({ title: titleEntirety, count: 1 });
+    await utils.checkCountInCard({ title: titleJoint, count: 1 });
 });

@@ -4,28 +4,26 @@ import { Type } from '@prisma/client';
 import { CardTableComponent } from '@/components/Grid/Table/CardTableComponent';
 
 export const Search: NextPage = () => {
-    const content = Object.values(Type).flatMap((type) => {
-        const table = CardTableComponent({
-            table: {
+    const content = Object.values(Type).map((type) => (
+        <CardTableComponent
+            key={type}
+            table={{
                 type,
                 groupBy: null,
                 chart: null,
                 columns: [],
                 typeTableRequest: 'FindMany',
-            },
-            pageSize: 5,
-            editableItems: false,
-            enableRowSelection: false,
-            enableMultiRowSelection: false,
-            multiTablesGlobalFilter: true,
-        });
-        if (table) {
-            return [table];
-        }
-        return [];
-    });
+            }}
+            pageSize={5}
+            editableItems={false}
+            enableRowSelection={false}
+            enableMultiRowSelection={false}
+            multiTablesGlobalFilter={true}
+        />
+    ));
 
-    return <WithNavBar>{content.length ? content : 'No result'}</WithNavBar>;
+    // Todo SRE No Result
+    return <WithNavBar>{content}</WithNavBar>;
 };
 
 export default Search;

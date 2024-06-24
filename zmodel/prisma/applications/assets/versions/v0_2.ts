@@ -617,17 +617,17 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                         colSpan: 2,
                                                         card: {
                                                             create: {
-                                                                title: 'Your property tenancies',
+                                                                title: 'Your PropertyTenancyInCommon',
                                                                 invertTitleDescription: false,
-                                                                description: `property tenants`,
-                                                                count: 'PropertyTenancy',
+                                                                description: `PropertyTenancyInCommon`,
+                                                                count: 'PropertyTenancyInCommon',
                                                                 icon: 'SquareUser',
                                                                 footer: {
                                                                     create: {
                                                                         button: {
                                                                             create: {
-                                                                                text: 'Create property tenant',
-                                                                                table: 'PropertyTenancy',
+                                                                                text: 'Create PropertyTenancyInCommon',
+                                                                                table: 'PropertyTenancyInCommon',
                                                                             },
                                                                         },
                                                                     },
@@ -683,8 +683,58 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                             },
                                                         },
                                                     },
+
                                                     {
                                                         index: 4,
+                                                        type: GridElementType.Card,
+                                                        colSpan: 2,
+                                                        card: {
+                                                            create: {
+                                                                title: 'Your PropertyTenancyByEntirety',
+                                                                invertTitleDescription: false,
+                                                                description: `PropertyTenancyByEntirety`,
+                                                                count: 'PropertyTenancyByEntirety',
+                                                                icon: 'SquareUser',
+                                                                footer: {
+                                                                    create: {
+                                                                        button: {
+                                                                            create: {
+                                                                                text: 'Create PropertyTenancyByEntirety',
+                                                                                table: 'PropertyTenancyByEntirety',
+                                                                            },
+                                                                        },
+                                                                    },
+                                                                },
+                                                            },
+                                                        },
+                                                    },
+
+                                                    {
+                                                        index: 5,
+                                                        type: GridElementType.Card,
+                                                        colSpan: 2,
+                                                        card: {
+                                                            create: {
+                                                                title: 'Your PropertyJointTenancy',
+                                                                invertTitleDescription: false,
+                                                                description: `PropertyJointTenancy`,
+                                                                count: 'PropertyJointTenancy',
+                                                                icon: 'SquareUser',
+                                                                footer: {
+                                                                    create: {
+                                                                        button: {
+                                                                            create: {
+                                                                                text: 'Create PropertyJointTenancy',
+                                                                                table: 'PropertyJointTenancy',
+                                                                            },
+                                                                        },
+                                                                    },
+                                                                },
+                                                            },
+                                                        },
+                                                    },
+                                                    {
+                                                        index: 6,
                                                         type: GridElementType.Card,
                                                         colSpan: 2,
                                                         card: {
@@ -713,7 +763,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                         },
                                                     },
                                                     {
-                                                        index: 5,
+                                                        index: 7,
                                                         type: GridElementType.Card,
                                                         colSpan: 2,
                                                         card: {
