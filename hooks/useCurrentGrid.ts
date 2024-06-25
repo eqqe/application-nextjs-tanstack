@@ -30,8 +30,6 @@ export const useCurrentGrid = () => {
         return;
     }
 
-    const { data: grid } = trpc.grid.findUnique.useQuery(params, {
-        enabled: !!gridId,
-    });
+    const { data: grid } = trpc.grid.findUnique.useQuery(params);
     return grid;
 };

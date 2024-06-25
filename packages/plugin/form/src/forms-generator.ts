@@ -1,5 +1,5 @@
-import { type Model, ReferenceExpr, isReferenceExpr, ArrayExpr, DataModelField } from '@zenstackhq/sdk/ast';
-import { getRelationKeyPairs, getAttribute, getAttributeArg } from '@zenstackhq/sdk';
+import { type Model, isReferenceExpr } from '@zenstackhq/sdk/ast';
+import { getAttribute, getAttributeArg } from '@zenstackhq/sdk';
 import {
     type PluginOptions,
     createProject,
@@ -13,6 +13,7 @@ import path from 'path';
 import { paramCase, camelCase } from 'change-case';
 import { type DMMF } from '@zenstackhq/sdk/prisma';
 import { VariableDeclarationKind } from 'ts-morph';
+import { buildDependency } from './utils';
 
 type BaseDependency = {
     key: string;
@@ -23,6 +24,7 @@ export type Dependency = BaseDependency & {
     optional: boolean;
     minLenghtArray1: boolean;
     mode: 'connect' | 'create';
+    where: Record<string, any>;
 };
 
 type Polymorphism = BaseDependency & {
@@ -87,23 +89,12 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
                                     if (!storeTypeField) {
                                         throw '!storeFieldType';
                                     }
-                                    const parentType = parent.type.reference?.ref?.name;
-                                    if (!parentType) {
-                                        throw '!parentType';
-                                    }
-                                    const { key, minLenghtArray1 } = getKeyAndMinLenghtArray1(parent);
+
                                     formDefinition.polymorphisms.push({
                                         key: field.name,
                                         type: camelCase(ref.name),
                                         storeTypeField,
-                                        parent: {
-                                            key,
-                                            array: parent.type.array,
-                                            mode: 'connect',
-                                            optional: parent.type.optional,
-                                            minLenghtArray1,
-                                            type: camelCase(parentType),
-                                        },
+                                        parent: buildDependency(parent),
                                     });
                                 }
                             }
@@ -117,16 +108,7 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
                         throw '!type';
                     }
 
-                    const { key, minLenghtArray1 } = getKeyAndMinLenghtArray1(field);
-
-                    const dependency: Dependency = {
-                        key,
-                        array: field.type.array,
-                        mode: 'connect',
-                        optional: field.type.optional,
-                        minLenghtArray1,
-                        type: camelCase(type),
-                    };
+                    const dependency = buildDependency(field);
                     if (field.type.array) {
                         formDefinition.children.push(dependency);
                     } else {
@@ -215,12 +197,4 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
     await saveProject(project);
 
     return { warnings };
-}
-
-function getKeyAndMinLenghtArray1(field: DataModelField) {
-    const minLenghtArray1 = !!getAttribute(field, '@form.minLenghtArray1');
-
-    const key = field.name;
-
-    return { minLenghtArray1, key };
 }
