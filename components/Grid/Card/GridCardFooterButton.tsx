@@ -67,10 +67,9 @@ export const GridCardFooterButton = memo(
                 onSubmitData={async (data) => {
                     // @ts-ignore
                     await create.mutateAsync({ data });
-                    queryClient.refetchQueries([button.table]);
-
                     toast.success(`${button.table} created successfully!`);
                 }}
+                type={button.table}
                 title={button.text}
             />
         );
