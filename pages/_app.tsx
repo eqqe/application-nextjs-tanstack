@@ -43,4 +43,5 @@ function AppContent(props: { children: ReactElement | ReactElement[] }) {
     );
 }
 
+// @ts-expect-error -----> Faster typescript inference of tRPC in VsCode by removing the recursion on type when createTRPCNext
 export default trpc.withTRPC(App);
