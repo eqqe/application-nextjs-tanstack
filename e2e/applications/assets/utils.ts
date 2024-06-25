@@ -96,6 +96,7 @@ export function getAssetsUtils(base: ReturnType<typeof getBaseUtils>, page: Page
         await base.getByLabel<PropertyTenancyInCommon>('siren').fill(tenancyInCommon.siren ?? '');
         await base.getByLabel<PropertyTenancyInCommon>('siret').fill(tenancyInCommon.siret ?? '');
         await base.clickSaveChanges();
+        await base.checkToastCreated('propertyTenancyInCommon');
     }
 
     async function createPropertyTenancyJoint({
