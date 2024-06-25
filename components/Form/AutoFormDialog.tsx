@@ -18,6 +18,7 @@ import { FallbackError } from '@/components/layout/FallbackError';
 import { CommonFormTable } from '@/components/ui/auto-common/types';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useQueryClient } from '@tanstack/react-query';
+import { Type } from '@zenstackhq/runtime/models';
 
 export function AutoFormDialog<SchemaType extends ZodObjectOrWrapped>({
     onSubmitData,
@@ -25,9 +26,11 @@ export function AutoFormDialog<SchemaType extends ZodObjectOrWrapped>({
     fieldConfig,
     values,
     title,
+    type,
 }: {
     onSubmitData: (data: z.infer<SchemaType>) => Promise<void>;
     title: string;
+    type: Type;
 } & AutoFormProps<SchemaType> &
     CommonFormTable<SchemaType>) {
     const [open, setOpen] = useState(false);
@@ -36,7 +39,7 @@ export function AutoFormDialog<SchemaType extends ZodObjectOrWrapped>({
         toast.dismiss();
         try {
             await onSubmitData(data);
-            queryClient.refetchQueries();
+            queryClient.refetchQueries([[type]]);
             setOpen(false);
         } catch (err) {
             toast.error('Failed to create');

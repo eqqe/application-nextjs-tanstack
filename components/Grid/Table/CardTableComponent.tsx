@@ -203,6 +203,7 @@ export const CardTableComponent = React.memo(
                                     },
                                 });
                             }}
+                            type={type}
                             title={`Edit ${type}`}
                         />
                     ),

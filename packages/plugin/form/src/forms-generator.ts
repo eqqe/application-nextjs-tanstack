@@ -13,31 +13,30 @@ import path from 'path';
 import { paramCase, camelCase } from 'change-case';
 import { type DMMF } from '@zenstackhq/sdk/prisma';
 import { VariableDeclarationKind } from 'ts-morph';
-import { buildDependency } from './utils';
+import { buildDependency as getRelation } from './utils';
 
-type BaseDependency = {
-    key: string;
-    type: string;
+type BaseRelation = {
+    referenceName: string;
 };
-export type Dependency = BaseDependency & {
+export type Relation = BaseRelation & {
+    type: 'Relation';
     array: boolean;
     optional: boolean;
     minLenghtArray1: boolean;
-    mode: 'connect' | 'create';
-    where: Record<string, any>;
+    backLinkName: string;
+    backLinkArray: boolean;
+    backLinkOptional: boolean;
 };
 
-type Polymorphism = BaseDependency & {
-    parent: Dependency;
+type DelegateRelation = BaseRelation & {
+    type: 'DelegateRelation';
+    parent: Relation & { fieldName: string };
     storeTypeField: string;
 };
 
 export type FormDefinition = {
-    mode: 'create' | 'update' | 'view';
-    polymorphisms: Polymorphism[];
-    parents: Dependency[];
+    relations: Record<string, Relation | DelegateRelation>;
     type: string;
-    children: Dependency[];
 };
 
 export const name = 'Form';
@@ -59,10 +58,7 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
 
         const formDefinition: FormDefinition = {
             type: camelCase(dataModel.name),
-            mode: 'create',
-            polymorphisms: [],
-            parents: [],
-            children: [],
+            relations: {},
         };
 
         dataModel.fields.forEach((field) => {
@@ -90,12 +86,12 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
                                         throw '!storeFieldType';
                                     }
 
-                                    formDefinition.polymorphisms.push({
-                                        key: field.name,
-                                        type: camelCase(ref.name),
+                                    formDefinition.relations[field.name] = {
+                                        type: 'DelegateRelation',
+                                        referenceName: camelCase(ref.name),
                                         storeTypeField,
-                                        parent: buildDependency(parent),
-                                    });
+                                        parent: { ...getRelation(parent), fieldName: parent.name },
+                                    };
                                 }
                             }
                         }
@@ -108,12 +104,7 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
                         throw '!type';
                     }
 
-                    const dependency = buildDependency(field);
-                    if (field.type.array) {
-                        formDefinition.children.push(dependency);
-                    } else {
-                        formDefinition.parents.push(dependency);
-                    }
+                    formDefinition.relations[field.name] = getRelation(field);
                 }
             }
         });
@@ -126,7 +117,7 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
             declarationKind: VariableDeclarationKind.Const,
             declarations: [
                 {
-                    name: `${dataModel.name}CreateForm`,
+                    name: `${dataModel.name}FormDefinition`,
                     initializer: JSON.stringify(formDefinition),
                     type: 'FormDefinition',
                 },
@@ -151,7 +142,7 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
                      import { AnyZodObject } from 'zod';`);
 
     names.forEach((name) => {
-        sf.addStatements(`import { ${name}CreateForm } from '@/zmodel/lib/forms/${paramCase(name)}';`);
+        sf.addStatements(`import { ${name}FormDefinition } from '@/zmodel/lib/forms/${paramCase(name)}';`);
     });
 
     const mappings = names
@@ -164,7 +155,7 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
             create: ${name}CreateScalarSchema,
         },
         form: {
-            create: ${name}CreateForm
+            create: ${name}FormDefinition
         }
     }
     `

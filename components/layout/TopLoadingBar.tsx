@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Progress } from '@/components/ui/progress';
 import { useQueryClient } from '@tanstack/react-query';
+import debounce from 'debounce';
 
 export function TopLoadingBar() {
     const [progress, setProgress] = React.useState(0);
@@ -9,11 +10,14 @@ export function TopLoadingBar() {
     const [isLoading, setIsLoading] = React.useState(false);
 
     React.useEffect(() => {
-        const unsubscribe = queryClient.getQueryCache().subscribe((event) => {
+        const debounceLoading = debounce(() => {
             const updateIsLoading = queryClient.isFetching() > 0 || queryClient.isMutating() > 0;
             setIsLoading(updateIsLoading);
-        });
+        }, 200);
+
+        const unsubscribe = queryClient.getQueryCache().subscribe(debounceLoading);
         return () => {
+            debounceLoading.clear();
             unsubscribe();
         };
     }, [queryClient]);

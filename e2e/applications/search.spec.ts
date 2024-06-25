@@ -20,8 +20,8 @@ test('Search for created property and tenancy, vs no result', async ({ page, uti
     await utils.search('Simon');
 
     async function checkResults() {
+        await expect(page.getByText(propertyTenancyName)).toBeVisible();
         await expect(page.getByText(property.city, { exact: true })).toBeVisible();
-        await expect(page.getByText(propertyTenancyName, { exact: true })).toBeVisible();
         await expect(page.getByText(property.postalCode, { exact: true })).toBeVisible();
         await expect(page.getByText(property.country, { exact: true })).toBeVisible();
         await expect(page.getByText(property.streetAddress, { exact: true })).toBeVisible();

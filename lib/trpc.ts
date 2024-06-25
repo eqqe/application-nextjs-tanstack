@@ -1,4 +1,4 @@
-import { TRPCClientError, httpBatchLink } from '@trpc/client';
+import { httpBatchLink } from '@trpc/client';
 import superjson from 'superjson';
 import { createTRPCNext } from '@/server/routers/generated/client/next';
 
