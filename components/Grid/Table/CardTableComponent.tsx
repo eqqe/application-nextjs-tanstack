@@ -237,6 +237,7 @@ export const CardTableComponent = React.memo(
         // @ts-expect-error
         rows = useTypedQuery(params, options).data;
 
+        // https://github.com/prisma/prisma/issues/7550
         let rowCount: number | undefined;
 
         const useCountQuery = trpc[type].count.useQuery;
