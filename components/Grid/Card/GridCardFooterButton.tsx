@@ -60,7 +60,6 @@ export const GridCardFooterButton = memo(
             }
         }, {} as Record<string, any>);
 
-        console.log(button.table);
         return (
             <AutoFormDialog
                 formSchema={formSchema}
@@ -68,7 +67,6 @@ export const GridCardFooterButton = memo(
                 onSubmitData={async (data) => {
                     // @ts-ignore
                     await create.mutateAsync({ data });
-                    console.log(queryClient.getQueryCache());
                     queryClient.refetchQueries([button.table]);
 
                     toast.success(`${button.table} created successfully!`);
@@ -118,7 +116,7 @@ export const GridCardFooterButton = memo(
         function reduceRelationConfig({
             config,
             fieldName,
-            relation: { array, optional, backLinkName, backLinkArray, referenceName },
+            relation: { array, optional, backLinkName, backLinkArray, backLinkOptional, referenceName },
         }: {
             config: FieldConfig<Record<string, any>>;
             fieldName: string;
@@ -131,11 +129,7 @@ export const GridCardFooterButton = memo(
                         enableMultiRowSelection: array,
                         optional,
                         type: referenceName,
-                        where: backLinkArray
-                            ? {}
-                            : {
-                                  [backLinkName]: void 0,
-                              },
+                        where: backLinkOptional && !backLinkArray ? { [backLinkName]: null } : {},
                     },
                 },
             };

@@ -56,6 +56,7 @@ export function buildDependency(field: DataModelField): Relation {
         minLenghtArray1,
         backLinkName: backLink.name,
         backLinkArray: backLink.type.array,
+        backLinkOptional: backLink.type.optional,
         array: field.type.array,
         optional: field.type.optional,
         referenceName: type,

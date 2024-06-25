@@ -25,6 +25,7 @@ export type Relation = BaseRelation & {
     minLenghtArray1: boolean;
     backLinkName: string;
     backLinkArray: boolean;
+    backLinkOptional: boolean;
 };
 
 type DelegateRelation = BaseRelation & {
