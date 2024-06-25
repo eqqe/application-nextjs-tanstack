@@ -11,7 +11,7 @@ import {
 import { useCurrentSubTab } from '@/hooks/useCurrentSubTab';
 import { getGridUrl, getSubTabFolderUrl } from '@/lib/urls';
 import { useCurrentGrid } from '@/hooks/useCurrentGrid';
-import { useCurrentProperty } from '@/hooks/property/useCurrentProperty';
+import React from 'react';
 
 export function TopBreadCrumb() {
     const space = useCurrentSpace();
@@ -44,23 +44,23 @@ export function TopBreadCrumb() {
                     </BreadcrumbLink>
                 </BreadcrumbItem>
                 {items.slice(0, -1).map((item) => (
-                    <>
-                        <BreadcrumbSeparator key={`separator-${item.id}`} />
-                        <BreadcrumbItem key={`item-${item.id}`}>
+                    <React.Fragment key={item.id}>
+                        <BreadcrumbSeparator />
+                        <BreadcrumbItem>
                             <BreadcrumbLink asChild>
                                 <Link href={item.link}>{item.text}</Link>
                             </BreadcrumbLink>
                         </BreadcrumbItem>
-                    </>
+                    </React.Fragment>
                 ))}
 
                 {items.length > 0 && (
-                    <>
-                        <BreadcrumbSeparator key={`separator-${items[items.length - 1].id}`} />
-                        <BreadcrumbItem key={`item-${items[items.length - 1].id}`}>
+                    <React.Fragment key={items[items.length - 1].id}>
+                        <BreadcrumbSeparator />
+                        <BreadcrumbItem>
                             <BreadcrumbPage>{items[items.length - 1].text}</BreadcrumbPage>
                         </BreadcrumbItem>
-                    </>
+                    </React.Fragment>
                 )}
             </BreadcrumbList>
         </Breadcrumb>

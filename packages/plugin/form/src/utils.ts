@@ -50,9 +50,7 @@ export function buildDependency(field: DataModelField): Dependency {
     const where = backLink.type.array
         ? {}
         : {
-              [backLink.name]: {
-                  is: null,
-              },
+              [backLink.name]: null,
           };
 
     let type = field.type.reference?.ref?.name;
