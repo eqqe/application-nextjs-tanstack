@@ -2,7 +2,7 @@ import { DataModel, isDataModel, DataModelField } from '@zenstackhq/sdk/ast';
 import { getAttribute } from '@zenstackhq/sdk';
 import { getAttributeArgLiteral } from '@zenstackhq/sdk';
 import { camelCase } from 'change-case';
-import { Dependency } from './forms-generator';
+import { Relation } from './forms-generator';
 
 function getBackLink(field: DataModelField) {
     if (!field.type.reference?.ref || !isDataModel(field.type.reference?.ref)) {
@@ -37,21 +37,14 @@ function getRelationName(field: DataModelField) {
     return getAttributeArgLiteral(relAttr, 'name');
 }
 
-export function buildDependency(field: DataModelField): Dependency {
+export function buildDependency(field: DataModelField): Relation {
     const minLenghtArray1 = !!getAttribute(field, '@form.minLenghtArray1');
 
-    const key = field.name;
     const backLink = getBackLink(field);
 
     if (!backLink) {
         throw '!backlink';
     }
-
-    const where = backLink.type.array
-        ? {}
-        : {
-              [backLink.name]: null,
-          };
 
     let type = field.type.reference?.ref?.name;
     if (!type) {
@@ -61,11 +54,11 @@ export function buildDependency(field: DataModelField): Dependency {
 
     return {
         minLenghtArray1,
-        key,
-        where,
+        backLinkName: backLink.name,
+        backLinkArray: backLink.type.array,
         array: field.type.array,
-        mode: 'connect',
         optional: field.type.optional,
-        type,
+        referenceName: type,
+        type: 'Relation',
     };
 }

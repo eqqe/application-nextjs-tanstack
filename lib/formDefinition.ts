@@ -1,26 +1,24 @@
 import { Type } from '@zenstackhq/runtime/models';
 
-type BaseDependency = {
-    key: string;
-    type: Type;
+type BaseRelation = {
+    referenceName: Type;
 };
-export type Dependency = BaseDependency & {
+export type Relation = BaseRelation & {
+    type: 'Relation';
     array: boolean;
     optional: boolean;
     minLenghtArray1: boolean;
-    mode: 'connect' | 'create';
-    where: Record<string, any>;
+    backLinkName: string;
+    backLinkArray: boolean;
 };
 
-type Polymorphism = BaseDependency & {
-    parent: Dependency;
+type DelegateRelation = BaseRelation & {
+    type: 'DelegateRelation';
+    parent: Relation;
     storeTypeField: string;
 };
 
 export type FormDefinition = {
-    mode: 'create' | 'update' | 'view';
-    polymorphisms: Polymorphism[];
-    parents: Dependency[];
+    relations: Record<string, Relation | DelegateRelation>;
     type: Type;
-    children: Dependency[];
 };
