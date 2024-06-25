@@ -29,7 +29,7 @@ export type Relation = BaseRelation & {
 
 type DelegateRelation = BaseRelation & {
     type: 'DelegateRelation';
-    parent: Relation;
+    parent: Relation & { fieldName: string };
     storeTypeField: string;
 };
 
@@ -89,7 +89,7 @@ export default async function run(model: Model, options: PluginOptions, dmmf: DM
                                         type: 'DelegateRelation',
                                         referenceName: camelCase(ref.name),
                                         storeTypeField,
-                                        parent: getRelation(parent),
+                                        parent: { ...getRelation(parent), fieldName: parent.name },
                                     };
                                 }
                             }

@@ -27,7 +27,11 @@ export function GridCardFooterButton({
                     const { parent, referenceName, storeTypeField } = relation;
 
                     let delegateSchema = typeHooks[referenceName].schema.create;
-                    delegateSchema = reduceRelation({ schema: delegateSchema, fieldName, relation: parent });
+                    delegateSchema = reduceRelation({
+                        schema: delegateSchema,
+                        fieldName: parent.fieldName,
+                        relation: parent,
+                    });
 
                     return schema.extend({
                         [fieldName]: z.object({

@@ -14,7 +14,7 @@ export type Relation = BaseRelation & {
 
 type DelegateRelation = BaseRelation & {
     type: 'DelegateRelation';
-    parent: Relation;
+    parent: Relation & { fieldName: string };
     storeTypeField: string;
 };
 
