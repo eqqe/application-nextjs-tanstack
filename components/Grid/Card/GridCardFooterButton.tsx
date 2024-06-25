@@ -52,7 +52,7 @@ export function GridCardFooterButton({
                 config[fieldName] = {
                     create: reduceRelationConfig({
                         config: {},
-                        fieldName: relation.referenceName,
+                        fieldName: relation.parent.fieldName,
                         relation: relation.parent,
                     }),
                 };
