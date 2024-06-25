@@ -36,7 +36,6 @@ export function AutoFormDialog<SchemaType extends ZodObjectOrWrapped>({
         toast.dismiss();
         try {
             await onSubmitData(data);
-            queryClient.refetchQueries();
             setOpen(false);
         } catch (err) {
             toast.error('Failed to create');
