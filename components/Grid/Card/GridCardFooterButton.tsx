@@ -114,7 +114,7 @@ export function GridCardFooterButton({
     function reduceRelationConfig({
         config,
         fieldName,
-        relation: { array, optional, type, backLinkName, backLinkArray, referenceName },
+        relation: { array, optional, backLinkName, backLinkArray, referenceName },
     }: {
         config: FieldConfig<Record<string, any>>;
         fieldName: string;
@@ -130,7 +130,7 @@ export function GridCardFooterButton({
                     where: backLinkArray
                         ? {}
                         : {
-                              [backLinkName]: null,
+                              [backLinkName]: void 0,
                           },
                 },
             },
