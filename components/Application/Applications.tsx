@@ -47,7 +47,6 @@ export const Applications = () => {
 
     const queryClient = useQueryClient();
 
-    console.log(queryClient.getQueryCache());
     if (!applications) {
         return <>Loading...</>;
     }

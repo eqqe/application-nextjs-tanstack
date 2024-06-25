@@ -12,7 +12,6 @@ export function TopLoadingBar() {
     React.useEffect(() => {
         const debounceLoading = debounce(() => {
             const updateIsLoading = queryClient.isFetching() > 0 || queryClient.isMutating() > 0;
-            console.log('set state is loading');
             setIsLoading(updateIsLoading);
         }, 200);
 
