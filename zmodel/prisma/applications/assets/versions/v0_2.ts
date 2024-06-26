@@ -22,7 +22,6 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                         {
                                             index: 0,
                                             name: 'Properties',
-                                            columns: 8,
                                             icon: 'Home',
                                             elements: {
                                                 create: [
@@ -221,7 +220,6 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                         {
                                             index: 1,
                                             name: 'Property Tenancies',
-                                            columns: 8,
                                             icon: 'SquareUser',
                                             elements: {
                                                 create: [
@@ -461,7 +459,6 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                         {
                                             index: 2,
                                             name: 'Leases',
-                                            columns: 8,
                                             icon: 'FolderKey',
                                             elements: {
                                                 create: [
@@ -583,7 +580,6 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                         {
                                             index: 3,
                                             name: 'Your essential data',
-                                            columns: 8,
                                             icon: 'Gauge',
                                             elements: {
                                                 create: [
