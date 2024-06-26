@@ -2,7 +2,7 @@
 export const colSpans: Record<number, string> = {
     1: 'sm:col-span-8 md:col-span-6 lg:col-span-1',
     2: 'sm:col-span-8 md:col-span-6 lg:col-span-2',
-    3: 'sm:col-span-8 md:col-span-8 lg:col-span-3',
+    3: 'sm:col-span-8 md:col-span-6 lg:col-span-3',
     4: 'sm:col-span-8 md:col-span-8 lg:col-span-4',
     5: 'sm:col-span-10 md:col-span-8 lg:col-span-5',
     6: 'sm:col-span-10 md:col-span-10 lg:col-span-6',

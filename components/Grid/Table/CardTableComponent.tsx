@@ -258,7 +258,6 @@ export const CardTableComponent = React.memo(
                         <Chart data={rows ?? []} chart={chart} groupBy={groupBy} />
                     ) : (
                         <AutoTable
-                            type={type}
                             formSchema={schema.base}
                             additionalColumns={columnDataTable}
                             onlyAdditionalColumns={(!!columns.length && findMany) || !findMany}
