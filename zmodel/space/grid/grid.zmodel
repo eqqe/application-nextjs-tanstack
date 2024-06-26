@@ -44,10 +44,6 @@ model GridElement extends Indexed, IdCreatedUpdatedAuth {
     type             GridElementType
 
     colSpan          Int?            @gte(1) @lte(12)
-    rowStart         Int?            @gte(1) @lte(12)
-    rowEnd           Int?            @gte(1) @lte(12)
-    colStart         Int?            @gte(1) @lte(12)
-    colEnd           Int?            @gte(1) @lte(12)
 
     card             GridCard?
     tabs             GridTabs?

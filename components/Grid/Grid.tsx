@@ -1,7 +1,7 @@
 import { useCurrentGrid } from '@/hooks/useCurrentGrid';
 import { GridCard } from './Card/GridCard';
 import { GridTabs } from './Tabs/GridTabs';
-import { gridCols, colSpans, rowStarts, rowEnds, colStarts, colEnds } from './utils';
+import { colSpans } from './utils';
 import { FallbackError } from '../layout/FallbackError';
 import { ErrorBoundary } from 'react-error-boundary';
 
