@@ -1,17 +1,17 @@
 /* https://tailwindcss.com/docs/content-configuration#dynamic-class-names */
 export const colSpans: Record<number, string> = {
-    1: 'col-span-1',
-    2: 'col-span-2',
-    3: 'col-span-3',
-    4: 'col-span-4',
-    5: 'col-span-5',
-    6: 'col-span-6',
-    7: 'col-span-7',
-    8: 'col-span-8',
-    9: 'col-span-9',
-    10: 'col-span-10',
-    11: 'col-span-11',
-    12: 'col-span-12',
+    1: 'sm:col-span-8 md:col-span-6 lg:col-span-1',
+    2: 'sm:col-span-8 md:col-span-6 lg:col-span-2',
+    3: 'sm:col-span-8 md:col-span-8 lg:col-span-3',
+    4: 'sm:col-span-8 md:col-span-8 lg:col-span-4',
+    5: 'sm:col-span-10 md:col-span-8 lg:col-span-5',
+    6: 'sm:col-span-10 md:col-span-10 lg:col-span-6',
+    7: 'sm:col-span-12 md:col-span-10 lg:col-span-7',
+    8: 'sm:col-span-12 md:col-span-10 lg:col-span-8',
+    9: 'sm:col-span-12 md:col-span-10 lg:col-span-9',
+    10: 'sm:col-span-12 md:col-span-10 lg:col-span-10',
+    11: 'sm:col-span-12 md:col-span-12 lg:col-span-11',
+    12: 'sm:col-span-12 md:col-span-12 lg:col-span-12',
 };
 
 export const paddingBottoms: Record<number, string> = {
@@ -21,80 +21,6 @@ export const paddingBottoms: Record<number, string> = {
     4: 'pb-4',
     5: 'pb-5',
     6: 'pb-6',
-};
-export const gridCols: Record<number, string> = {
-    1: 'lg:grid-cols-1',
-    2: 'lg:grid-cols-2',
-    3: 'lg:grid-cols-3',
-    4: 'lg:grid-cols-4',
-    5: 'lg:grid-cols-5',
-    6: 'lg:grid-cols-6',
-    7: 'lg:grid-cols-7',
-    8: 'lg:grid-cols-8',
-    9: 'lg:grid-cols-9',
-    10: 'lg:grid-cols-10',
-    11: 'lg:grid-cols-11',
-    12: 'lg:grid-cols-12',
-};
-
-export const rowStarts: Record<number, string> = {
-    1: 'row-start-1',
-    2: 'row-start-2',
-    3: 'row-start-3',
-    4: 'row-start-4',
-    5: 'row-start-5',
-    6: 'row-start-6',
-    7: 'row-start-7',
-    8: 'row-start-8',
-    9: 'row-start-9',
-    10: 'row-start-10',
-    11: 'row-start-11',
-    12: 'row-start-12',
-};
-
-export const rowEnds: Record<number, string> = {
-    1: 'row-end-1',
-    2: 'row-end-2',
-    3: 'row-end-3',
-    4: 'row-end-4',
-    5: 'row-end-5',
-    6: 'row-end-6',
-    7: 'row-end-7',
-    8: 'row-end-8',
-    9: 'row-end-9',
-    10: 'row-end-10',
-    11: 'row-end-11',
-    12: 'row-end-12',
-};
-
-export const colStarts: Record<number, string> = {
-    1: 'col-start-1',
-    2: 'col-start-2',
-    3: 'col-start-3',
-    4: 'col-start-4',
-    5: 'col-start-5',
-    6: 'col-start-6',
-    7: 'col-start-7',
-    8: 'col-start-8',
-    9: 'col-start-9',
-    10: 'col-start-10',
-    11: 'col-start-11',
-    12: 'col-start-12',
-};
-
-export const colEnds: Record<number, string> = {
-    1: 'col-end-1',
-    2: 'col-end-2',
-    3: 'col-end-3',
-    4: 'col-end-4',
-    5: 'col-end-5',
-    6: 'col-end-6',
-    7: 'col-end-7',
-    8: 'col-end-8',
-    9: 'col-end-9',
-    10: 'col-end-10',
-    11: 'col-end-11',
-    12: 'col-end-12',
 };
 
 export const textXl: Record<number, string> = {
