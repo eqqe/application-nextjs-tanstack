@@ -17,8 +17,6 @@ model Grid extends BaseGrid, OptionalIcon, Indexed {
     subTab   SubTabFolder @relation(fields: [parentId], references: [id], onDelete: Cascade)
     parentId String
 
-    columns  Int          @gte(1) @lte(12)
-
     @@allow('read', subTab.tab.folder.applicationVersion.activations?[spaceId in auth().selectedSpaces && space.profiles?[users?[user.id == auth().id] && (role == ADMIN || role == USER)]])
 }
 
@@ -43,11 +41,7 @@ model GridElement extends Indexed, IdCreatedUpdatedAuth {
 
     type             GridElementType
 
-    colSpan          Int?            @gte(1) @lte(12)
-    rowStart         Int?            @gte(1) @lte(12)
-    rowEnd           Int?            @gte(1) @lte(12)
-    colStart         Int?            @gte(1) @lte(12)
-    colEnd           Int?            @gte(1) @lte(12)
+    colSpan          Int?            @gte(1) @lte(12) @default(4)
 
     card             GridCard?
     tabs             GridTabs?

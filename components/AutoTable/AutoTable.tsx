@@ -13,7 +13,6 @@ export function AutoTable<SchemaType extends ZodObjectOrWrapped>({
     additionalColumns,
     data,
     onlyAdditionalColumns,
-    type,
     state,
     onGlobalFilterChange,
     onPaginationChange,
@@ -27,7 +26,6 @@ export function AutoTable<SchemaType extends ZodObjectOrWrapped>({
         additionalColumns?: ColumnDef<z.infer<SchemaType> & Id, ReactNode>[];
         data: (Partial<z.infer<SchemaType>> & Id)[];
         onlyAdditionalColumns?: boolean;
-        type?: Type;
     }) {
     const objectFormSchema = getObjectFormSchema(formSchema);
     if (!objectFormSchema) {

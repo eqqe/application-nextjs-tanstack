@@ -7,7 +7,6 @@ it('Should get grids', async () => {
     function checkGrids() {
         assert.equal(grids.length, 4);
         const firstGrid = grids[0];
-        assert.equal(firstGrid.columns, 6);
         const card = firstGrid.elements[0];
         assert.equal(card.type, 'Card');
         assert.equal(card.card?.footer?.button?.text, 'Create Property');

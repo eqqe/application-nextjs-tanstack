@@ -22,7 +22,6 @@ export const assetsv0_1: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                         {
                                             index: 0,
                                             name: 'List of properties',
-                                            columns: 1,
                                             elements: {
                                                 create: [
                                                     {

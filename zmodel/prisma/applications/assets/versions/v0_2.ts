@@ -22,7 +22,6 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                         {
                                             index: 0,
                                             name: 'Properties',
-                                            columns: 6,
                                             icon: 'Home',
                                             elements: {
                                                 create: [
@@ -97,7 +96,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                     {
                                                         index: 3,
                                                         type: GridElementType.Tabs,
-                                                        colSpan: 4,
+                                                        colSpan: 12,
                                                         tabs: {
                                                             create: {
                                                                 tabsContent: {
@@ -221,14 +220,13 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                         {
                                             index: 1,
                                             name: 'Property Tenancies',
-                                            columns: 8,
                                             icon: 'SquareUser',
                                             elements: {
                                                 create: [
                                                     {
                                                         index: 0,
                                                         type: GridElementType.Card,
-                                                        colSpan: 1,
+                                                        colSpan: 3,
                                                         card: {
                                                             create: {
                                                                 title: 'Property Tenancy',
@@ -240,7 +238,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                     {
                                                         index: 1,
                                                         type: GridElementType.Card,
-                                                        colSpan: 1,
+                                                        colSpan: 3,
                                                         card: {
                                                             create: {
                                                                 title: 'Your joint property tenancies',
@@ -263,7 +261,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                     {
                                                         index: 2,
                                                         type: GridElementType.Card,
-                                                        colSpan: 1,
+                                                        colSpan: 3,
                                                         card: {
                                                             create: {
                                                                 title: 'Your in common property tenancies',
@@ -286,7 +284,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                     {
                                                         index: 3,
                                                         type: GridElementType.Card,
-                                                        colSpan: 1,
+                                                        colSpan: 3,
                                                         card: {
                                                             create: {
                                                                 title: 'Your by entirety property tenancies',
@@ -309,7 +307,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                     {
                                                         index: 4,
                                                         type: GridElementType.Tabs,
-                                                        colSpan: 8,
+                                                        colSpan: 12,
                                                         tabs: {
                                                             create: {
                                                                 tabsContent: {
@@ -461,14 +459,13 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                         {
                                             index: 2,
                                             name: 'Leases',
-                                            columns: 4,
                                             icon: 'FolderKey',
                                             elements: {
                                                 create: [
                                                     {
                                                         index: 0,
                                                         type: GridElementType.Card,
-                                                        colSpan: 1,
+                                                        colSpan: 3,
                                                         card: {
                                                             create: {
                                                                 title: 'Leases',
@@ -491,7 +488,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                     {
                                                         index: 1,
                                                         type: GridElementType.Card,
-                                                        colSpan: 1,
+                                                        colSpan: 3,
                                                         card: {
                                                             create: {
                                                                 title: 'Tenants',
@@ -514,7 +511,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                     {
                                                         index: 2,
                                                         type: GridElementType.Tabs,
-                                                        colSpan: 4,
+                                                        colSpan: 12,
                                                         tabs: {
                                                             create: {
                                                                 tabsContent: {
@@ -583,14 +580,13 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                         {
                                             index: 3,
                                             name: 'Your essential data',
-                                            columns: 4,
                                             icon: 'Gauge',
                                             elements: {
                                                 create: [
                                                     {
                                                         index: 0,
                                                         type: GridElementType.Card,
-                                                        colSpan: 2,
+                                                        colSpan: 3,
                                                         card: {
                                                             create: {
                                                                 title: 'Your properties',
@@ -614,7 +610,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                     {
                                                         index: 1,
                                                         type: GridElementType.Card,
-                                                        colSpan: 2,
+                                                        colSpan: 3,
                                                         card: {
                                                             create: {
                                                                 title: 'Your propertyTenancyInCommon',
@@ -638,7 +634,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                     {
                                                         index: 2,
                                                         type: GridElementType.Card,
-                                                        colSpan: 2,
+                                                        colSpan: 3,
                                                         card: {
                                                             create: {
                                                                 title: 'Your leases',
@@ -662,7 +658,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                     {
                                                         index: 3,
                                                         type: GridElementType.Card,
-                                                        colSpan: 2,
+                                                        colSpan: 3,
                                                         card: {
                                                             create: {
                                                                 title: 'Your persons',
@@ -687,7 +683,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                     {
                                                         index: 4,
                                                         type: GridElementType.Card,
-                                                        colSpan: 2,
+                                                        colSpan: 3,
                                                         card: {
                                                             create: {
                                                                 title: 'Your propertyTenancyByEntirety',
@@ -712,7 +708,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                     {
                                                         index: 5,
                                                         type: GridElementType.Card,
-                                                        colSpan: 2,
+                                                        colSpan: 3,
                                                         card: {
                                                             create: {
                                                                 title: 'Your propertyJointTenancy',
@@ -736,7 +732,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                     {
                                                         index: 6,
                                                         type: GridElementType.Card,
-                                                        colSpan: 2,
+                                                        colSpan: 5,
                                                         card: {
                                                             create: {
                                                                 title: 'Your stats on leases',
@@ -765,7 +761,7 @@ export const assetsv0_2: Prisma.ApplicationVersionCreateWithoutApplicationInput 
                                                     {
                                                         index: 7,
                                                         type: GridElementType.Card,
-                                                        colSpan: 2,
+                                                        colSpan: 5,
                                                         card: {
                                                             create: {
                                                                 title: 'Surface of properties by city',

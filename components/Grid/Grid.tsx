@@ -1,7 +1,7 @@
 import { useCurrentGrid } from '@/hooks/useCurrentGrid';
 import { GridCard } from './Card/GridCard';
 import { GridTabs } from './Tabs/GridTabs';
-import { gridCols, colSpans, rowStarts, rowEnds, colStarts, colEnds } from './utils';
+import { colSpans } from './utils';
 import { FallbackError } from '../layout/FallbackError';
 import { ErrorBoundary } from 'react-error-boundary';
 
@@ -13,7 +13,7 @@ export const Grid = () => {
     }
 
     return (
-        <div className={`grid sm:grid-cols-2  ${gridCols[grid.columns]} gap-4`}>
+        <div className={`grid gap-4 sm:grid-cols-12 md:grid-cols-12 lg:grid-cols-12`}>
             {grid.elements.map((element) => {
                 function getComponentRender() {
                     switch (element.type) {
@@ -33,10 +33,6 @@ export const Grid = () => {
                         key={element.id}
                         className={`
                             ${element.colSpan ? colSpans[element.colSpan] : ''}
-                            ${element.rowStart ? rowStarts[element.rowStart] : ''}
-                            ${element.rowEnd ? rowEnds[element.rowEnd] : ''}
-                            ${element.colStart ? colStarts[element.colStart] : ''}
-                            ${element.colEnd ? colEnds[element.colEnd] : ''}
                             `}
                     >
                         <ErrorBoundary fallback={<FallbackError />}>{getComponentRender()}</ErrorBoundary>
