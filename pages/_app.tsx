@@ -15,7 +15,6 @@ import frLocale from '../locales/fr';
 const queryClient = new QueryClient();
 
 function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
-    console.log(pageProps.locale);
     return (
         <I18nProvider locale={frLocale}>
             <QueryClientProvider client={queryClient}>
