@@ -29,6 +29,7 @@ export const findManyApplicationArgs = {
         },
     },
 };
+
 export const Applications = () => {
     const { data: applications } = trpc.application.findMany.useQuery(findManyApplicationArgs);
 

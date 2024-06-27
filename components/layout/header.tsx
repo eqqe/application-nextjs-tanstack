@@ -65,6 +65,7 @@ export default function Header() {
                     }}
                 />
             </div>
+
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="relative size-8 rounded-full focus-visible:ring-0">

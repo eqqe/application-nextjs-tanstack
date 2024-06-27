@@ -2,6 +2,7 @@ import { enhance } from '@zenstackhq/runtime';
 import type { GetServerSidePropsContext } from 'next';
 import { getServerAuthSession } from './auth';
 import { SelectedSpaces, selectedSpacesCookieName } from '@/lib/context';
+import { prisma } from '@/server/db/client';
 
 export function enhancePrisma({ userId, selectedSpaces }: { userId?: string; selectedSpaces?: SelectedSpaces }) {
     let options;
@@ -16,7 +17,6 @@ export function enhancePrisma({ userId, selectedSpaces }: { userId?: string; sel
     } else {
         options = {};
     }
-    // @ts-ignore
     return enhance(prisma, options);
 }
 
