@@ -17,8 +17,7 @@
         "db:browse": "prisma studio",
         "generate": "npx tsc -p packages/plugin/&& NODE_OPTIONS=\"--max-old-space-size=8192\" zenstack generate --schema zmodel/schema.zmodel",
         "test": "vitest",
-        "test:e2e": "npx playwright test",
-        "postinstall": "npm run generate"
+        "test:e2e": "npx playwright test"
     },
     "dependencies": {
         "@heroicons/react": "^2.1.4",
