@@ -15,6 +15,10 @@ const nextConfig = {
     images: {
         domains: ['picsum.photos', 'lh3.googleusercontent.com'],
     },
+    i18n: {
+        locales: ['en', 'fr'],
+        defaultLocale: 'en',
+    },
 };
 
 module.exports = nextConfig;

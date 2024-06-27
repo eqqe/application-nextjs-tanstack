@@ -15,6 +15,7 @@ import {
     UserPlus,
     Users,
     Moon,
+    Globe,
 } from 'lucide-react';
 import { TopBreadCrumb } from './BreadCrumb';
 import { Input } from '@/components/ui/input';
@@ -40,10 +41,13 @@ import { ModeToggle } from './ModeToggle';
 import { SpaceSwitch } from './SpaceSwitch';
 import { useRouter } from 'next/router';
 import { profilesUrl, settingsUrl, userUrl } from '@/lib/urls';
+import { useChangeLocale, useCurrentLocale } from '@/locales';
 
 export default function Header() {
     const user = useCurrentSessionUser();
     const router = useRouter();
+    const changeLocale = useChangeLocale();
+    const locale = useCurrentLocale();
     return (
         <header className="bg-background sticky top-0 z-30 flex h-14 items-center gap-4 border-b px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
             <MobileSideNav />
@@ -120,6 +124,22 @@ export default function Header() {
                                     <DropdownMenuItem>
                                         <PlusCircle className="mr-2 size-4" />
                                         <span>More...</span>
+                                    </DropdownMenuItem>
+                                </DropdownMenuSubContent>
+                            </DropdownMenuPortal>
+                        </DropdownMenuSub>
+                        <DropdownMenuSub>
+                            <DropdownMenuSubTrigger>
+                                <Globe className="mr-2 size-4" />
+                                <span>Switch language</span>
+                            </DropdownMenuSubTrigger>
+                            <DropdownMenuPortal>
+                                <DropdownMenuSubContent>
+                                    <DropdownMenuItem onClick={() => changeLocale('en')}>
+                                        <span>English</span>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => changeLocale('fr')}>
+                                        <span>French</span>
                                     </DropdownMenuItem>
                                 </DropdownMenuSubContent>
                             </DropdownMenuPortal>

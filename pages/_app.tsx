@@ -10,26 +10,29 @@ import { ThemeProvider, useTheme } from 'next-themes';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { SelectedSpacesProvider } from '@/lib/context';
 import { trpc } from '@/lib/trpc';
+import { I18nProvider } from '../locales';
 
 const queryClient = new QueryClient();
 
 function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
     return (
-        <QueryClientProvider client={queryClient}>
-            <SessionProvider session={session}>
-                <TooltipProvider>
-                    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-                        <SelectedSpacesProvider>
-                            <AppContent>
-                                <div className="h-100 grow">
-                                    <Component {...pageProps} />
-                                </div>
-                            </AppContent>
-                        </SelectedSpacesProvider>
-                    </ThemeProvider>
-                </TooltipProvider>
-            </SessionProvider>
-        </QueryClientProvider>
+        <I18nProvider locale={pageProps.locale}>
+            <QueryClientProvider client={queryClient}>
+                <SessionProvider session={session}>
+                    <TooltipProvider>
+                        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+                            <SelectedSpacesProvider>
+                                <AppContent>
+                                    <div className="h-100 grow">
+                                        <Component {...pageProps} />
+                                    </div>
+                                </AppContent>
+                            </SelectedSpacesProvider>
+                        </ThemeProvider>
+                    </TooltipProvider>
+                </SessionProvider>
+            </QueryClientProvider>
+        </I18nProvider>
     );
 }
 
