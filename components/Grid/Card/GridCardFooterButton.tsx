@@ -93,10 +93,6 @@ export const GridCardFooterButton = memo(
                                 .default([]),
                         }),
                     });
-                } else {
-                    schema = schema.extend({
-                        [fieldName]: z.object({ connect: z.array(z.object({ id: z.string() })).default([]) }),
-                    });
                 }
             } else {
                 if (optional) {

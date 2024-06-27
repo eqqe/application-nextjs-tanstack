@@ -13,7 +13,7 @@ export const Grid = () => {
     }
 
     return (
-        <div className={`grid gap-4 sm:grid-cols-12 md:grid-cols-12 lg:grid-cols-12`}>
+        <div className={`grid gap-4 sm:grid-cols-12 md:grid-cols-12 lg:grid-cols-12 `}>
             {grid.elements.map((element) => {
                 function getComponentRender() {
                     switch (element.type) {
@@ -33,6 +33,7 @@ export const Grid = () => {
                         key={element.id}
                         className={`
                             ${element.colSpan ? colSpans[element.colSpan] : ''}
+                            overflow-x-auto
                             `}
                     >
                         <ErrorBoundary fallback={<FallbackError />}>{getComponentRender()}</ErrorBoundary>

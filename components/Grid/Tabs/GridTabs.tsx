@@ -14,9 +14,9 @@ export function GridTabs({ tabs }: { tabs: Prisma.GridTabsGetPayload<typeof Grid
         throw 'Not tabsContent lenght';
     }
     return (
-        <Tabs defaultValue={tabsContent[0].name} className="col-span-4">
-            <div className="flex items-center">
-                <TabsList>
+        <Tabs defaultValue={tabsContent[0].name} className="col-span-4 ">
+            <div className="flex items-center  ">
+                <TabsList className="overflow-x-auto">
                     {tabsContent.map((tabContent, key) => (
                         <TabsTrigger key={key} value={tabContent.name}>
                             {tabContent.name}
