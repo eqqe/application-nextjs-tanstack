@@ -3,7 +3,7 @@
 name: Run Azure Login with OIDC
 on:
     push:
-        branches: ['main']
+        branches: ['dev']
 
 permissions:
     id-token: write
@@ -15,7 +15,9 @@ jobs:
             - name: Azure login
               uses: azure/login@v2
               with:
+                  auth-type: IDENTITY
                   client-id: ${{ secrets.AZURE_CLIENT_ID }}
+                  # run "az account show" to get the tenantId
                   tenant-id: ${{ secrets.AZURE_TENANT_ID }}
                   subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
                   enable-AzPSSession: true
@@ -32,4 +34,33 @@ jobs:
               with:
                   azPSVersion: 'latest'
                   inlineScript: |
-                      Get-AzContext
+                      # Retrieve secrets from GitHub environment variables
+                      $POSTGRES_ADMIN_USER = $env:POSTGRES_ADMIN_USER
+                      $POSTGRES_ADMIN_PASSWORD = $env:POSTGRES_ADMIN_PASSWORD
+                      $POSTGRES_NAME = $env:POSTGRES_NAME
+                      $LOCATION = $env:LOCATION
+                      $GROUP_NAME = $env:GROUP_NAME
+                      $CONTAINER_ENV_NAME = $env:CONTAINER_ENV_NAME
+                      $NEXTAUTH_SECRET = $env:NEXTAUTH_SECRET
+
+                      $POSTGRES_URL = "postgresql://$POSTGRES_ADMIN_USER:$POSTGRES_ADMIN_PASSWORD@$POSTGRES_NAME.postgres.database.azure.com/flexibleserverdb?sslmode=require"
+
+                      az extension add --name containerapp --upgrade
+
+                      az config set defaults.location=$LOCATION defaults.group=$GROUP_NAME
+
+                      $postgresServer = az postgres flexible-server show --name $POSTGRES_NAME --output none 2>&1
+                      if ($LASTEXITCODE -ne 0) {
+                          $POSTGRES_URL = az postgres flexible-server create --admin-user $POSTGRES_ADMIN_USER --admin-password $POSTGRES_ADMIN_PASSWORD --name $POSTGRES_NAME --sku-name Standard_B1ms --tier Burstable --storage-size 32 --version 16 --query "connectionString" -o tsv
+                      } else {
+                          Write-Output "PostgreSQL server '$POSTGRES_NAME' already exists."
+                      }
+
+                      $containerEnv = az containerapp env show --name $CONTAINER_ENV_NAME --output none 2>&1
+                      if ($LASTEXITCODE -ne 0) {
+                          az containerapp env create --name $CONTAINER_ENV_NAME
+                      } else {
+                          Write-Output "Container Apps environment '$CONTAINER_ENV_NAME' already exists."
+                      }
+
+                      az containerapp up --name application-nextjs-tanstack --environment $CONTAINER_ENV_NAME --source . --env-vars POSTGRES_URL="$POSTGRES_URL" POSTGRES_URL_NON_POOLING="$POSTGRES_URL" NEXTAUTH_SECRET="$NEXTAUTH_SECRET" EMAIL_SERVER_USER="alana.dubuque@ethereal.email" EMAIL_SERVER_PASSWORD="W5xF77eURgth5dAHKf" EMAIL_SERVER_HOST="smtp.ethereal.email" EMAIL_SERVER_PORT="587" EMAIL_FROM="noreply@example.com"
