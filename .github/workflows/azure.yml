@@ -10,6 +10,7 @@ permissions:
     contents: read
 jobs:
     build-and-deploy:
+        environment: Azure - Visual Studio Professional Subscription - 50€ per month
         runs-on: ubuntu-latest
         steps:
             - name: Azure login
