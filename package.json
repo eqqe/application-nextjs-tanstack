@@ -6,7 +6,6 @@
         "dev": "next dev",
         "dev:tsc": "concurrently --raw \"npx tsc -w\" \"next dev\"",
         "build": "npm run generate && next build",
-        "vercel-build": "npm run build && npm run db:push:reset",
         "start": "next start",
         "seed": "prisma db seed",
         "db:push": "prisma db push && prisma db seed",
