@@ -14,8 +14,7 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-RUN npm run generate
-RUN npx next build
+RUN npm run build
 
 FROM base AS runner
 WORKDIR /app
@@ -39,4 +38,4 @@ EXPOSE 3000
 
 ENV PORT 3000
 
-CMD HOSTNAME="0.0.0.0" node server.js
+CMD ["./scripts/migrate-delete-all-and-start.sh"]
