@@ -26,7 +26,6 @@
         }
     ],
     "parserOptions": {
-        "project": true,
-        "tsconfigRootDir": "__dirname"
+        "project": true
     }
 }

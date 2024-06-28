@@ -19,6 +19,7 @@ const nextConfig = {
         locales: ['en', 'fr'],
         defaultLocale: 'fr',
     },
+    output: 'standalone',
 };
 
 module.exports = nextConfig;
