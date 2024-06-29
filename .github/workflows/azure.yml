@@ -36,6 +36,8 @@ jobs:
 
                       # Cannot use the azure login action because I don't have access to the AD (microsoft Entra)
                       az login --use-device
+                      az account set --subscription $env:SUBSCRIPTION_NAME
+
                       az extension add --name containerapp --upgrade
 
                       az config set defaults.location=$LOCATION defaults.group=$GROUP_NAME
@@ -63,3 +65,4 @@ jobs:
                   GROUP_NAME: ${{ vars.GROUP_NAME }}
                   CONTAINER_ENV_NAME: ${{ vars.CONTAINER_ENV_NAME }}
                   NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+                  SUBSCRIPTION_NAME: ${{ vars.SUBSCRIPTION_NAME }}
