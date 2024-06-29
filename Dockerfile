@@ -31,6 +31,8 @@ RUN chown nextjs:nodejs .next
 
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder /app/scripts/entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
 
 USER nextjs
 
@@ -38,8 +40,5 @@ EXPOSE 3000
 
 ENV PORT 3000
 
-COPY --from=builder /app/scripts/entrypoint.sh /app/entrypoint.sh
-
-RUN chmod +x /app/entrypoint.sh
 
 CMD ["sh", "/app/entrypoint.sh"]
