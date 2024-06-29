@@ -29,6 +29,7 @@ jobs:
 
                       $POSTGRES_URL = "postgresql://${POSTGRES_ADMIN_USER}:${POSTGRES_ADMIN_PASSWORD}@${POSTGRES_NAME}.postgres.database.azure.com/flexibleserverdb?sslmode=require"
 
+                      # Cannot use the azure login action because I don't have access to the AD (microsoft Entra)
                       az login --use-device
                       az extension add --name containerapp --upgrade
 
@@ -49,3 +50,11 @@ jobs:
                       }
 
                       az containerapp up --name application-nextjs-tanstack --environment $CONTAINER_ENV_NAME --source . --env-vars POSTGRES_URL="$POSTGRES_URL" POSTGRES_URL_NON_POOLING="$POSTGRES_URL" NEXTAUTH_SECRET="$NEXTAUTH_SECRET" EMAIL_SERVER_USER="alana.dubuque@ethereal.email" EMAIL_SERVER_PASSWORD="W5xF77eURgth5dAHKf" EMAIL_SERVER_HOST="smtp.ethereal.email" EMAIL_SERVER_PORT="587" EMAIL_FROM="noreply@example.com"
+              env:
+                  POSTGRES_ADMIN_USER: ${{ secrets.POSTGRES_ADMIN_USER }}
+                  POSTGRES_ADMIN_PASSWORD: ${{ secrets.POSTGRES_ADMIN_PASSWORD }}
+                  POSTGRES_NAME: ${{ secrets.POSTGRES_NAME }}
+                  LOCATION: ${{ secrets.LOCATION }}
+                  GROUP_NAME: ${{ secrets.GROUP_NAME }}
+                  CONTAINER_ENV_NAME: ${{ secrets.CONTAINER_ENV_NAME }}
+                  NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
