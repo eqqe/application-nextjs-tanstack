@@ -11,6 +11,8 @@ jobs:
         environment: production
         runs-on: ubuntu-latest
         steps:
+            - name: 'Checkout GitHub Action'
+              uses: actions/checkout@main
             - name: Azure PowerShell script
               uses: azure/powershell@v2
               with:
