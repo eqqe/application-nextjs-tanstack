@@ -1,5 +1,8 @@
-#!/bin/bash
+#!/bin/sh
 
-npx prisma db push  --force-reset
+set -e
+
+npx prisma db push --force-reset
 npx prisma db seed
+
 HOSTNAME="0.0.0.0" node server.js

@@ -38,4 +38,8 @@ EXPOSE 3000
 
 ENV PORT 3000
 
-CMD ["./scripts/migrate-delete-all-and-start.sh"]
+COPY --from=builder /app/scripts/entrypoint.sh /app/entrypoint.sh
+
+RUN chmod +x /app/entrypoint.sh
+
+CMD ["sh", "/app/entrypoint.sh"]
