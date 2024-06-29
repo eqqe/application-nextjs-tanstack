@@ -1,6 +1,4 @@
-# File: .github/workflows/workflow.yml
-
-name: Run Azure Login with OIDC
+name: Run Azure
 on:
     push:
         branches: ['dev']
@@ -10,7 +8,7 @@ permissions:
     contents: read
 jobs:
     build-and-deploy:
-        environment: Azure - Visual Studio Professional Subscription - 50€ per month
+        environment: production
         runs-on: ubuntu-latest
         steps:
             - name: Azure PowerShell script
