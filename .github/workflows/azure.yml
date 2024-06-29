@@ -16,6 +16,13 @@ jobs:
               with:
                   azPSVersion: 'latest'
                   inlineScript: |
+                      Write-Output "POSTGRES_ADMIN_USER: $env:POSTGRES_ADMIN_USER"
+                      Write-Output "POSTGRES_ADMIN_PASSWORD: $env:POSTGRES_ADMIN_PASSWORD"
+                      Write-Output "POSTGRES_NAME: $env:POSTGRES_NAME"
+                      Write-Output "LOCATION: $env:LOCATION"
+                      Write-Output "GROUP_NAME: $env:GROUP_NAME"
+                      Write-Output "CONTAINER_ENV_NAME: $env:CONTAINER_ENV_NAME"
+                      Write-Output "NEXTAUTH_SECRET: $env:NEXTAUTH_SECRET"
                       # Retrieve secrets from GitHub environment variables
                       $POSTGRES_ADMIN_USER = $env:POSTGRES_ADMIN_USER
                       $POSTGRES_ADMIN_PASSWORD = $env:POSTGRES_ADMIN_PASSWORD
