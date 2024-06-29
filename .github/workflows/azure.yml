@@ -27,7 +27,7 @@ jobs:
                       $CONTAINER_ENV_NAME = $env:CONTAINER_ENV_NAME
                       $NEXTAUTH_SECRET = $env:NEXTAUTH_SECRET
 
-                      $POSTGRES_URL = "postgresql://$POSTGRES_ADMIN_USER:$POSTGRES_ADMIN_PASSWORD@$POSTGRES_NAME.postgres.database.azure.com/flexibleserverdb?sslmode=require"
+                      $POSTGRES_URL = "postgresql://${POSTGRES_ADMIN_USER}:${POSTGRES_ADMIN_PASSWORD}@${POSTGRES_NAME}.postgres.database.azure.com/flexibleserverdb?sslmode=require"
 
                       az login --device-code
                       az extension add --name containerapp --upgrade
