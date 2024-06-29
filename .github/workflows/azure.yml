@@ -29,7 +29,7 @@ jobs:
 
                       $POSTGRES_URL = "postgresql://${POSTGRES_ADMIN_USER}:${POSTGRES_ADMIN_PASSWORD}@${POSTGRES_NAME}.postgres.database.azure.com/flexibleserverdb?sslmode=require"
 
-                      az login --device-code
+                      az login --use-device
                       az extension add --name containerapp --upgrade
 
                       az config set defaults.location=$LOCATION defaults.group=$GROUP_NAME
