@@ -31,8 +31,12 @@ RUN chown nextjs:nodejs .next
 
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
 COPY --from=builder /app/scripts/entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
+
+COPY --from=builder /app/prisma /app/prisma
+COPY --from=builder /app/zmodel /app/zmodel
 
 USER nextjs
 
