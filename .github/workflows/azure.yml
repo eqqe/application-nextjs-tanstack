@@ -64,7 +64,7 @@ jobs:
 
                       $containerEnv = az containerapp show --name application-nextjs-tanstack --output none 2>&1
                       if ($LASTEXITCODE -ne 0) {
-                          az containerapp create --name $CONTAINER_ENV_NAME --environment $CONTAINER_ENV_NAME
+                          az containerapp create --name application-nextjs-tanstack --environment $CONTAINER_ENV_NAME
                       } else {
                           Write-Output "Container Apps already exists."
                       }
