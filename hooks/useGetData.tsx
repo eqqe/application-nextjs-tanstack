@@ -8,6 +8,7 @@ import { typeHooks } from '@/zmodel/lib/forms/typeHooks';
 import { trpc } from '@/lib/trpc';
 import { CardTableComponentProps } from '@/components/Grid/Table/CardTableComponent';
 import { AutoFormDialog } from '@/components/Form/AutoFormDialog';
+import { useGlobalFilter } from './useGlobalFilter';
 
 export const groupByTypes = ['sum', 'count', 'avg', 'min', 'max'] as const;
 
@@ -23,7 +24,7 @@ export interface UseGetDataProps extends CardTableComponentProps {
 export function useGetData({
     where,
     pageSize,
-    table: { chart, columns, groupBy, type, typeTableRequest },
+    table: { columns, groupBy, type, typeTableRequest },
     multiTablesGlobalFilter,
     editableItems,
 }: UseGetDataProps) {
@@ -37,15 +38,14 @@ export function useGetData({
     });
 
     const [sorting, onSortingChange] = useState<SortingState>([{ id: 'updatedAt', desc: true }]);
-    const searchParams = useSearchParams();
     const [globalFilter, onGlobalFilterChange] = useState('');
 
+    const _globalFilter = useGlobalFilter();
     useEffect(() => {
-        const queryParam = searchParams.get('q');
-        if (queryParam) {
-            onGlobalFilterChange(queryParam);
+        if (_globalFilter) {
+            onGlobalFilterChange(_globalFilter);
         }
-    }, [searchParams]);
+    }, [_globalFilter]);
 
     // @ts-expect-error Here we cannot define the args of the mutation for any type
     const update = useUpdateMutation();

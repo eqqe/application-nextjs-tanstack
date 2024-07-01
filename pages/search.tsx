@@ -3,10 +3,12 @@ import { WithNavBar } from '@/components/layout/WithNavBar';
 import { Type } from '@prisma/client';
 import { useGetData } from '@/hooks/useGetData';
 import { TypeTableRequest } from '@prisma/client';
-import { useMemo } from 'react';
 import { CardTableComponent } from '@/components/Grid/Table/CardTableComponent';
+import { useScopedI18n } from '@/locales';
+import { useGlobalFilter } from '@/hooks/useGlobalFilter';
 
 export const Search: NextPage = () => {
+    const scopedT = useScopedI18n('search');
     const content = Object.values(Type).flatMap((type) => {
         const props = {
             table: {
@@ -30,6 +32,7 @@ export const Search: NextPage = () => {
         }
         return [];
     });
+    const globalFilter = useGlobalFilter();
 
     // Todo SRE No Result
     return (
@@ -38,7 +41,9 @@ export const Search: NextPage = () => {
                 ? content.map(({ data, props }) => (
                       <CardTableComponent key={props.table.type} data={data} props={props} />
                   ))
-                : 'No result'}
+                : scopedT('noResult', {
+                      query: globalFilter,
+                  })}
         </WithNavBar>
     );
 };
