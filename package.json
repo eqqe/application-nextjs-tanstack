@@ -14,7 +14,7 @@
         "db:reset": "prisma migrate reset",
         "db:browse": "prisma studio",
         "build:seed": "npx esbuild zmodel/prisma/seed.ts --platform=node --bundle --outfile=dist/seed.js",
-        "generate": "npx tsc -p packages/plugin/&& NODE_OPTIONS=\"--max-old-space-size=8192\" zenstack generate --schema zmodel/schema.zmodel && npx tsc -p zmodel/prisma",
+        "generate": "npx tsc -p packages/plugin/&& NODE_OPTIONS=\"--max-old-space-size=8192\" zenstack generate --schema zmodel/schema.zmodel && npm run build:seed",
         "test": "vitest",
         "test:e2e": "npx playwright test"
     },
