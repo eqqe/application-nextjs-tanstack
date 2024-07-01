@@ -120,7 +120,7 @@
         "zenstack": "^2.2.3"
     },
     "prisma": {
-        "seed": "tsx zmodel/prisma/seed.ts",
+        "seed": "npx tsx zmodel/prisma/seed.ts",
         "schema": "zmodel/prisma/schema.prisma"
     },
     "optionalDependencies": {

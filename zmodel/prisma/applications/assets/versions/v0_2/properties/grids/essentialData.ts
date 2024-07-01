@@ -5,9 +5,10 @@ import {
     LeaseColumns,
     PropertyTenancyInCommonScalarSchemaColumns,
 } from '@/zmodel/prisma/applications/assets/columns';
+import { AssetsLocaleKeys } from '@/zmodel/prisma/applications/assets/locales/fr';
 
-const grid: Omit<Prisma.GridCreateWithoutSubTabInput, 'index'> = {
-    name: 'Your essential data',
+const grid: Omit<Prisma.GridCreateWithoutSubTabInput, 'index'> & { name: AssetsLocaleKeys } = {
+    name: 'yourEssentialData',
     icon: 'Gauge',
     elements: {
         create: [

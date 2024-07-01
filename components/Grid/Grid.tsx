@@ -4,6 +4,7 @@ import { GridTabs } from './Tabs/GridTabs';
 import { colSpans } from './utils';
 import { FallbackError } from '../layout/FallbackError';
 import { ErrorBoundary } from 'react-error-boundary';
+import { useScopedI18n } from '@/locales';
 
 export const Grid = () => {
     const grid = useCurrentGrid();
