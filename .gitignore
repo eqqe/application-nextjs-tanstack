@@ -15,8 +15,3 @@ zmodel/prisma/schema.prisma
 /playwright/.cache/
 tsconfig.tsbuildinfo
 dist
-public/fallback-development.js
-public/sw.js
-public/sw.js.map
-public/workbox-e43f5367.js
-public/workbox-e43f5367.js.map

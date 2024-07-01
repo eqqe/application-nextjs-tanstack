@@ -1,9 +1,5 @@
 /** @type {import('next').NextConfig} */
 
-const withPWA = require('next-pwa')({
-    dest: 'public',
-});
-
 const nextConfig = {
     experimental: {
         swcPlugins: [
@@ -27,4 +23,4 @@ const nextConfig = {
     output: 'standalone',
 };
 
-module.exports = withPWA(nextConfig);
+module.exports = nextConfig;
