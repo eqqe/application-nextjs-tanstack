@@ -7,14 +7,14 @@
         "dev:tsc": "concurrently --raw \"npx tsc -w\" \"next dev\"",
         "build": "npm run generate && next build",
         "start": "next start",
-        "seed": "prisma db seed",
-        "db:push": "prisma db push && prisma db seed",
-        "db:push:reset": "prisma db push --force-reset && prisma db seed",
+        "seed": "npm run build:seed && prisma db seed",
+        "db:push": "prisma db push && npm run seed",
         "db:migrate": "prisma migrate dev",
         "db:deploy": "prisma migrate deploy",
         "db:reset": "prisma migrate reset",
         "db:browse": "prisma studio",
-        "generate": "npx tsc -p packages/plugin/&& NODE_OPTIONS=\"--max-old-space-size=8192\" zenstack generate --schema zmodel/schema.zmodel",
+        "build:seed": "npx esbuild zmodel/prisma/seed.ts --platform=node --bundle --outfile=dist/seed.js",
+        "generate": "npx tsc -p packages/plugin/&& NODE_OPTIONS=\"--max-old-space-size=8192\" zenstack generate --schema zmodel/schema.zmodel && npm run build:seed",
         "test": "vitest",
         "test:e2e": "npx playwright test"
     },
@@ -120,7 +120,7 @@
         "zenstack": "^2.2.3"
     },
     "prisma": {
-        "seed": "tsx zmodel/prisma/seed.ts",
+        "seed": "node dist/seed.js",
         "schema": "zmodel/prisma/schema.prisma"
     },
     "optionalDependencies": {
