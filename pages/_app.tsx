@@ -50,7 +50,7 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
                 <link rel="apple-touch-startup-image" href="/images/apple_splash_750.png" sizes="750x1334" />
                 <link rel="apple-touch-startup-image" href="/images/apple_splash_640.png" sizes="640x1136" />
             </Head>
-            <I18nProvider locale={{} as any}>
+            <I18nProvider locale={fr as any}>
                 <QueryClientProvider client={queryClient}>
                     <SessionProvider session={session}>
                         <TooltipProvider>
@@ -86,6 +86,7 @@ export default trpc.withTRPC(App);
 
 import { headers } from 'next/headers';
 import { Viewport } from 'next';
+import fr from '@/locales/fr';
 
 export function generateViewport() {
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
