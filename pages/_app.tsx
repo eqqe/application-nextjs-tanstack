@@ -12,7 +12,6 @@ import { SelectedSpacesProvider } from '@/lib/context';
 import { trpc } from '@/lib/trpc';
 import Head from 'next/head';
 import { I18nProvider } from '../locales';
-import frLocale from '../locales/fr';
 const queryClient = new QueryClient();
 
 function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
@@ -51,7 +50,7 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
                 <link rel="apple-touch-startup-image" href="/images/apple_splash_750.png" sizes="750x1334" />
                 <link rel="apple-touch-startup-image" href="/images/apple_splash_640.png" sizes="640x1136" />
             </Head>
-            <I18nProvider locale={frLocale}>
+            <I18nProvider locale={{} as any}>
                 <QueryClientProvider client={queryClient}>
                     <SessionProvider session={session}>
                         <TooltipProvider>
