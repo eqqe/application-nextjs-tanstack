@@ -15,7 +15,7 @@ export function getAssetsUtils(base: ReturnType<typeof getBaseUtils>, page: Page
         await page.getByText('Enable Assets').click();
     }
     async function openEssentialData() {
-        await page.getByText('Your essential data').click();
+        await page.getByText('yourEssentialData').click();
     }
     async function createFillScalarLeaseFields({ startDate }: { startDate: string }) {
         await base.clickButton('Create lease');

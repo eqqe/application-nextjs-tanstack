@@ -1,3 +1,12 @@
+$env:POSTGRES_ADMIN_USER=""
+$env:POSTGRES_ADMIN_PASSWORD=""
+$env:POSTGRES_NAME=""
+$env:LOCATION=""
+$env:GROUP_NAME=""
+$env:CONTAINER_ENV_NAME=""
+$env:CONTAINER_APP_NAME=""
+$env:NEXTAUTH_SECRET=""
+$env:SUBSCRIPTION_NAME=""
 
 
 az login
@@ -24,7 +33,7 @@ if ($LASTEXITCODE -ne 0) {
 az containerapp show --name $env:CONTAINER_APP_NAME --output none 2>&1
 if ($LASTEXITCODE -ne 0) {
     $env:POSTGRES_URL = "postgresql://${env:POSTGRES_ADMIN_USER}:${env:POSTGRES_ADMIN_PASSWORD}@${env:POSTGRES_NAME}.postgres.database.azure.com/flexibleserverdb?sslmode=require"
-    az containerapp create --name $env:CONTAINER_APP_NAME --environment $env:CONTAINER_ENV_NAME --env-vars POSTGRES_URL="$env:POSTGRES_URL" POSTGRES_URL_NON_POOLING="$env:POSTGRES_URL" NEXTAUTH_SECRET="$env:NEXTAUTH_SECRET" EMAIL_SERVER_USER="alana.dubuque@ethereal.email" EMAIL_SERVER_PASSWORD="W5xF77eURgth5dAHKf" EMAIL_SERVER_HOST="smtp.ethereal.email" EMAIL_SERVER_PORT="587" EMAIL_FROM="noreply@example.com"
+    az containerapp create --name $env:CONTAINER_APP_NAME --ingress external --target-port 3000 --environment $env:CONTAINER_ENV_NAME --env-vars POSTGRES_URL="$env:POSTGRES_URL" POSTGRES_URL_NON_POOLING="$env:POSTGRES_URL" NEXTAUTH_SECRET="$env:NEXTAUTH_SECRET" EMAIL_SERVER_USER="alana.dubuque@ethereal.email" EMAIL_SERVER_PASSWORD="W5xF77eURgth5dAHKf" EMAIL_SERVER_HOST="smtp.ethereal.email" EMAIL_SERVER_PORT="587" EMAIL_FROM="noreply@example.com"
 } else {
     Write-Output "$env:CONTAINER_APP_NAME already exists."
 }
@@ -34,5 +43,4 @@ if ($LASTEXITCODE -ne 0) {
 # Activate continuous deployement from Github repository :)
 # It bypasses the missing rights on Azure AD (Microsoft Entra), you cannot do it from the command line here.
 
-
-# Todo allow access to postgres from Azure
+# Todo set NEXTAUTH_URL
