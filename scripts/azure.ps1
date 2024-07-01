@@ -33,14 +33,15 @@ if ($LASTEXITCODE -ne 0) {
 az containerapp show --name $env:CONTAINER_APP_NAME --output none 2>&1
 if ($LASTEXITCODE -ne 0) {
     $env:POSTGRES_URL = "postgresql://${env:POSTGRES_ADMIN_USER}:${env:POSTGRES_ADMIN_PASSWORD}@${env:POSTGRES_NAME}.postgres.database.azure.com/flexibleserverdb?sslmode=require"
-    az containerapp create --name $env:CONTAINER_APP_NAME --ingress external --target-port 3000 --environment $env:CONTAINER_ENV_NAME --env-vars POSTGRES_URL="$env:POSTGRES_URL" POSTGRES_URL_NON_POOLING="$env:POSTGRES_URL" NEXTAUTH_SECRET="$env:NEXTAUTH_SECRET" EMAIL_SERVER_USER="alana.dubuque@ethereal.email" EMAIL_SERVER_PASSWORD="W5xF77eURgth5dAHKf" EMAIL_SERVER_HOST="smtp.ethereal.email" EMAIL_SERVER_PORT="587" EMAIL_FROM="noreply@example.com"
+    $env:fqdn=az containerapp create --name $env:CONTAINER_APP_NAME --ingress external --target-port 3000 --environment $env:CONTAINER_ENV_NAME --env-vars POSTGRES_URL="$env:POSTGRES_URL" POSTGRES_URL_NON_POOLING="$env:POSTGRES_URL" NEXTAUTH_SECRET="$env:NEXTAUTH_SECRET" EMAIL_SERVER_USER="alana.dubuque@ethereal.email" EMAIL_SERVER_PASSWORD="W5xF77eURgth5dAHKf" EMAIL_SERVER_HOST="smtp.ethereal.email" EMAIL_SERVER_PORT="587" EMAIL_FROM="noreply@example.com" -o tsv --query properties.configuration.ingress.fqdn
+    az containerapp update --name $env:CONTAINER_APP_NAME --set-env-vars NEXTAUTH_URL=https://${env:fqdn}
 } else {
     Write-Output "$env:CONTAINER_APP_NAME already exists."
 }
 
+az acr create -n myregistrylzkgk76hhjhghjfze --sku Basic --admin-enabled true
 
 # Then go to Azure Portal > Resource Groups > Container App > Settings > Deployment > Continuous deployment >
 # Activate continuous deployement from Github repository :)
+# You need to disable main branch protection temporarly first on GitHub
 # It bypasses the missing rights on Azure AD (Microsoft Entra), you cannot do it from the command line here.
-
-# Todo set NEXTAUTH_URL
