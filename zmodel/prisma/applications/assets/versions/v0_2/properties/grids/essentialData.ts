@@ -1,10 +1,6 @@
 import { GridElementType } from '@prisma/client';
 import { Type, type Prisma, TypeTableRequest } from '@prisma/client';
-import {
-    PropertyColumns,
-    LeaseColumns,
-    PropertyTenancyInCommonScalarSchemaColumns,
-} from '@/zmodel/prisma/applications/assets/columns';
+import { PropertyColumns, LeaseColumns } from '@/zmodel/prisma/applications/assets/columns';
 import { AssetsLocaleKeys } from '@/zmodel/prisma/applications/assets/locales/fr';
 
 const grid: Omit<Prisma.GridCreateWithoutSubTabInput, 'index'> & { name: AssetsLocaleKeys } = {
