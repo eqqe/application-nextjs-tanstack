@@ -84,3 +84,19 @@ function AppContent(props: { children: ReactElement | ReactElement[] }) {
 
 // @ts-expect-error -----> Faster typescript inference of tRPC in VsCode by removing the recursion on type when createTRPCNext
 export default trpc.withTRPC(App);
+
+import { headers } from 'next/headers';
+import { Viewport } from 'next';
+
+// eslint-disable-next-line require-await
+export async function generateViewport(): Promise<Viewport> {
+    const userAgent = headers().get('user-agent');
+    const isiPhone = /iphone/i.test(userAgent ?? '');
+    return isiPhone
+        ? {
+              width: 'device-width',
+              initialScale: 1,
+              maximumScale: 1, // disables auto-zoom on ios safari
+          }
+        : {};
+}
