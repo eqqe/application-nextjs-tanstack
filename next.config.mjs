@@ -1,5 +1,12 @@
 /** @type {import('next').NextConfig} */
 
+import withSerwistInit from '@serwist/next';
+
+const withSerwist = withSerwistInit({
+    swSrc: 'lib/sw.ts',
+    swDest: 'public/sw.js',
+});
+
 const nextConfig = {
     experimental: {
         swcPlugins: [
@@ -23,4 +30,4 @@ const nextConfig = {
     output: 'standalone',
 };
 
-module.exports = nextConfig;
+export default withSerwist(nextConfig);
