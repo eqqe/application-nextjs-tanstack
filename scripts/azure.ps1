@@ -9,7 +9,7 @@ az config set defaults.location=$env:LOCATION defaults.group=$env:GROUP_NAME
 
 az postgres flexible-server show --name $env:POSTGRES_NAME --output none 2>&1
 if ($LASTEXITCODE -ne 0) {
-    az postgres flexible-server create --yes --admin-user $env:POSTGRES_ADMIN_USER --admin-password $env:POSTGRES_ADMIN_PASSWORD --name $env:POSTGRES_NAME --sku-name Standard_B1ms --tier Burstable --storage-size 32 --version 16
+    az postgres flexible-server create --public-access 0.0.0.0 --yes --admin-user $env:POSTGRES_ADMIN_USER --admin-password $env:POSTGRES_ADMIN_PASSWORD --name $env:POSTGRES_NAME --sku-name Standard_B1ms --tier Burstable --storage-size 32 --version 16
 } else {
     Write-Output "PostgreSQL server '$env:POSTGRES_NAME' already exists."
 }
@@ -32,3 +32,7 @@ if ($LASTEXITCODE -ne 0) {
 
 # Then go to Azure Portal > Resource Groups > Container App > Settings > Deployment > Continuous deployment >
 # Activate continuous deployement from Github repository :)
+# It bypasses the missing rights on Azure AD (Microsoft Entra), you cannot do it from the command line here.
+
+
+# Todo allow access to postgres from Azure
