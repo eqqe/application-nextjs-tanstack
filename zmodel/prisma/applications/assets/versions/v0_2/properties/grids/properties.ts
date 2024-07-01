@@ -1,5 +1,5 @@
 import { GridElementType } from '@prisma/client';
-import { Type, type Prisma, TypeTableRequest } from '@prisma/client';
+import { Type, type Prisma, TypeTableRequest, ChartType } from '@prisma/client';
 import {
     PropertyColumns,
     LeaseColumns,
@@ -12,7 +12,6 @@ const grid: Omit<Prisma.GridCreateWithoutSubTabInput, 'index'> = {
     elements: {
         create: [
             {
-                index: 0,
                 type: GridElementType.Card,
                 colSpan: 2,
                 card: {
@@ -25,7 +24,7 @@ const grid: Omit<Prisma.GridCreateWithoutSubTabInput, 'index'> = {
                                 button: {
                                     create: {
                                         text: 'Create Property',
-                                        table: 'property',
+                                        table: Type.property,
                                     },
                                 },
                             },
@@ -34,7 +33,6 @@ const grid: Omit<Prisma.GridCreateWithoutSubTabInput, 'index'> = {
                 },
             },
             {
-                index: 1,
                 type: GridElementType.Card,
                 card: {
                     create: {
@@ -57,7 +55,6 @@ const grid: Omit<Prisma.GridCreateWithoutSubTabInput, 'index'> = {
                 },
             },
             {
-                index: 2,
                 type: GridElementType.Card,
                 card: {
                     create: {
@@ -80,7 +77,6 @@ const grid: Omit<Prisma.GridCreateWithoutSubTabInput, 'index'> = {
                 },
             },
             {
-                index: 3,
                 type: GridElementType.Tabs,
                 colSpan: 12,
                 tabs: {
@@ -88,7 +84,6 @@ const grid: Omit<Prisma.GridCreateWithoutSubTabInput, 'index'> = {
                         tabsContent: {
                             create: [
                                 {
-                                    index: 0,
                                     name: 'All',
                                     elements: {
                                         create: {
@@ -104,7 +99,7 @@ const grid: Omit<Prisma.GridCreateWithoutSubTabInput, 'index'> = {
                                                     table: {
                                                         create: {
                                                             type: Type.property,
-                                                            typeTableRequest: 'findMany',
+                                                            typeTableRequest: TypeTableRequest.findMany,
                                                             columns: [
                                                                 PropertyColumns.streetAddress,
                                                                 PropertyColumns.city,
@@ -118,7 +113,6 @@ const grid: Omit<Prisma.GridCreateWithoutSubTabInput, 'index'> = {
                                     },
                                 },
                                 {
-                                    index: 1,
                                     name: 'Surface / city',
                                     elements: {
                                         create: {
@@ -149,7 +143,6 @@ const grid: Omit<Prisma.GridCreateWithoutSubTabInput, 'index'> = {
                                     },
                                 },
                                 {
-                                    index: 2,
                                     name: 'Type',
                                     elements: {
                                         create: {
@@ -168,7 +161,7 @@ const grid: Omit<Prisma.GridCreateWithoutSubTabInput, 'index'> = {
                                                             typeTableRequest: TypeTableRequest.groupBy,
                                                             chart: {
                                                                 create: {
-                                                                    type: 'PieChart',
+                                                                    type: ChartType.PieChart,
                                                                 },
                                                             },
                                                             groupBy: {
@@ -184,12 +177,12 @@ const grid: Omit<Prisma.GridCreateWithoutSubTabInput, 'index'> = {
                                         },
                                     },
                                 },
-                            ],
+                            ].map((tabContent, index) => ({ ...tabContent, index })),
                         },
                     },
                 },
             },
-        ],
+        ].map((element, index) => ({ ...element, index })),
     },
 };
 
