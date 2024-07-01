@@ -90,9 +90,8 @@ import { Viewport } from 'next';
 
 // eslint-disable-next-line require-await
 export async function generateViewport(): Promise<Viewport> {
-    const userAgent = headers().get('user-agent');
-    const isiPhone = /iphone/i.test(userAgent ?? '');
-    return isiPhone
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    return isIOS
         ? {
               width: 'device-width',
               initialScale: 1,
