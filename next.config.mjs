@@ -1,7 +1,10 @@
 /** @type {import('next').NextConfig} */
 
-const withPWA = require('next-pwa')({
-    dest: 'public',
+import withSerwistInit from '@serwist/next';
+
+const withSerwist = withSerwistInit({
+    swSrc: 'lib/sw.ts',
+    swDest: 'public/sw.js',
 });
 
 const nextConfig = {
@@ -27,4 +30,4 @@ const nextConfig = {
     output: 'standalone',
 };
 
-module.exports = withPWA(nextConfig);
+export default withSerwist(nextConfig);
