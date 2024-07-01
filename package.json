@@ -88,7 +88,7 @@
     },
     "devDependencies": {
         "@faker-js/faker": "^8.4.1",
-        "@playwright/test": "^1.44.1",
+        "@playwright/test": "^1.45.0",
         "@tailwindcss/line-clamp": "^0.4.4",
         "@tanstack/eslint-plugin-query": "^5.49.1",
         "@testing-library/react": "^16.0.0",
