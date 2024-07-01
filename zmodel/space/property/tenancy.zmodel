@@ -19,6 +19,7 @@ model PropertyTenancyInCommon extends Address, PropertyTenancyLink {
     codeNafApe        String?
     rcs               String?
     lei               String?
+    optionalCode      String?
     intraCommunityVAT String?
     tenants           PropertyTenancyInCommonTenant[]
 }

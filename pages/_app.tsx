@@ -87,8 +87,7 @@ export default trpc.withTRPC(App);
 import { headers } from 'next/headers';
 import { Viewport } from 'next';
 
-// eslint-disable-next-line require-await
-export async function generateViewport(): Promise<Viewport> {
+export function generateViewport() {
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
     return isIOS
         ? {
