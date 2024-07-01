@@ -50,7 +50,7 @@ export const fakeTenancyInCommon = (): z.infer<typeof PropertyTenancyInCommonCre
     ...fakeAddress(),
     siret: faker.finance.accountNumber(),
     siren: faker.finance.accountNumber(),
-    codeNafApe: faker.finance.accountNumber(),
+    nafApeCode: faker.finance.accountNumber(),
     intraCommunityVAT: faker.finance.accountNumber(),
     lei: faker.finance.accountNumber(),
     rcs: faker.finance.accountNumber(),
