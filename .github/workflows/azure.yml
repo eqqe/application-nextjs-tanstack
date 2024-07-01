@@ -22,23 +22,8 @@ jobs:
               with:
                   azPSVersion: 'latest'
                   inlineScript: |
-                      Write-Output "POSTGRES_ADMIN_USER: $env:POSTGRES_ADMIN_USER"
-                      Write-Output "POSTGRES_ADMIN_PASSWORD: $env:POSTGRES_ADMIN_PASSWORD"
-                      Write-Output "POSTGRES_NAME: $env:POSTGRES_NAME"
-                      Write-Output "LOCATION: $env:LOCATION"
-                      Write-Output "GROUP_NAME: $env:GROUP_NAME"
-                      Write-Output "CONTAINER_ENV_NAME: $env:CONTAINER_ENV_NAME"
-                      Write-Output "NEXTAUTH_SECRET: $env:NEXTAUTH_SECRET"
-                      # Retrieve secrets from GitHub environment variables
-                      $POSTGRES_ADMIN_USER = $env:POSTGRES_ADMIN_USER
-                      $POSTGRES_ADMIN_PASSWORD = $env:POSTGRES_ADMIN_PASSWORD
-                      $POSTGRES_NAME = $env:POSTGRES_NAME
-                      $LOCATION = $env:LOCATION
-                      $GROUP_NAME = $env:GROUP_NAME
-                      $CONTAINER_ENV_NAME = $env:CONTAINER_ENV_NAME
-                      $NEXTAUTH_SECRET = $env:NEXTAUTH_SECRET
 
-                      $POSTGRES_URL = "postgresql://${POSTGRES_ADMIN_USER}:${POSTGRES_ADMIN_PASSWORD}@${POSTGRES_NAME}.postgres.database.azure.com/flexibleserverdb?sslmode=require"
+                      $POSTGRES_URL = "postgresql://${env:POSTGRES_ADMIN_USER}:${env:POSTGRES_ADMIN_PASSWORD}@${env:POSTGRES_NAME}.postgres.database.azure.com/flexibleserverdb?sslmode=require"
 
                       # Cannot use the azure login action because I don't have access to the AD (microsoft Entra)
                       az login --use-device
@@ -46,30 +31,30 @@ jobs:
 
                       az extension add --name containerapp --upgrade
 
-                      az config set defaults.location=$LOCATION defaults.group=$GROUP_NAME
+                      az config set defaults.location=$env:LOCATION defaults.group=$env:GROUP_NAME
 
-                      $postgresServer = az postgres flexible-server show --name $POSTGRES_NAME --output none 2>&1
+                      $postgresServer = az postgres flexible-server show --name $env:POSTGRES_NAME --output none 2>&1
                       if ($LASTEXITCODE -ne 0) {
-                          $POSTGRES_URL = az postgres flexible-server create --admin-user $POSTGRES_ADMIN_USER --admin-password $POSTGRES_ADMIN_PASSWORD --name $POSTGRES_NAME --sku-name Standard_B1ms --tier Burstable --storage-size 32 --version 16 --query "connectionString" -o tsv
+                          az postgres flexible-server create --yes --admin-user $env:POSTGRES_ADMIN_USER --admin-password $env:POSTGRES_ADMIN_PASSWORD --name $env:POSTGRES_NAME --sku-name Standard_B1ms --tier Burstable --storage-size 32 --version 16
                       } else {
-                          Write-Output "PostgreSQL server '$POSTGRES_NAME' already exists."
+                          Write-Output "PostgreSQL server '$env:POSTGRES_NAME' already exists."
                       }
 
-                      $containerEnv = az containerapp env show --name $CONTAINER_ENV_NAME --output none 2>&1
+                      $containerEnv = az containerapp env show --name $env:CONTAINER_ENV_NAME --output none 2>&1
                       if ($LASTEXITCODE -ne 0) {
-                          az containerapp env create --name $CONTAINER_ENV_NAME
+                          az containerapp env create --name $env:CONTAINER_ENV_NAME
                       } else {
-                          Write-Output "Container Apps environment '$CONTAINER_ENV_NAME' already exists."
+                          Write-Output "Container Apps environment '$env:CONTAINER_ENV_NAME' already exists."
                       }
 
                       $containerEnv = az containerapp show --name application-nextjs-tanstack --output none 2>&1
                       if ($LASTEXITCODE -ne 0) {
-                          az containerapp create --name application-nextjs-tanstack --environment $CONTAINER_ENV_NAME
+                          az containerapp create --name application-nextjs-tanstack --environment $env:CONTAINER_ENV_NAME
                       } else {
                           Write-Output "Container Apps already exists."
                       }
 
-                      az containerapp update --revision-suffix ${{ github.run_id }} --name application-nextjs-tanstack --source . --set-env-vars POSTGRES_URL="$POSTGRES_URL" POSTGRES_URL_NON_POOLING="$POSTGRES_URL" NEXTAUTH_SECRET="$NEXTAUTH_SECRET" EMAIL_SERVER_USER="alana.dubuque@ethereal.email" EMAIL_SERVER_PASSWORD="W5xF77eURgth5dAHKf" EMAIL_SERVER_HOST="smtp.ethereal.email" EMAIL_SERVER_PORT="587" EMAIL_FROM="noreply@example.com"
+                      az containerapp update --revision-suffix ${{ github.run_id }} --name application-nextjs-tanstack --source . --set-env-vars POSTGRES_URL="$env:POSTGRES_URL" POSTGRES_URL_NON_POOLING="$env:POSTGRES_URL" NEXTAUTH_SECRET="$env:NEXTAUTH_SECRET" EMAIL_SERVER_USER="alana.dubuque@ethereal.email" EMAIL_SERVER_PASSWORD="W5xF77eURgth5dAHKf" EMAIL_SERVER_HOST="smtp.ethereal.email" EMAIL_SERVER_PORT="587" EMAIL_FROM="noreply@example.com"
               env:
                   POSTGRES_ADMIN_USER: ${{ secrets.POSTGRES_ADMIN_USER }}
                   POSTGRES_ADMIN_PASSWORD: ${{ secrets.POSTGRES_ADMIN_PASSWORD }}
