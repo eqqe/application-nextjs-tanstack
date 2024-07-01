@@ -1,5 +1,5 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
-import { CardTableComponent, GridCardTableInclude } from '../Table/CardTableComponent';
+import { CardTableComponentWrapper, GridCardTableInclude } from '../Table/CardTableComponent';
 import { paddingBottoms, textXl } from '../utils';
 import { Prisma } from '@prisma/client';
 import { GridCardFooterInclude, GridCardFooter } from '@/components/Grid/Card/GridCardFooter';
@@ -47,7 +47,7 @@ export function GridCard({ card }: { card: Prisma.GridCardGetPayload<typeof Grid
                 </ErrorBoundary>
                 <ErrorBoundary fallback={<FallbackError />}>
                     {card.table && (
-                        <CardTableComponent
+                        <CardTableComponentWrapper
                             table={card.table}
                             editableItems={true}
                             pageSize={50}

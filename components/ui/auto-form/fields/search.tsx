@@ -3,9 +3,9 @@ import { FormControl, FormItem, FormMessage } from '@/components/ui/form';
 import AutoFormLabel from '../common/label';
 import AutoFormTooltip from '../common/tooltip';
 import { AutoFormInputComponentProps } from '../types';
-import { CardTableComponent } from '@/components/Grid/Table/CardTableComponent';
 import { useFormContext } from 'react-hook-form';
 import { TypeTableRequest } from '@prisma/client';
+import { CardTableComponentWrapper } from '@/components/Grid/Table/CardTableComponent';
 
 function AutoFormSearch({ label, isRequired, fieldConfigItem, fieldProps }: AutoFormInputComponentProps) {
     const { showLabel: _showLabel } = fieldProps;
@@ -47,7 +47,7 @@ function AutoFormSearch({ label, isRequired, fieldConfigItem, fieldProps }: Auto
         <FormItem className="flex w-full flex-col justify-start">
             {showLabel && <AutoFormLabel label={fieldConfigItem?.label || label} isRequired={isRequired} />}
             <FormControl>
-                <CardTableComponent
+                <CardTableComponentWrapper
                     table={table}
                     pageSize={5}
                     editableItems={false}

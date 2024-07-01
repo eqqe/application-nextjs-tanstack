@@ -1,6 +1,6 @@
+import { groupByTypes } from '@/hooks/useGetData';
 import { Chart as ChartType, GroupBy } from '@zenstackhq/runtime/models';
 import { Bar, BarChart, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { groupByTypes } from '@/components/Grid/Table/CardTableComponent';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
